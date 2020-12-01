@@ -9,16 +9,22 @@ import java.lang.reflect.Method;
  * @author Mike
  */
 public class BeanRowAdapter extends RowAdapterWithColumnNames {
-    
+
     private Class itemClass;
     private Field[] fields;
     private Method[] getters;
     private Method[] setters;
     private boolean[] columnLookedUp;
-    
+
     public BeanRowAdapter(String... columnNames) {
         super(columnNames);
         initColumnsLookUp();
+    }
+
+    public BeanRowAdapter(Class itemClass, String... columnNames) {
+        super(columnNames);
+        initColumnsLookUp();
+        setItemClass(itemClass);
     }
 
     @Override
@@ -28,69 +34,78 @@ public class BeanRowAdapter extends RowAdapterWithColumnNames {
     }
 
     @Override
-    public Object getValueAt(Object item, int columnIndex, Class columnClass) {
+    public Object getValueAt(Object item, int columnIndex) {
         if (!columnLookedUp[columnIndex]) {
-            lookUpColumnAt(item, columnIndex, columnClass);
+            lookUpColumnAt(columnIndex, item.getClass());
         }
-        
+
         if (fields[columnIndex] != null) {
             try {
                 return fields[columnIndex].get(item);
-            }
-            catch (IllegalArgumentException | IllegalAccessException ex) {
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 return null;
             }
         }
-        
+
         if (getters[columnIndex] != null) {
             try {
                 return getters[columnIndex].invoke(item);
-            }
-            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 return null;
             }
         }
-        
+
         return null;
     }
 
     @Override
-    public void setValueAt(Object item, int columnIndex, Class columnClass, Object value) {
+    public void setValueAt(Object item, int columnIndex, Object value) {
         if (!columnLookedUp[columnIndex]) {
-            lookUpColumnAt(item, columnIndex, columnClass);
+            lookUpColumnAt(columnIndex, item.getClass());
         }
-        
+
         if (fields[columnIndex] != null) {
             try {
                 fields[columnIndex].set(item, value);
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
             }
-            catch (IllegalArgumentException | IllegalAccessException ex) {
-            }
-        }
-        else if (setters[columnIndex] != null) {
+        } else if (setters[columnIndex] != null) {
             try {
                 setters[columnIndex].invoke(item, value);
-            }
-            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             }
         }
     }
-    
+
+    @Override
+    public boolean isCellEditable(int columnIndex) {
+        return setters == null || setters[columnIndex] != null;
+    }
+
+    public Class getColumnClassAt(int columnIndex) {
+        if (fields != null && fields[columnIndex] != null) {
+            return fields[columnIndex].getType();
+        }
+        if (getters != null && getters[columnIndex] != null) {
+            return getters[columnIndex].getReturnType();
+        }
+        return Object.class;
+    }
+
     private void initColumnsLookUp() {
         itemClass = null;
-        
+
         if (columnNames == null) {
             fields = null;
             getters = null;
             setters = null;
             columnLookedUp = null;
-        }
-        else {
+        } else {
             fields = new Field[columnNames.length];
             getters = new Method[columnNames.length];
             setters = new Method[columnNames.length];
             columnLookedUp = new boolean[columnNames.length];
-            
+
             for (int i = 0; i < columnNames.length; ++i) {
                 fields[i] = null;
                 getters[i] = null;
@@ -99,54 +114,53 @@ public class BeanRowAdapter extends RowAdapterWithColumnNames {
             }
         }
     }
-    
-    private void lookUpColumnAt(Object item, int columnIndex, Class columnClass) {
-        if (itemClass == null) {
-            itemClass = item.getClass();
+
+    private void setItemClass(Class itemClass) {
+        this.itemClass = itemClass;
+        for (int i = 0; i < columnNames.length; ++i) {
+            lookUpColumnAt(i, itemClass);
         }
-        
+    }
+
+    private void lookUpColumnAt(int columnIndex, Class clazz) {
+        if (itemClass == null) {
+            itemClass = clazz;
+        }
+
         try {
             fields[columnIndex] = itemClass.getField(columnNames[columnIndex]);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
-            String getterName = columnNames[columnIndex];
-            if (getterName.length() > 1) {
-                getterName = Character.toUpperCase(getterName.charAt(0)) + getterName.substring(1);
+        } catch (NoSuchFieldException | SecurityException ex) {
+            String propertyName = columnNames[columnIndex];
+            if (propertyName.length() > 1) {
+                propertyName = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+            } else {
+                propertyName = propertyName.toUpperCase();
             }
-            else {
-                getterName = getterName.toUpperCase();
-            }
-            
-            String setterName = "set" + getterName;
-            getterName = "get" + getterName;
-            
+
             try {
-                getters[columnIndex] = itemClass.getMethod(getterName);
-            }
-            catch (NoSuchMethodException | SecurityException ex1) {
-                if (columnClass == Boolean.TYPE) {
-                    getterName = "is" + getterName.substring(3);
+                getters[columnIndex] = itemClass.getMethod("get" + propertyName);
+            } catch (NoSuchMethodException | SecurityException ex1) {
+                Method tmpGetter = null;
+                try {
+                    tmpGetter = itemClass.getMethod("is" + propertyName);
+                } catch (NoSuchMethodException | SecurityException ex2) {
                     try {
-                        getters[columnIndex] = itemClass.getMethod(getterName);
+                        tmpGetter = itemClass.getMethod("has" + propertyName);
+                    } catch (NoSuchMethodException | SecurityException ex3) {
                     }
-                    catch (NoSuchMethodException | SecurityException ex2) {
-                        getterName = "has" + getterName.substring(2);
-                        try {
-                            getters[columnIndex] = itemClass.getMethod(getterName);
-                        }
-                        catch (NoSuchMethodException | SecurityException ex3) {
-                        }
+                } finally {
+                    if (tmpGetter != null && tmpGetter.getReturnType() == Boolean.TYPE) {
+                        getters[columnIndex] = tmpGetter;
                     }
                 }
             }
-            
+
             try {
-                setters[columnIndex] = itemClass.getMethod(setterName);
-            }
-            catch (NoSuchMethodException | SecurityException ex1) {
+                setters[columnIndex] = itemClass.getMethod("set" + propertyName);
+            } catch (NoSuchMethodException | SecurityException ex1) {
             }
         }
-        
+
         columnLookedUp[columnIndex] = true;
     }
 

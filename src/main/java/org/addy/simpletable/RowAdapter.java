@@ -6,8 +6,8 @@ package org.addy.simpletable;
  */
 public interface RowAdapter {
     
-    public boolean isCellEditable(int columnIndex);
-    public Object getValueAt(Object item, int columnIndex, Class columnClass);
-    public void setValueAt(Object item, int columnIndex, Class columnClass, Object value);
+    boolean isCellEditable(int columnIndex);
+    Object getValueAt(Object item, int columnIndex);
+    void setValueAt(Object item, int columnIndex, Object value);
 
 }

@@ -9,12 +9,12 @@ import java.util.List;
 public class ListRowAdapter extends BasicRowAdapter {
 
     @Override
-    public Object getValueAt(Object item, int columnIndex, Class columnClass) {
+    public Object getValueAt(Object item, int columnIndex) {
         return ((List) item).get(columnIndex);
     }
 
     @Override
-    public void setValueAt(Object item, int columnIndex, Class columnClass, Object value) {
+    public void setValueAt(Object item, int columnIndex, Object value) {
         ((List) item).set(columnIndex, value);
     }
 

@@ -7,12 +7,12 @@ package org.addy.simpletable;
 public class ArrayRowAdapter extends BasicRowAdapter {
 
     @Override
-    public Object getValueAt(Object item, int columnIndex, Class columnClass) {
+    public Object getValueAt(Object item, int columnIndex) {
         return ((Object[]) item)[columnIndex];
     }
 
     @Override
-    public void setValueAt(Object item, int columnIndex, Class columnClass, Object value) {
+    public void setValueAt(Object item, int columnIndex, Object value) {
         ((Object[]) item)[columnIndex] = value;
     }
 

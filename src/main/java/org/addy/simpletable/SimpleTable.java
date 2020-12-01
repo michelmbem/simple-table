@@ -6,12 +6,14 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -24,13 +26,13 @@ import javax.swing.table.TableModel;
 public class SimpleTable extends javax.swing.JTable {
 
     public static final int DEFAULT_ROW_HEIGHT = 20;
-    public static final Color DEFAULT_ALTERNATE_BACKGROUND = new Color(225, 255, 240);
-    public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 205);
-    
+    public static final Color DEFAULT_ALTERNATE_BACKGROUND = new Color(225, 240, 255);
+    public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 240);
+
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
-    
+
     public SimpleTable() {
         super();
         initializeTable();
@@ -71,6 +73,16 @@ public class SimpleTable extends javax.swing.JTable {
         initializeTable();
     }
 
+    public SimpleTable(String[] columnNames, List items, RowAdapter rowAdapter) {
+        super(new SimpleTableModel(columnNames, items, rowAdapter));
+        initializeTable();
+    }
+
+    public SimpleTable(Class itemClass, String... propertyNames) {
+        super(new SimpleTableModel(itemClass, propertyNames));
+        initializeTable();
+    }
+
     public Color getAlternateBackground() {
         return alternateBackground;
     }
@@ -90,20 +102,17 @@ public class SimpleTable extends javax.swing.JTable {
 
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-        Component comp = super.prepareRenderer(renderer, row, column);
+        JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
+        component.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
         if (rolloverBackground != null && row == rolloverRowIndex) {
-            comp.setForeground(getForeground());
-            comp.setBackground(rolloverBackground);
+            component.setForeground(getForeground());
+            component.setBackground(rolloverBackground);
+        } else if (!(alternateBackground == null || component.getBackground().equals(getSelectionBackground()))) {
+            component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
         }
-        else if (!(alternateBackground == null || comp.getBackground().equals(getSelectionBackground()))) {
-            if (row % 2 == 1) {
-                comp.setBackground(alternateBackground);
-            }
-            else {
-                comp.setBackground(getBackground());
-            }
-        }
-        return comp;
+
+        return component;
     }
 
     private void initializeTable() {
@@ -111,12 +120,12 @@ public class SimpleTable extends javax.swing.JTable {
         setAlternateBackground(DEFAULT_ALTERNATE_BACKGROUND);
         setRolloverBackground(DEFAULT_ROLLOVER_BACKGROUND);
         setAutoCreateRowSorter(true);
-        
+
         RolloverListener rl = new RolloverListener();
         addMouseMotionListener(rl);
         addMouseListener(rl);
     }
-    
+
     private class RolloverListener extends MouseInputAdapter {
 
         @Override
@@ -128,7 +137,7 @@ public class SimpleTable extends javax.swing.JTable {
         @Override
         public void mouseMoved(MouseEvent e) {
             int row = rowAtPoint(e.getPoint());
-            if( row != rolloverRowIndex ) {
+            if (row != rolloverRowIndex) {
                 rolloverRowIndex = row;
                 repaint();
             }
@@ -136,36 +145,31 @@ public class SimpleTable extends javax.swing.JTable {
     }
 
     public static void main(String... args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setSize(600, 450);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         SimpleTableModel model = new SimpleTableModel(
                 new String[]{"Nom", "Prénom", "Sexe", "Age", "Adresse"},
-                new Class[]{String.class, String.class, Character.TYPE, Integer.class, String.class},
                 getTableData(),
                 new ArrayRowAdapter());
 
         SimpleTable table = new SimpleTable(model);
         frame.getContentPane().add(new JScrollPane(table));
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (ClassNotFoundException |
-               InstantiationException |
-               IllegalAccessException |
-               UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace(System.err);
-        }
-
         SwingUtilities.invokeLater(() -> {
             frame.setVisible(true);
         });
     }
 
-    private static List getTableData() {
+    private static List<?> getTableData() {
         return Arrays.asList(
                 new Object[]{"MIMB", "Martin Camus", 'M', 32, "Douala - Bepanda"},
                 new Object[]{"OBAMA", "Ernest", 'M', 28, "Yaoundé - Soa"},

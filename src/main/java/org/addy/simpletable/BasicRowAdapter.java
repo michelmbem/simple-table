@@ -11,10 +11,4 @@ public abstract class BasicRowAdapter implements RowAdapter {
         return true;
     }
 
-    @Override
-    public abstract Object getValueAt(Object item, int columnIndex, Class columnClass);
-
-    @Override
-    public abstract void setValueAt(Object item, int columnIndex, Class columnClass, Object value);
-
 }
