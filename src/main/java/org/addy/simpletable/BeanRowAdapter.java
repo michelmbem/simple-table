@@ -155,9 +155,13 @@ public class BeanRowAdapter extends RowAdapterWithColumnNames {
                 }
             }
 
-            try {
-                setters[columnIndex] = itemClass.getMethod("set" + propertyName);
-            } catch (NoSuchMethodException | SecurityException ex1) {
+            if (getters[columnIndex] != null) {
+                try {
+                    setters[columnIndex] = itemClass.getMethod(
+                            "set" + propertyName,
+                            getters[columnIndex].getReturnType());
+                } catch (NoSuchMethodException | SecurityException ex1) {
+                }
             }
         }
 
