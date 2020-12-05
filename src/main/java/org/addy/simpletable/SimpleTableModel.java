@@ -1,5 +1,9 @@
 package org.addy.simpletable;
 
+import org.addy.simpletable.rows.RowAdapter;
+import org.addy.simpletable.rows.RowAdapterWithColumnNames;
+import org.addy.simpletable.rows.BeanRowAdapter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

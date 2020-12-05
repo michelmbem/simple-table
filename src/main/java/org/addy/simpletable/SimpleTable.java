@@ -1,11 +1,15 @@
 package org.addy.simpletable;
 
+import org.addy.simpletable.rows.ArrayRowAdapter;
+import org.addy.simpletable.rows.RowAdapter;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -18,6 +22,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import org.addy.simpletable.columns.ColumnSettings;
 
 /**
  *
@@ -32,55 +37,66 @@ public class SimpleTable extends javax.swing.JTable {
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
+    private ColumnSettings[] columns;
 
     public SimpleTable() {
         super();
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(int numRows, int numColumns) {
         super(numRows, numColumns);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(Object[][] rowData, Object[] columnNames) {
         super(rowData, columnNames);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(Vector rowData, Vector columnNames) {
         super(rowData, columnNames);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(TableModel model) {
         super(model);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm) {
         super(tm, cm);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm, ListSelectionModel sm) {
         super(tm, cm, sm);
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(String[] columnNames, Class[] columnClasses, List items, RowAdapter rowAdapter) {
         super(new SimpleTableModel(columnNames, columnClasses, items, rowAdapter));
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(String[] columnNames, List items, RowAdapter rowAdapter) {
         super(new SimpleTableModel(columnNames, items, rowAdapter));
         initializeTable();
+        createComlumns();
     }
 
     public SimpleTable(Class itemClass, String... propertyNames) {
         super(new SimpleTableModel(itemClass, propertyNames));
         initializeTable();
+        createComlumns();
     }
 
     public Color getAlternateBackground() {
@@ -98,6 +114,39 @@ public class SimpleTable extends javax.swing.JTable {
 
     public void setRolloverBackground(Color rolloverBackground) {
         this.rolloverBackground = rolloverBackground;
+    }
+    
+    public ColumnSettings[] getColumns() {
+        return columns;
+    }
+    
+    public void setColumns(ColumnSettings... columns) {
+        for (int i = 0; i < columns.length; ++i) {
+            if (i > this.columns.length) break;
+            this.columns[i].copyFrom(columns[i]);
+            this.columns[i].applyTo(getColumnModel().getColumn(i));
+        }
+    }
+    
+    public ColumnSettings getColumnAt(int index) {
+        return columns[index];
+    }
+    
+    public void setColumnAt(int index, ColumnSettings column) {
+        columns[index].copyFrom(column);
+        columns[index].applyTo(getColumnModel().getColumn(index));
+    }
+    
+    public void applyColumnSettings() {
+        for (int i = 0; i < columns.length; ++i) {
+            columns[i].applyTo(getColumnModel().getColumn(i));
+        }
+    }
+    
+    @Override
+    public void setModel(TableModel dataModel) {
+        super.setModel(dataModel);
+        createComlumns();
     }
 
     @Override
@@ -124,6 +173,13 @@ public class SimpleTable extends javax.swing.JTable {
         RolloverListener rl = new RolloverListener();
         addMouseMotionListener(rl);
         addMouseListener(rl);
+    }
+    
+    private void createComlumns() {
+        columns = new ColumnSettings[getColumnCount()];
+        for (int i = 0; i < columns.length; ++i) {
+            columns[i] = new ColumnSettings();
+        }
     }
 
     private class RolloverListener extends MouseInputAdapter {

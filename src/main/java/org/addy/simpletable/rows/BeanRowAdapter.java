@@ -1,4 +1,4 @@
-package org.addy.simpletable;
+package org.addy.simpletable.rows;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
