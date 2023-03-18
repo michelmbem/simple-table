@@ -164,7 +164,7 @@ public class SimpleTable extends javax.swing.JTable {
         return component;
     }
 
-    private void initializeTable() {
+    protected void initializeTable() {
         setRowHeight(DEFAULT_ROW_HEIGHT);
         setAlternateBackground(DEFAULT_ALTERNATE_BACKGROUND);
         setRolloverBackground(DEFAULT_ROLLOVER_BACKGROUND);
@@ -175,14 +175,14 @@ public class SimpleTable extends javax.swing.JTable {
         addMouseListener(rl);
     }
     
-    private void createComlumns() {
+    protected void createComlumns() {
         columns = new ColumnSettings[getColumnCount()];
         for (int i = 0; i < columns.length; ++i) {
             columns[i] = new ColumnSettings();
         }
     }
 
-    private class RolloverListener extends MouseInputAdapter {
+    protected class RolloverListener extends MouseInputAdapter {
 
         @Override
         public void mouseExited(MouseEvent e) {
