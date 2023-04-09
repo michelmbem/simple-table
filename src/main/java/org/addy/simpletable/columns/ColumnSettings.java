@@ -1,7 +1,7 @@
 package org.addy.simpletable.columns;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -63,40 +63,67 @@ public class ColumnSettings {
     public void setVerticalAlignment(int verticalAlignment) {
         this.verticalAlignment = verticalAlignment;
     }
-    
-    public void applyTo(TableColumn column) {
-        if (headerText != null) {   // if headerText is null let the table model supply the value
-            column.setHeaderValue(headerText);
-        }
-        if (width >= 0) {   // if width is negative let the table model supply the value
-            column.setPreferredWidth(width);
-        }
-        
-        TableCellRenderer cellRenderer = column.getCellRenderer();
-        if (cellRenderer instanceof JLabel) {
-            JLabel label = (JLabel) cellRenderer;
-            if (horizontalAlignment >= 0) {   // if horizontalAlignment is negative let the table guess the value
-                label.setHorizontalAlignment(horizontalAlignment);
-            }
-            if (verticalAlignment >= 0) {   // if verticalAlignment is negative let the table guess the value
-                label.setVerticalAlignment(verticalAlignment);
-            }
-        }
-        
-        TableCellEditor cellEditor = column.getCellEditor();
-        if (cellEditor instanceof JTextField) {
-            JTextField textField = (JTextField) cellEditor;
-            if (horizontalAlignment >= 0) {   // if horizontalAlignment is negative let the table guess the value
-                textField.setHorizontalAlignment(horizontalAlignment);
-            }
-        }
-    }
 
     public void copyFrom(ColumnSettings other) {
         this.headerText = other.headerText;
         this.width = other.width;
         this.horizontalAlignment = other.horizontalAlignment;
         this.verticalAlignment = other.verticalAlignment;
+    }
+    
+    public void applyTo(TableColumn column) {
+        if (headerText != null) {   // if headerText is null let the table model supply the value
+            column.setHeaderValue(headerText);
+        }
+
+        if (width >= 0) {   // if width is negative let the table model supply the value
+            column.setPreferredWidth(width);
+        }
+
+        customizeCellRenderer(column);
+        customizeCellEditor(column);
+    }
+
+    private void customizeCellRenderer(TableColumn column) {
+        TableCellRenderer cellRenderer = column.getCellRenderer();
+
+        if (cellRenderer == null) {
+            cellRenderer = new DefaultTableCellRenderer();
+            column.setCellRenderer(cellRenderer);
+        }
+
+        if (cellRenderer instanceof JLabel) {
+            JLabel label = (JLabel) cellRenderer;
+
+            if (horizontalAlignment >= 0) {   // if horizontalAlignment is negative let the table guess the value
+                label.setHorizontalAlignment(horizontalAlignment);
+            }
+
+            if (verticalAlignment >= 0) {   // if verticalAlignment is negative let the table guess the value
+                label.setVerticalAlignment(verticalAlignment);
+            }
+        }
+    }
+
+    private void customizeCellEditor(TableColumn column) {
+        TableCellEditor cellEditor = column.getCellEditor();
+
+        if (cellEditor == null) {
+            cellEditor = new DefaultCellEditor(new JTextField());
+            column.setCellEditor(cellEditor);
+        }
+
+        if (cellEditor instanceof DefaultCellEditor) {
+            DefaultCellEditor defaultCellEditor = (DefaultCellEditor) cellEditor;
+
+            if (defaultCellEditor.getComponent() instanceof JTextField) {
+                JTextField textField = (JTextField) defaultCellEditor.getComponent();
+
+                if (horizontalAlignment >= 0) {   // if horizontalAlignment is negative let the table guess the value
+                    textField.setHorizontalAlignment(horizontalAlignment);
+                }
+            }
+        }
     }
     
 }
