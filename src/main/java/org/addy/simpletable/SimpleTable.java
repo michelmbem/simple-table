@@ -1,28 +1,18 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.rows.ArrayRowAdapter;
-import org.addy.simpletable.rows.RowAdapter;
+import org.addy.simpletable.column.adapter.ArrayColumnAdapter;
 
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import org.addy.simpletable.columns.ColumnSettings;
+import org.addy.simpletable.column.config.ColumnConfig;
 
 /**
  *
@@ -33,32 +23,16 @@ public class SimpleTable extends javax.swing.JTable {
     public static final int DEFAULT_ROW_HEIGHT = 20;
     public static final Color DEFAULT_ALTERNATE_BACKGROUND = new Color(225, 240, 255);
     public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 240);
+    public static final Insets DEFAULT_CELL_INSETS = new Insets(2, 2, 2, 2);
 
     private Color alternateBackground;
     private Color rolloverBackground;
+    private Insets cellInsets;
     private int rolloverRowIndex = -1;
-    private ColumnSettings[] columns;
+    private ColumnConfig[] columns;
 
     public SimpleTable() {
         super();
-        initializeTable();
-        createComlumns();
-    }
-
-    public SimpleTable(int numRows, int numColumns) {
-        super(numRows, numColumns);
-        initializeTable();
-        createComlumns();
-    }
-
-    public SimpleTable(Object[][] rowData, Object[] columnNames) {
-        super(rowData, columnNames);
-        initializeTable();
-        createComlumns();
-    }
-
-    public SimpleTable(Vector rowData, Vector columnNames) {
-        super(rowData, columnNames);
         initializeTable();
         createComlumns();
     }
@@ -81,24 +55,6 @@ public class SimpleTable extends javax.swing.JTable {
         createComlumns();
     }
 
-    public SimpleTable(String[] columnNames, Class[] columnClasses, List items, RowAdapter rowAdapter) {
-        super(new SimpleTableModel(columnNames, columnClasses, items, rowAdapter));
-        initializeTable();
-        createComlumns();
-    }
-
-    public SimpleTable(String[] columnNames, List items, RowAdapter rowAdapter) {
-        super(new SimpleTableModel(columnNames, items, rowAdapter));
-        initializeTable();
-        createComlumns();
-    }
-
-    public SimpleTable(Class itemClass, String... propertyNames) {
-        super(new SimpleTableModel(itemClass, propertyNames));
-        initializeTable();
-        createComlumns();
-    }
-
     public Color getAlternateBackground() {
         return alternateBackground;
     }
@@ -115,12 +71,21 @@ public class SimpleTable extends javax.swing.JTable {
     public void setRolloverBackground(Color rolloverBackground) {
         this.rolloverBackground = rolloverBackground;
     }
+
+    public Insets getCellInsets() {
+        return cellInsets;
+    }
+
+    public void setCellInsets(Insets cellInsets) {
+        this.cellInsets = cellInsets;
+        repaint();
+    }
     
-    public ColumnSettings[] getColumns() {
+    public ColumnConfig[] getColumns() {
         return columns;
     }
     
-    public void setColumns(ColumnSettings... columns) {
+    public void setColumns(ColumnConfig... columns) {
         for (int i = 0; i < columns.length; ++i) {
             if (i > this.columns.length) break;
             this.columns[i].copyFrom(columns[i]);
@@ -128,16 +93,16 @@ public class SimpleTable extends javax.swing.JTable {
         }
     }
     
-    public ColumnSettings getColumnAt(int index) {
+    public ColumnConfig getColumnAt(int index) {
         return columns[index];
     }
     
-    public void setColumnAt(int index, ColumnSettings column) {
+    public void setColumnAt(int index, ColumnConfig column) {
         columns[index].copyFrom(column);
         columns[index].applyTo(getColumnModel().getColumn(index));
     }
     
-    public void applyColumnSettings() {
+    public void applyColumnConfiguration() {
         for (int i = 0; i < columns.length; ++i) {
             columns[i].applyTo(getColumnModel().getColumn(i));
         }
@@ -152,7 +117,7 @@ public class SimpleTable extends javax.swing.JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        component.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        component.setBorder(BorderFactory.createEmptyBorder(getCellInsets().top, getCellInsets().left, getCellInsets().bottom, getCellInsets().right));
 
         if (rolloverBackground != null && row == rolloverRowIndex) {
             component.setForeground(getForeground());
@@ -168,22 +133,26 @@ public class SimpleTable extends javax.swing.JTable {
         setRowHeight(DEFAULT_ROW_HEIGHT);
         setAlternateBackground(DEFAULT_ALTERNATE_BACKGROUND);
         setRolloverBackground(DEFAULT_ROLLOVER_BACKGROUND);
+        setCellInsets(DEFAULT_CELL_INSETS);
         setAutoCreateRowSorter(true);
-
-        RolloverListener rl = new RolloverListener();
-        addMouseMotionListener(rl);
-        addMouseListener(rl);
+        createRolloverListener();
     }
-    
+
     protected void createComlumns() {
-        columns = new ColumnSettings[getColumnCount()];
+        columns = new ColumnConfig[getColumnCount()];
+
         for (int i = 0; i < columns.length; ++i) {
-            columns[i] = new ColumnSettings();
+            columns[i] = new ColumnConfig();
         }
     }
 
-    protected class RolloverListener extends MouseInputAdapter {
+    protected void createRolloverListener() {
+        RolloverListener rolloverListener = new RolloverListener();
+        addMouseMotionListener(rolloverListener);
+        addMouseListener(rolloverListener);
+    }
 
+    protected class RolloverListener extends MouseInputAdapter {
         @Override
         public void mouseExited(MouseEvent e) {
             rolloverRowIndex = -1;
@@ -212,12 +181,14 @@ public class SimpleTable extends javax.swing.JTable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        SimpleTableModel model = new SimpleTableModel(
-                new String[]{"Nom", "Prénom", "Sexe", "Age", "Adresse"},
-                getTableData(),
-                new ArrayRowAdapter());
-
+        SimpleTableModel model = new SimpleTableModel(getTableData(), "Nom", "Prénom", "Sexe", "Age", "Adresse");
         SimpleTable table = new SimpleTable(model);
+        table.setColumns(
+                new ColumnConfig(null, 100),
+                new ColumnConfig(null, 100),
+                new ColumnConfig(null, 75, SwingConstants.CENTER, -1),
+                new ColumnConfig(null, 75, SwingConstants.TRAILING, -1),
+                new ColumnConfig(null, 150));
         frame.getContentPane().add(new JScrollPane(table));
 
         SwingUtilities.invokeLater(() -> {
@@ -225,8 +196,8 @@ public class SimpleTable extends javax.swing.JTable {
         });
     }
 
-    private static List<?> getTableData() {
-        return Arrays.asList(
+    private static Object[][] getTableData() {
+        return new Object[][] {
                 new Object[]{"MIMB", "Martin Camus", 'M', 32, "Douala - Bepanda"},
                 new Object[]{"OBAMA", "Ernest", 'M', 28, "Yaoundé - Soa"},
                 new Object[]{"MBEM", "Paul Michel", 'M', 35, "Edea"},
@@ -246,7 +217,7 @@ public class SimpleTable extends javax.swing.JTable {
                 new Object[]{"NJOYAH", "Maïmouna", 'F', 27, "Foumban"},
                 new Object[]{"AKEM", "Donaldson", 'M', 38, "Bamenda"},
                 new Object[]{"ENOW", "Sunday", 'M', 22, "Mamfe"},
-                new Object[]{"PENDA", "Laurence", 'F', 20, "Douala - Bonaberi"});
+                new Object[]{"PENDA", "Laurence", 'F', 20, "Douala - Bonaberi"}};
     }
 
 }

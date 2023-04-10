@@ -1,4 +1,4 @@
-package org.addy.simpletable.columns;
+package org.addy.simpletable.column.config;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -6,26 +6,26 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-public class ColumnSettings {
+public class ColumnConfig {
     
     private String headerText = null;
     private int width = -1;
     private int horizontalAlignment = -1;
     private int verticalAlignment = -1;
 
-    public ColumnSettings() {
+    public ColumnConfig() {
     }
 
-    public ColumnSettings(String headerText) {
+    public ColumnConfig(String headerText) {
         this.headerText = headerText;
     }
 
-    public ColumnSettings(String headerText, int width) {
+    public ColumnConfig(String headerText, int width) {
         this.headerText = headerText;
         this.width = width;
     }
 
-    public ColumnSettings(String headerText, int width, int horizontalAlignment, int verticalAlignment) {
+    public ColumnConfig(String headerText, int width, int horizontalAlignment, int verticalAlignment) {
         this.headerText = headerText;
         this.width = width;
         this.horizontalAlignment = horizontalAlignment;
@@ -64,7 +64,7 @@ public class ColumnSettings {
         this.verticalAlignment = verticalAlignment;
     }
 
-    public void copyFrom(ColumnSettings other) {
+    public void copyFrom(ColumnConfig other) {
         this.headerText = other.headerText;
         this.width = other.width;
         this.horizontalAlignment = other.horizontalAlignment;

@@ -1,14 +1,13 @@
-package org.addy.simpletable.rows;
+package org.addy.simpletable.column.adapter;
 
 /**
  *
  * @author Mike
  */
-public abstract class RowAdapterWithColumnNames extends BasicRowAdapter {
-    
+public abstract class AssociativeColumnAdapter extends BasicColumnAdapter {
     protected String[] columnNames;
     
-    public RowAdapterWithColumnNames(String... columnNames) {
+    public AssociativeColumnAdapter(String... columnNames) {
         this.columnNames = columnNames;
     }
 
@@ -19,5 +18,4 @@ public abstract class RowAdapterWithColumnNames extends BasicRowAdapter {
     public void setColumnNames(String[] columnNames) {
         this.columnNames = columnNames;
     }
-
 }

@@ -1,4 +1,4 @@
-package org.addy.simpletable.rows;
+package org.addy.simpletable.column.adapter;
 
 import java.util.List;
 
@@ -6,8 +6,7 @@ import java.util.List;
  *
  * @author Mike
  */
-public class ListRowAdapter extends BasicRowAdapter {
-
+public class ListColumnAdapter extends BasicColumnAdapter {
     @Override
     public Object getValueAt(Object item, int columnIndex) {
         return ((List) item).get(columnIndex);
@@ -17,5 +16,4 @@ public class ListRowAdapter extends BasicRowAdapter {
     public void setValueAt(Object item, int columnIndex, Object value) {
         ((List) item).set(columnIndex, value);
     }
-
 }
