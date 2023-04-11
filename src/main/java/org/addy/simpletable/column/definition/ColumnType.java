@@ -1,4 +1,4 @@
-package org.addy.simpletable.column.config;
+package org.addy.simpletable.column.definition;
 
 public enum ColumnType {
     TEXT,
@@ -6,10 +6,8 @@ public enum ColumnType {
     DATETIME,
     CHECKBOX,
     COMBOBOX,
-    SPINNER,
     BUTTON,
     HYPERLINK,
-    IMAGE,
-    PROGRESS,
-    RATING
+    ICON,
+    PROGRESS
 }
