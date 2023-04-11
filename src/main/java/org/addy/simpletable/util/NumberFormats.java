@@ -6,8 +6,12 @@ import java.text.NumberFormat;
 public final class NumberFormats {
     private NumberFormats() {}
 
-    public static NumberFormat of(String pattern) {
-        switch (pattern) {
+    public static NumberFormat of(Object value) {
+        if (value == null) return NumberFormat.getInstance();
+
+        if (value instanceof NumberFormat) return (NumberFormat) value;
+
+        switch (value.toString()) {
             case "g":
                 return NumberFormat.getNumberInstance();
             case "$":
@@ -18,8 +22,11 @@ public final class NumberFormats {
             case "p":
             case "percent":
                 return NumberFormat.getPercentInstance();
-            default:
-                return new DecimalFormat(pattern);
+            default: {
+                DecimalFormat decimalFormat = new DecimalFormat(value.toString());
+                decimalFormat.setParseBigDecimal(true);
+                return decimalFormat;
+            }
         }
     }
 }

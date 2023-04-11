@@ -10,11 +10,15 @@ public final class DateFormats {
 
     private DateFormats() {}
 
-    public static DateFormat of(String pattern) {
-        String component = pattern;
+    public static DateFormat of(Object value) {
+        if (value == null) return DateFormat.getInstance();
+
+        if (value instanceof DateFormat) return (DateFormat) value;
+
+        String component = value.toString();
         int[] style = {DateFormat.DEFAULT, DateFormat.DEFAULT};
 
-        Matcher matcher = DATETIME_PATTERN.matcher(pattern);
+        Matcher matcher = DATETIME_PATTERN.matcher(component);
         if (matcher.find()) {
             component = matcher.group(1);
 
@@ -38,7 +42,7 @@ public final class DateFormats {
             case "datetime":
                 return DateFormat.getDateTimeInstance(style[0], style[1]);
             default:
-                return new SimpleDateFormat(pattern);
+                return new SimpleDateFormat(component);
         }
     }
 
