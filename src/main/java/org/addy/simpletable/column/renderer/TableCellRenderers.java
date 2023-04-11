@@ -17,16 +17,12 @@ public final class TableCellRenderers {
     public static TableCellRenderer from(ColumnType columnType, int horizontalAlignment, int verticalAlignment, Object extraData) {
         switch (columnType) {
             case NUMBER: {
-                NumberTableCellRenderer numberTableCellRenderer = extraData != null
-                        ? new NumberTableCellRenderer(NumberFormats.of(extraData.toString()))
-                        : new NumberTableCellRenderer();
+                NumberTableCellRenderer numberTableCellRenderer = new NumberTableCellRenderer(NumberFormats.of(extraData));
                 applyAlignment(numberTableCellRenderer, horizontalAlignment, verticalAlignment);
                 return numberTableCellRenderer;
             }
             case DATETIME: {
-                DateTimeTableCellRenderer dateTimeTableCellRenderer = extraData != null
-                        ? new DateTimeTableCellRenderer(DateFormats.of(extraData.toString()))
-                        : new DateTimeTableCellRenderer();
+                DateTimeTableCellRenderer dateTimeTableCellRenderer = new DateTimeTableCellRenderer(DateFormats.of(extraData));
                 applyAlignment(dateTimeTableCellRenderer, horizontalAlignment, verticalAlignment);
                 return dateTimeTableCellRenderer;
             }
