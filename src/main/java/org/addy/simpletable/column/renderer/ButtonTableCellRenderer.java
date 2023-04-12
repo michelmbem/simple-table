@@ -1,6 +1,6 @@
 package org.addy.simpletable.column.renderer;
 
-import org.addy.simpletable.util.ButtonModel;
+import org.addy.simpletable.model.ButtonModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

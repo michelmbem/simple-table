@@ -7,15 +7,17 @@ import java.text.SimpleDateFormat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DateFormatsTest {
+class DateFormatsTest {
     @Test
-    void from_returns_default_instance_when_pattern_is_g() {
-        DateFormat dateFormat = DateFormats.of("g");
-        assertThat(dateFormat).isEqualTo(DateFormat.getInstance());
+    void of_returns_default_instance_when_value_is_g_or_null() {
+        DateFormat dateFormat1 = DateFormats.of("g");
+        DateFormat dateFormat2 = DateFormats.of(null);
+        assertThat(dateFormat1).isEqualTo(DateFormat.getInstance());
+        assertThat(dateFormat2).isEqualTo(DateFormat.getInstance());
     }
 
     @Test
-    void from_returns_date_instance_when_pattern_is_d_or_date() {
+    void of_returns_date_instance_when_value_is_d_or_date() {
         DateFormat dateFormat1 = DateFormats.of("d");
         DateFormat dateFormat2 = DateFormats.of("date");
         assertThat(dateFormat1).isEqualTo(DateFormat.getDateInstance());
@@ -23,7 +25,7 @@ public class DateFormatsTest {
     }
 
     @Test
-    void from_returns_time_instance_when_pattern_is_t_or_time() {
+    void of_returns_time_instance_when_value_is_t_or_time() {
         DateFormat dateFormat1 = DateFormats.of("t");
         DateFormat dateFormat2 = DateFormats.of("time");
         assertThat(dateFormat1).isEqualTo(DateFormat.getTimeInstance());
@@ -31,7 +33,7 @@ public class DateFormatsTest {
     }
 
     @Test
-    void from_returns_datetime_instance_when_pattern_is_dt_or_datetime() {
+    void of_returns_datetime_instance_when_value_is_dt_or_datetime() {
         DateFormat dateFormat1 = DateFormats.of("dt");
         DateFormat dateFormat2 = DateFormats.of("datetime");
         assertThat(dateFormat1).isEqualTo(DateFormat.getDateTimeInstance());
@@ -39,7 +41,7 @@ public class DateFormatsTest {
     }
 
     @Test
-    void from_returns_correct_instance_with_correct_style_when_pattern_and_style_are_set() {
+    void of_returns_correct_instance_with_correct_style_when_value_and_style_are_set() {
         DateFormat dateFormat1 = DateFormats.of("d:short");
         DateFormat dateFormat2 = DateFormats.of("time:long");
         DateFormat dateFormat3 = DateFormats.of("dt:medium,short");
@@ -49,8 +51,15 @@ public class DateFormatsTest {
     }
 
     @Test
-    void from_returns_simple_date_format_when_pattern_unrecognized() {
+    void of_returns_simple_date_format_when_value_is_a_pattern() {
         DateFormat dateFormat = DateFormats.of("dd/MM/yyyy HH:mm:ss");
         assertThat(dateFormat).isInstanceOf(SimpleDateFormat.class);
+    }
+
+    @Test
+    void of_returns_the_given_object_when_value_is_a_date_format() {
+        Object value = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat dateFormat = DateFormats.of(value);
+        assertThat(dateFormat).isSameAs(value);
     }
 }

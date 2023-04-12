@@ -15,12 +15,12 @@ public final class DateFormats {
 
         if (value instanceof DateFormat) return (DateFormat) value;
 
-        String component = value.toString();
+        String pattern = value.toString();
         int[] style = {DateFormat.DEFAULT, DateFormat.DEFAULT};
 
-        Matcher matcher = DATETIME_PATTERN.matcher(component);
+        Matcher matcher = DATETIME_PATTERN.matcher(pattern);
         if (matcher.find()) {
-            component = matcher.group(1);
+            pattern = matcher.group(1);
 
             if (matcher.group(3) != null)
                 style[0] = parseDateStyle(matcher.group(3));
@@ -29,7 +29,7 @@ public final class DateFormats {
                 style[1] = parseDateStyle(matcher.group(5));
         }
 
-        switch (component) {
+        switch (pattern) {
             case "g":
                 return DateFormat.getInstance();
             case "d":
@@ -42,7 +42,7 @@ public final class DateFormats {
             case "datetime":
                 return DateFormat.getDateTimeInstance(style[0], style[1]);
             default:
-                return new SimpleDateFormat(component);
+                return new SimpleDateFormat(pattern);
         }
     }
 

@@ -2,10 +2,10 @@ package org.addy.simpletable.column.renderer;
 
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionListener;
-import org.addy.simpletable.util.ButtonModel;
+import org.addy.simpletable.model.ButtonModel;
 import org.addy.simpletable.util.DateFormats;
 import org.addy.simpletable.util.NumberFormats;
-import org.addy.simpletable.util.Range;
+import org.addy.simpletable.model.Range;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

@@ -35,23 +35,18 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
 
     @Override
     public Object getValueAt(Object item, int columnIndex) {
-        if (properties == null) {
-            loadPropertiesFrom(item.getClass());
-        }
+        if (properties == null) loadPropertiesFrom(item.getClass());
 
         try {
             return properties[columnIndex].getReadMethod().invoke(item);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
     public void setValueAt(Object item, int columnIndex, Object value) {
-        if (properties == null) {
-            loadPropertiesFrom(item.getClass());
-        }
+        if (properties == null) loadPropertiesFrom(item.getClass());
 
         try {
             properties[columnIndex].getWriteMethod().invoke(item, value);
@@ -70,7 +65,7 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
 
             properties = new PropertyDescriptor[columnNames.length];
 
-            for (int i = 0; i < columnNames.length; ++i) {
+            for (int i = 0; i < properties.length; ++i) {
                 properties[i] = null;
 
                 for (PropertyDescriptor property : allProperties) {

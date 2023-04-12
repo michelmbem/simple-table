@@ -1,4 +1,4 @@
-package org.addy.simpletable.util;
+package org.addy.simpletable.model;
 
 public class Range {
     private int minimum;

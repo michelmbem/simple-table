@@ -18,7 +18,7 @@ public class SimpleTable extends javax.swing.JTable {
     public static final int DEFAULT_ROW_HEIGHT = 20;
     public static final Color DEFAULT_ALTERNATE_BACKGROUND = new Color(225, 240, 255);
     public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 240);
-    public static final Insets DEFAULT_CELL_INSETS = new Insets(2, 2, 2, 2);
+    public static final Insets DEFAULT_CELL_INSETS = new Insets(2, 4, 2, 4);
 
     private Color alternateBackground;
     private Color rolloverBackground;

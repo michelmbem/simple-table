@@ -3,19 +3,22 @@ package org.addy.simpletable;
 import org.addy.simpletable.column.adapter.*;
 import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
+import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
 import org.addy.simpletable.row.adapter.RowAdapter;
 
-import java.util.*;
-import java.util.stream.Stream;
+import javax.swing.table.AbstractTableModel;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.addy.util.CollectionUtil.requiredFirst;
 
 /**
  *
  * @author Mike
  */
-public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
-
-    private static final String OUT_OF_BOUNDS_MESSAGE = "index is out of the bounds of the item's indices";
-
+public class SimpleTableModel extends AbstractTableModel {
     private Object itemSource;
     private String[] columnNames;
     private Class<?>[] columnClasses;
@@ -42,7 +45,7 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
     }
 
     public SimpleTableModel(Object[] items, String... columnNames) {
-        this(items, columnNames, new ArrayRowAdapter(), inferColumnAdapterFrom(first(items).getClass(), columnNames));
+        this(items, columnNames, new ArrayRowAdapter(), ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Object[][] items, String... columnNames) {
@@ -54,11 +57,15 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
     }
 
     public SimpleTableModel(Collection<?> items, String... columnNames) {
-        this(new ArrayList<>(items), columnNames, new ListRowAdapter(), inferColumnAdapterFrom(first(items).getClass(), columnNames));
+        this(new ArrayList<>(items), columnNames, new ListRowAdapter(), ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Class<?> itemClass, String... columnNames) {
-        this(new ArrayList<>(), columnNames, new ListRowAdapter(), inferColumnAdapterFrom(itemClass, columnNames));
+        this(new ArrayList<>(), columnNames, new ListRowAdapter(), ColumnAdapters.from(itemClass, columnNames));
+    }
+
+    public SimpleTableModel(ResultSet resultSet, String... columnNames) {
+        this(resultSet, columnNames, new ResultSetRowAdapter(), new ResultSetColumnAdapter());
     }
 
     public SimpleTableModel() {
@@ -80,6 +87,7 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
 
     public void setColumnNames(String[] columnNames) {
         this.columnNames = columnNames;
+        this.columnClasses = null;
         fireTableStructureChanged();
     }
 
@@ -88,6 +96,7 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
     }
 
     public void setColumnClasses(Class<?>[] columnClasses) {
+        checkSameSize(this.columnNames, columnClasses);
         this.columnClasses = columnClasses;
         fireTableStructureChanged();
     }
@@ -101,7 +110,7 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public ColumnAdapter getColumndapter() {
+    public ColumnAdapter getColumnAdapter() {
         return columnAdapter;
     }
 
@@ -154,10 +163,10 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        Object item = rowAdapter.getRowAt(itemSource, rowIndex);
+        Object row = rowAdapter.getRowAt(itemSource, rowIndex);
 
-        if (!(item == null || columnAdapter == null)) {
-            columnAdapter.setValueAt(item, columnIndex, value);
+        if (!(row == null || columnAdapter == null)) {
+            columnAdapter.setValueAt(row, columnIndex, value);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
@@ -169,32 +178,11 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
                 (columnAdapter == null || columnAdapter.isCellEditable(columnIndex));
     }
 
-    private static void checkSameSize(String[] columnNames, Class<?>[] columnClasses) {
+    private void checkSameSize(String[] columnNames, Class<?>[] columnClasses) {
         if (columnClasses == null) return;
 
         if (columnNames != null && columnNames.length != columnClasses.length)
-            throw new IllegalArgumentException("columnNames and columnClasses must either be both null or have the same length");
-    }
-
-    private static Object first(Object[] array) {
-        return Stream.of(array).findFirst().orElseThrow();
-    }
-
-    private static Object first(Collection<?> collection) {
-        return collection.stream().findFirst().orElseThrow();
-    }
-
-    private static ColumnAdapter inferColumnAdapterFrom(Class<?> itemClass, String[] columnNames) {
-        if (itemClass.isArray())
-            return new ArrayColumnAdapter();
-
-        if (List.class.isAssignableFrom(itemClass))
-            return new ListColumnAdapter();
-
-        if (Map.class.isAssignableFrom(itemClass))
-            return new MapColumnAdapter(columnNames);
-
-        return new BeanColumnAdapter(itemClass, columnNames);
+            throw new IllegalArgumentException("When columnClasses is not null it must have the exact same size than columnNames");
     }
 
     private void initColumnAdapter(ColumnAdapter columnAdapter) {
@@ -225,5 +213,4 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
             }
         }
     }
-
 }

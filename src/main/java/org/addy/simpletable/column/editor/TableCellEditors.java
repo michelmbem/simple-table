@@ -2,7 +2,7 @@ package org.addy.simpletable.column.editor;
 
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionListener;
-import org.addy.simpletable.util.ButtonModel;
+import org.addy.simpletable.model.ButtonModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -41,6 +41,22 @@ public final class TableCellEditors {
                 }
 
                 return buttonTableCellEditor;
+            }
+            case HYPERLINK: {
+                HyperLinkTableCellEditor hyperLinkTableCellEditor;
+
+                if (extraData == null) {
+                    hyperLinkTableCellEditor = new HyperLinkTableCellEditor(null);
+                } else if (extraData instanceof ButtonModel) {
+                    ButtonModel buttonModel = (ButtonModel) extraData;
+                    hyperLinkTableCellEditor = new HyperLinkTableCellEditor(buttonModel.getText(), buttonModel.getActionListener());
+                } else if (extraData instanceof TableCellActionListener) {
+                    hyperLinkTableCellEditor = new HyperLinkTableCellEditor((TableCellActionListener) extraData);
+                } else {
+                    hyperLinkTableCellEditor = new HyperLinkTableCellEditor(extraData.toString(), null);
+                }
+
+                return hyperLinkTableCellEditor;
             }
             default: {
                 JTextField textField = new JTextField();

@@ -1,10 +1,11 @@
 package org.addy.simpletable;
 
+import org.addy.simpletable.column.adapter.ELColumnAdapter;
 import org.addy.simpletable.column.definition.ColumnDefinition;
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
-import org.addy.simpletable.util.Range;
+import org.addy.simpletable.model.Range;
 import org.addy.util.StringUtil;
 
 import javax.swing.*;
@@ -16,9 +17,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class Demo {
-
     public static void main(String... args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -26,7 +27,8 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        SimpleTableModel model = new SimpleTableModel(getTableData(), "lastName", "firstName", "gender", "dateOfBirth", "height", "weight", "married", "photo");
+        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "1 * $.weight", "$.married", "$.photo"};
+        SimpleTableModel model = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter(tableColumns));
         SimpleTable table = new SimpleTable(model);
         table.setRowHeight(28);
         table.setColumnDefinitions(
@@ -41,40 +43,32 @@ public final class Demo {
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(new JScrollPane(table));
+        frame.setContentPane(new JScrollPane(table));
         frame.pack();
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
-
-        SwingUtilities.invokeLater(() -> {
-            frame.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
     }
 
     private static List<?> getTableData() {
         List<Person> personList = new ArrayList<>();
         ClassLoader classLoader = Demo.class.getClassLoader();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(classLoader.getResourceAsStream("demodata.txt"))))) {
 
-            String line;
-            String[] fields;
-            Person p;
-
-            while ((line = br.readLine()) != null) {
-                fields = line.split(",");
-                p = new Person(
-                        fields[0],
-                        fields[1],
-                        Gender.valueOf(fields[2]),
-                        LocalDate.parse(fields[3]),
-                        Float.parseFloat(fields[4]),
-                        Short.parseShort(fields[5]),
-                        Boolean.parseBoolean(fields[6]),
-                        loadIcon(classLoader, fields[7]));
-                personList.add(p);
-            }
+            personList = reader.lines()
+                    .map(line -> line.split(","))
+                    .map(fields -> new Person(
+                            fields[0],
+                            fields[1],
+                            Gender.valueOf(fields[2]),
+                            LocalDate.parse(fields[3]),
+                            Float.parseFloat(fields[4]),
+                            Short.parseShort(fields[5]),
+                            Boolean.parseBoolean(fields[6]),
+                            loadIcon(classLoader, fields[7])))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,6 +106,7 @@ public final class Demo {
 
         public Person(String firstName, String lastName, Gender gender, LocalDate dateOfBirth,
                       float height, short weight, boolean married, Icon photo) {
+
             this.firstName = firstName;
             this.lastName = lastName;
             this.gender = gender;

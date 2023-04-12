@@ -2,7 +2,7 @@ package org.addy.simpletable.column.editor;
 
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
-import org.addy.simpletable.util.ButtonModel;
+import org.addy.simpletable.model.ButtonModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -85,13 +85,13 @@ public class ButtonTableCellEditor extends AbstractCellEditor
     }
 
     @Override
-    public void mousePressed(MouseEvent mouseEvent) {
+    public void mousePressed(MouseEvent e) {
         if (table.isEditing() &&  table.getCellEditor() == this)
             isButtonColumnEditor = true;
     }
 
     @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
+    public void mouseReleased(MouseEvent e) {
         if (isButtonColumnEditor &&  table.isEditing())
             table.getCellEditor().stopCellEditing();
 
@@ -99,13 +99,19 @@ public class ButtonTableCellEditor extends AbstractCellEditor
     }
 
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {}
+    public void mouseClicked(MouseEvent e) {
+        // Unused
+    }
 
     @Override
-    public void mouseEntered(MouseEvent mouseEvent) {}
+    public void mouseEntered(MouseEvent e) {
+        // Unused
+    }
 
     @Override
-    public void mouseExited(MouseEvent mouseEvent) {}
+    public void mouseExited(MouseEvent e) {
+        // Unused
+    }
 
     protected void setTable(JTable table) {
         this.table = table;
