@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +28,21 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "1 * $.weight", "$.married", "$.photo"};
-        SimpleTableModel model = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter(tableColumns));
-        SimpleTable table = new SimpleTable(model);
+        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
+        SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
+        tableModel.getColumns()[7].setEditable(false);
+
+        SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnDefinitions(
-                new ColumnDefinition(ColumnType.BUTTON,"Nom", 100, true, -1, -1, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnDefinition(ColumnType.HYPERLINK,"Nom", 100, true, -1, -1, (TableCellActionListener) Demo::buttonClicked),
                 new ColumnDefinition(ColumnType.TEXT,"Prénom", 100),
                 new ColumnDefinition(ColumnType.COMBOBOX, "Sexe", 70, false, SwingConstants.CENTER, -1, Gender.values()),
                 new ColumnDefinition(ColumnType.DATETIME, "Né(e) le", 100, true, SwingConstants.LEADING, -1, "d"),
                 new ColumnDefinition(ColumnType.NUMBER,"Taille", 80, false, SwingConstants.TRAILING, -1, "#0.00'm'"),
-                new ColumnDefinition(ColumnType.PROGRESS,"Poids", 100, true, -1, -1, new Range(0, 150)),
+                new ColumnDefinition(ColumnType.PROGRESS,"Poids (lbs)", 100, true, -1, -1, new Range(0, 220)),
                 new ColumnDefinition(ColumnType.CHECKBOX,"Marié(e)?", 80, false, SwingConstants.CENTER, -1, null),
-                new ColumnDefinition(ColumnType.ICON,"Photo", 70, false, SwingConstants.CENTER, -1, null));
+                new ColumnDefinition(ColumnType.IMAGE,"Photo", 70, false, SwingConstants.CENTER, -1, null));
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -67,7 +70,7 @@ public final class Demo {
                             Float.parseFloat(fields[4]),
                             Short.parseShort(fields[5]),
                             Boolean.parseBoolean(fields[6]),
-                            loadIcon(classLoader, fields[7])))
+                            loadImage(classLoader, fields[7])))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,9 +79,9 @@ public final class Demo {
         return personList;
     }
 
-    private static Icon loadIcon(ClassLoader classLoader, String filename) {
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/portraits/" + filename)));
-        return new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+    private static Image loadImage(ClassLoader classLoader, String filename) {
+        URL imageURL = classLoader.getResource("images/portraits/" + filename);
+        return new ImageIcon(Objects.requireNonNull(imageURL)).getImage();
     }
 
     private static void buttonClicked(TableCellActionEvent e) {
@@ -100,12 +103,12 @@ public final class Demo {
         private float height; // Height in meters
         private short weight; // Weight in kilograms
         private boolean married;
-        private Icon photo;
+        private Image photo;
 
         public Person() {}
 
         public Person(String firstName, String lastName, Gender gender, LocalDate dateOfBirth,
-                      float height, short weight, boolean married, Icon photo) {
+                      float height, short weight, boolean married, Image photo) {
 
             this.firstName = firstName;
             this.lastName = lastName;
@@ -173,11 +176,11 @@ public final class Demo {
             this.married = married;
         }
 
-        public Icon getPhoto() {
+        public Image getPhoto() {
             return photo;
         }
 
-        public void setPhoto(Icon photo) {
+        public void setPhoto(Image photo) {
             this.photo = photo;
         }
     }

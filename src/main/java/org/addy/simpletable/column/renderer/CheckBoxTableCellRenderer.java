@@ -1,12 +1,17 @@
 package org.addy.simpletable.column.renderer;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRenderer {
+    private static final Border NO_FOCUS_BORDER = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+
     public CheckBoxTableCellRenderer() {
-        super.setHorizontalAlignment(SwingConstants.CENTER);
+        super();
+        setHorizontalAlignment(SwingConstants.CENTER);
+        setBorderPainted(true);
     }
 
     @Override
@@ -19,8 +24,74 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
             setBackground(table.getBackground());
         }
 
-        setSelected(value != null && (Boolean) value);
+        setBorder(hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : NO_FOCUS_BORDER);
+        setValue(value);
 
         return this;
+    }
+
+    @Override
+    public void invalidate() {
+        // Unused!
+    }
+
+    @Override
+    public void validate() {
+        // Unused!
+    }
+
+    @Override
+    public void revalidate() {
+        // Unused!
+    }
+
+    @Override
+    public void repaint(long tm, int x, int y, int width, int height) {
+        // Unused!
+    }
+
+    @Override
+    public void repaint(Rectangle r) {
+        // Unused!
+    }
+
+    @Override
+    public void repaint() {
+        // Unused!
+    }
+
+    @Override
+    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+        // Unused!
+    }
+
+    @Override
+    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        switch (propertyName) {
+            case "text":
+            case "displayedMnemonic":
+            case "selected":
+                super.firePropertyChange(propertyName, oldValue, newValue);
+                break;
+            case "font":
+            case "foreground":
+                if (oldValue != newValue && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)
+                    super.firePropertyChange(propertyName, oldValue, newValue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setValue(Object value) {
+        if (value == null) {
+            setSelected(false);
+        } else if (value instanceof Boolean) {
+            setSelected((Boolean) value);
+        } else if (value instanceof Number) {
+            setSelected(((Number) value).intValue() != 0);
+        } else {
+            setSelected(Boolean.parseBoolean(value.toString()));
+        }
     }
 }

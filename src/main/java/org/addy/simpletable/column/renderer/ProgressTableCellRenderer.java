@@ -27,4 +27,52 @@ public class ProgressTableCellRenderer extends JProgressBar implements TableCell
 
         return this;
     }
+
+    @Override
+    public void invalidate() {
+        // Unused!
+    }
+
+    @Override
+    public void validate() {
+        // Unused!
+    }
+
+    @Override
+    public void revalidate() {
+        // Unused!
+    }
+
+    @Override
+    public void repaint(long tm, int x, int y, int width, int height) {
+        // Unused!
+    }
+
+    @Override
+    public void repaint(Rectangle r) {
+        // Unused!
+    }
+
+    @Override
+    public void repaint() {
+        // Unused!
+    }
+
+    @Override
+    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+        // Unused!
+    }
+
+    @Override
+    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        switch (propertyName) {
+            case "value":
+            case "minimum":
+            case "maximum":
+                super.firePropertyChange(propertyName, oldValue, newValue);
+                break;
+            default:
+                break;
+        }
+    }
 }

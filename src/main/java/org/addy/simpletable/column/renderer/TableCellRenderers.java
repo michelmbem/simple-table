@@ -3,9 +3,10 @@ package org.addy.simpletable.column.renderer;
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
+import org.addy.simpletable.model.Range;
 import org.addy.simpletable.util.DateFormats;
 import org.addy.simpletable.util.NumberFormats;
-import org.addy.simpletable.model.Range;
+import org.addy.swing.SizeMode;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -49,11 +50,10 @@ public final class TableCellRenderers {
                 applyAlignment(hyperLinkTableCellRenderer, horizontalAlignment, verticalAlignment);
                 return hyperLinkTableCellRenderer;
             }
-            case ICON: {
-                IconTableCellRenderer iconTableCellRenderer = new IconTableCellRenderer();
-                applyAlignment(iconTableCellRenderer, horizontalAlignment, verticalAlignment);
-                return iconTableCellRenderer;
-            }
+            case IMAGE:
+                return extraData == null
+                        ? new ImageTableCellRenderer()
+                        : new ImageTableCellRenderer((SizeMode) extraData);
             case PROGRESS: {
                 ProgressTableCellRenderer progressTableCellRenderer;
 

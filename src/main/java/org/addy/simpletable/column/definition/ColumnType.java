@@ -8,6 +8,6 @@ public enum ColumnType {
     COMBOBOX,
     BUTTON,
     HYPERLINK,
-    ICON,
+    IMAGE,
     PROGRESS
 }

@@ -2,6 +2,7 @@ package org.addy.simpletable.column.adapter;
 
 import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
+import org.addy.simpletable.util.ELEngine;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
@@ -15,12 +16,14 @@ public class ELColumnAdapter extends AssociativeColumnAdapter {
     public ELColumnAdapter(String... expressions) {
         super(expressions);
         createColumnExpressions();
+        ELEngine.initializeContext(context, factory);
     }
 
     @Override
     public void setColumnNames(String[] columnNames) {
         super.setColumnNames(columnNames);
         createColumnExpressions();
+        ELEngine.initializeContext(context, factory);
     }
 
     @Override
