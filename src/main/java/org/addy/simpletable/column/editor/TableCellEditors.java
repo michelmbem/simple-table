@@ -14,6 +14,8 @@ public final class TableCellEditors {
 
     public static TableCellEditor from(ColumnType columnType, int horizontalAlignment, int verticalAlignment, Object extraData) {
         switch (columnType) {
+            case DATETIME:
+                return new DateTimeTableCellEditor();
             case CHECKBOX: {
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setHorizontalAlignment(SwingConstants.CENTER);

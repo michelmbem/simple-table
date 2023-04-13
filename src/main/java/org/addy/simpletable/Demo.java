@@ -90,7 +90,7 @@ public final class Demo {
     }
 
 
-    public static enum Gender {
+    public enum Gender {
         M,
         F,
     }

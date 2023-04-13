@@ -6,29 +6,28 @@ import org.addy.simpletable.model.ButtonModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class ButtonTableCellEditor extends AbstractCellEditor
-        implements TableCellEditor, ActionListener, MouseListener {
-
+public class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
     public static final String COMMAND = "BUTTON_CLICK";
 
     private final JButton button;
     private final TableCellActionListener actionListener;
     private JTable table;
-    private Object editedValue = null;
+    private Object editedValue;
+    private boolean isCurrentCellEditor;
     private boolean useCellValue = false;
-    private boolean isButtonColumnEditor;
 
     public ButtonTableCellEditor(TableCellActionListener actionListener) {
         button = new JButton();
         button.addActionListener(this);
-        useCellValue = true;
         this.actionListener = actionListener;
+        useCellValue = true;
     }
 
     public ButtonTableCellEditor(String text, TableCellActionListener actionListener) {
@@ -51,6 +50,8 @@ public class ButtonTableCellEditor extends AbstractCellEditor
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        if (this.table == null) setTable(table);
+
         if (isSelected) {
             button.setForeground(table.getSelectionForeground());
             button.setBackground(table.getSelectionBackground());
@@ -59,9 +60,14 @@ public class ButtonTableCellEditor extends AbstractCellEditor
             button.setBackground(UIManager.getColor("Button.background"));
         }
 
-        if (this.table == null) setTable(table);
+        TableCellRenderer renderer = table.getCellRenderer(row, column);
+        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, true, row, column);
 
-        if (useCellValue) setEditedValue(value);
+        if (c instanceof JComponent) {
+            button.setBorder(((JComponent) c).getBorder());
+        }
+
+        setEditedValue(value);
 
         return button;
     }
@@ -84,56 +90,43 @@ public class ButtonTableCellEditor extends AbstractCellEditor
         }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (table.isEditing() &&  table.getCellEditor() == this)
-            isButtonColumnEditor = true;
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (isButtonColumnEditor &&  table.isEditing())
-            table.getCellEditor().stopCellEditing();
-
-        isButtonColumnEditor = false;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // Unused
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Unused
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Unused
-    }
-
     protected void setTable(JTable table) {
         this.table = table;
-        table.addMouseListener(this);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (table.isEditing() && table.getCellEditor() == ButtonTableCellEditor.this && !isCurrentCellEditor)
+                    isCurrentCellEditor = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (isCurrentCellEditor && table.isEditing())
+                    table.getCellEditor().stopCellEditing();
+
+                isCurrentCellEditor = false;
+            }
+        });
     }
 
     protected void setEditedValue(Object editedValue) {
         this.editedValue = editedValue;
 
-        if (editedValue == null) {
-            button.setText("");
-            button.setIcon(null);
-        } else if (editedValue instanceof ButtonModel) {
-            ButtonModel buttonModel = (ButtonModel) editedValue;
-            button.setText(buttonModel.getText());
-            button.setIcon(buttonModel.getIcon());
-        } else if (editedValue instanceof Icon) {
-            button.setText("");
-            button.setIcon((Icon) editedValue);
-        } else {
-            button.setText(editedValue.toString());
-            button.setIcon(null);
+        if (useCellValue) {
+            if (editedValue == null) {
+                button.setText("");
+                button.setIcon(null);
+            } else if (editedValue instanceof ButtonModel) {
+                ButtonModel buttonModel = (ButtonModel) editedValue;
+                button.setText(buttonModel.getText());
+                button.setIcon(buttonModel.getIcon());
+            } else if (editedValue instanceof Icon) {
+                button.setText("");
+                button.setIcon((Icon) editedValue);
+            } else {
+                button.setText(editedValue.toString());
+                button.setIcon(null);
+            }
         }
     }
 }

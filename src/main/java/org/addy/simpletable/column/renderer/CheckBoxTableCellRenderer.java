@@ -1,5 +1,7 @@
 package org.addy.simpletable.column.renderer;
 
+import org.addy.simpletable.util.TypeConverter;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
@@ -25,7 +27,7 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
         }
 
         setBorder(hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : NO_FOCUS_BORDER);
-        setValue(value);
+        setSelected(TypeConverter.toBoolean(value));
 
         return this;
     }
@@ -80,18 +82,6 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
                 break;
             default:
                 break;
-        }
-    }
-
-    private void setValue(Object value) {
-        if (value == null) {
-            setSelected(false);
-        } else if (value instanceof Boolean) {
-            setSelected((Boolean) value);
-        } else if (value instanceof Number) {
-            setSelected(((Number) value).intValue() != 0);
-        } else {
-            setSelected(Boolean.parseBoolean(value.toString()));
         }
     }
 }

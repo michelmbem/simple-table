@@ -40,7 +40,7 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
             setBackground(table.getSelectionBackground());
         } else {
             setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Panel.background"));
+            setBackground(table.getBackground());
         }
 
         setBorder(hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : NO_FOCUS_BORDER);

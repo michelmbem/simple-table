@@ -20,7 +20,7 @@ public class ProgressTableCellRenderer extends JProgressBar implements TableCell
             setBackground(table.getSelectionBackground());
         } else {
             setForeground(table.getForeground());
-            setBackground(UIManager.getColor("ProgressBar.background"));
+            setBackground(table.getBackground());
         }
 
         setValue(((Number) value).intValue());

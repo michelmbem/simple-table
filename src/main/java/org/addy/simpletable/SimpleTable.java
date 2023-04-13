@@ -109,7 +109,7 @@ public class SimpleTable extends javax.swing.JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        component.setBorder(BorderFactory.createEmptyBorder(getCellInsets().top, getCellInsets().left, getCellInsets().bottom, getCellInsets().right));
+        component.setBorder(BorderFactory.createEmptyBorder(cellInsets.top, cellInsets.left, cellInsets.bottom, cellInsets.right));
 
         if (rolloverBackground != null && row == rolloverRowIndex) {
             component.setForeground(getForeground());

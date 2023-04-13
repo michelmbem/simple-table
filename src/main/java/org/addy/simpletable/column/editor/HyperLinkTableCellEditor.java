@@ -7,48 +7,54 @@ import org.addy.simpletable.util.HyperLink;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class HyperLinkTableCellEditor extends AbstractCellEditor
-        implements TableCellEditor, MouseListener {
-
+public class HyperLinkTableCellEditor extends AbstractCellEditor implements TableCellEditor {
     public static final String COMMAND = "LINK_CLICK";
 
     private final JLabel label;
     private final TableCellActionListener actionListener;
     private JTable table;
-    private Object editedValue = null;
+    private Object editedValue;
+    private boolean isCurrentCellEditor;
     private boolean useCellValue = false;
-    private boolean isLinkColumnEditor;
 
     public HyperLinkTableCellEditor(TableCellActionListener actionListener) {
         label = new JLabel();
-        label.addMouseListener(this);
-        useCellValue = true;
+        label.addMouseListener(new LinkMouseAdapter());
         this.actionListener = actionListener;
+        useCellValue = true;
     }
 
     public HyperLinkTableCellEditor(String text, TableCellActionListener actionListener) {
         label = new JLabel(HyperLink.format(text));
-        label.addMouseListener(this);
+        label.addMouseListener(new LinkMouseAdapter());
         this.actionListener = actionListener;
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        if (this.table == null) setTable(table);
+
         if (isSelected) {
             label.setForeground(table.getSelectionForeground());
             label.setBackground(table.getSelectionBackground());
         } else {
             label.setForeground(table.getForeground());
-            label.setBackground(UIManager.getColor("Button.background"));
+            label.setBackground(table.getBackground());
         }
 
-        if (this.table == null) setTable(table);
+        TableCellRenderer renderer = table.getCellRenderer(row, column);
+        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, true, row, column);
 
-        if (useCellValue) setEditedValue(value);
+        if (c instanceof JComponent) {
+            label.setBorder(((JComponent) c).getBorder());
+        }
+
+        setEditedValue(value);
 
         return label;
     }
@@ -58,22 +64,44 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor
         return editedValue;
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (e.getSource() == table) {
-            if (table.isEditing() && table.getCellEditor() == this)
-                isLinkColumnEditor = true;
+    protected void setTable(JTable table) {
+        this.table = table;
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (table.isEditing() && table.getCellEditor() == HyperLinkTableCellEditor.this && !isCurrentCellEditor)
+                    isCurrentCellEditor = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (isCurrentCellEditor && table.isEditing())
+                    table.getCellEditor().stopCellEditing();
+
+                isCurrentCellEditor = false;
+            }
+        });
+    }
+
+    protected void setEditedValue(Object editedValue) {
+        this.editedValue = editedValue;
+
+        if (useCellValue) {
+            if (editedValue == null) {
+                label.setText("");
+            } else if (editedValue instanceof ButtonModel) {
+                ButtonModel buttonModel = (ButtonModel) editedValue;
+                label.setText(HyperLink.format(buttonModel.getText()));
+            } else {
+                label.setText(HyperLink.format(editedValue));
+            }
         }
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.getSource() == table) {
-            if (isLinkColumnEditor && table.isEditing())
-                table.getCellEditor().stopCellEditing();
 
-            isLinkColumnEditor = false;
-        } else if (isLinkColumnEditor) {
+    protected class LinkMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseReleased(MouseEvent e) {
             int row = table.convertRowIndexToModel(table.getEditingRow());
             int column = table.convertColumnIndexToModel(table.getEditingColumn());
 
@@ -83,39 +111,6 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor
                 TableCellActionEvent e1 = new TableCellActionEvent(table, row, column, editedValue, COMMAND);
                 actionListener.actionPerformed(e1);
             }
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // Unused
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Unused
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Unused
-    }
-
-    protected void setTable(JTable table) {
-        this.table = table;
-        table.addMouseListener(this);
-    }
-
-    protected void setEditedValue(Object editedValue) {
-        this.editedValue = editedValue;
-
-        if (editedValue == null) {
-            label.setText("");
-        } else if (editedValue instanceof ButtonModel) {
-            ButtonModel buttonModel = (ButtonModel) editedValue;
-            label.setText(HyperLink.format(buttonModel.getText()));
-        } else {
-            label.setText(HyperLink.format(editedValue));
         }
     }
 }
