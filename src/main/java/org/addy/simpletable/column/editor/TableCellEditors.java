@@ -1,5 +1,6 @@
 package org.addy.simpletable.column.editor;
 
+import org.addy.simpletable.column.definition.CellFormat;
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
@@ -12,19 +13,20 @@ import java.util.Vector;
 public final class TableCellEditors {
     private TableCellEditors() {}
 
-    public static TableCellEditor from(ColumnType columnType, int horizontalAlignment, int verticalAlignment, Object extraData) {
+    public static TableCellEditor from(ColumnType columnType, CellFormat cellFormat, Object extraData) {
+        DefaultCellEditor editor;
+
         switch (columnType) {
             case DATETIME:
                 return new DateTimeTableCellEditor();
-            case CHECKBOX: {
-                JCheckBox checkBox = new JCheckBox();
-                checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-                return new DefaultCellEditor(checkBox);
-            }
+            case CHECKBOX:
+                editor = new DefaultCellEditor(new JCheckBox());
+                break;
             case COMBOBOX: {
                 ComboBoxModel<?> comboBoxModel = getComboBoxModel(extraData);
                 JComboBox<?> comboBox = new JComboBox<>(comboBoxModel);
-                return new DefaultCellEditor(comboBox);
+                editor = new DefaultCellEditor(comboBox);
+                break;
             }
             case BUTTON: {
                 ButtonTableCellEditor buttonTableCellEditor;
@@ -60,17 +62,14 @@ public final class TableCellEditors {
 
                 return hyperLinkTableCellEditor;
             }
-            default: {
-                JTextField textField = new JTextField();
-                applyAlignment(textField, horizontalAlignment, verticalAlignment);
-                return new DefaultCellEditor(textField);
-            }
+            default:
+                editor = new DefaultCellEditor(new JTextField());
+                break;
         }
-    }
 
-    private static void applyAlignment(JTextField textField, int horizontalAlignment, int ignoredVerticalAlignment) {
-        if (horizontalAlignment >= 0)
-            textField.setHorizontalAlignment(horizontalAlignment);
+        cellFormat.applyTo(editor.getComponent());
+
+        return editor;
     }
 
     private static ComboBoxModel<?> getComboBoxModel(Object data) {

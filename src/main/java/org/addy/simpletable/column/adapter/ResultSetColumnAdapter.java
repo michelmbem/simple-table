@@ -25,6 +25,7 @@ public class ResultSetColumnAdapter extends AssociativeColumnAdapter {
 
         try {
             resultSet.updateObject(columnNames[columnIndex], value);
+            resultSet.updateRow();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

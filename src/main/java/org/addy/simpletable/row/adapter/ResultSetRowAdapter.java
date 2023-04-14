@@ -21,7 +21,7 @@ public class ResultSetRowAdapter extends BasicRowAdapter {
         ResultSet resultSet = (ResultSet) itemSource;
 
         try {
-            resultSet.absolute(rowIndex);
+            resultSet.absolute(rowIndex + 1);
             return resultSet;
         } catch (SQLException e) {
             throw new RuntimeException(e);

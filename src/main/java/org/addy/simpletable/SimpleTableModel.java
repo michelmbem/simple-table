@@ -1,6 +1,7 @@
 package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.*;
+import org.addy.simpletable.column.converter.CellConverter;
 import org.addy.simpletable.column.metadata.ColumnMetaData;
 import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
@@ -145,18 +146,24 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        CellConverter converter = columns[columnIndex].getConverter();
         Object row = rowAdapter.getRowAt(itemSource, rowIndex);
-
-        return !(row == null || columnAdapter == null)
+        Object value = !(row == null || columnAdapter == null)
                 ? columnAdapter.getValueAt(row, columnIndex)
                 : null;
+
+        return converter != null ? converter.model2view(value, row) : value;
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        CellConverter converter = columns[columnIndex].getConverter();
         Object row = rowAdapter.getRowAt(itemSource, rowIndex);
 
         if (!(row == null || columnAdapter == null)) {
+            if (converter != null)
+                value = converter.view2model(value, row);
+
             columnAdapter.setValueAt(row, columnIndex, value);
             fireTableCellUpdated(rowIndex, columnIndex);
         }

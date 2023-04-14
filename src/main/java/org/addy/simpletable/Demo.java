@@ -1,6 +1,7 @@
 package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.ELColumnAdapter;
+import org.addy.simpletable.column.definition.CellFormat;
 import org.addy.simpletable.column.definition.ColumnDefinition;
 import org.addy.simpletable.column.definition.ColumnType;
 import org.addy.simpletable.event.TableCellActionEvent;
@@ -32,17 +33,18 @@ public final class Demo {
         SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
         tableModel.getColumns()[7].setEditable(false);
 
+        CellFormat yellowCell = CellFormat.DEFAULT.withColors(null, Color.YELLOW);
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnDefinitions(
-                new ColumnDefinition(ColumnType.HYPERLINK,"Nom", 100, true, -1, -1, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnDefinition(ColumnType.TEXT,"Prénom", 100),
-                new ColumnDefinition(ColumnType.COMBOBOX, "Sexe", 70, false, SwingConstants.CENTER, -1, Gender.values()),
-                new ColumnDefinition(ColumnType.DATETIME, "Né(e) le", 100, true, SwingConstants.LEADING, -1, "d"),
-                new ColumnDefinition(ColumnType.NUMBER,"Taille", 80, false, SwingConstants.TRAILING, -1, "#0.00'm'"),
-                new ColumnDefinition(ColumnType.PROGRESS,"Poids (lbs)", 100, true, -1, -1, new Range(0, 220)),
-                new ColumnDefinition(ColumnType.CHECKBOX,"Marié(e)?", 80, false, SwingConstants.CENTER, -1, null),
-                new ColumnDefinition(ColumnType.IMAGE,"Photo", 70, false, SwingConstants.CENTER, -1, null));
+                new ColumnDefinition(ColumnType.HYPERLINK,"Nom", 100, CellFormat.DEFAULT, yellowCell, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnDefinition(ColumnType.DEFAULT,"Prénom", 100),
+                new ColumnDefinition(ColumnType.COMBOBOX, "Sexe", 70, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
+                new ColumnDefinition(ColumnType.DATETIME, "Né(e) le", 100, "d"),
+                new ColumnDefinition(ColumnType.NUMBER,"Taille", 80, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
+                new ColumnDefinition(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
+                new ColumnDefinition(ColumnType.CHECKBOX,"Marié(e)?", 80, false, true),
+                new ColumnDefinition(ColumnType.IMAGE,"Photo", 70, false, false));
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

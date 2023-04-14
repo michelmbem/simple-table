@@ -3,40 +3,67 @@ package org.addy.simpletable.column.definition;
 import org.addy.simpletable.column.editor.TableCellEditors;
 import org.addy.simpletable.column.renderer.TableCellRenderers;
 
+import javax.swing.*;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.util.Objects;
 
 public class ColumnDefinition {
-    private ColumnType columnType = ColumnType.TEXT;
-    private String headerText = null;
-    private int width = -1;
-    private boolean resizable = true;
-    private int horizontalAlignment = -1;
-    private int verticalAlignment = -1;
-    private Object extraData = null;
+    private ColumnType columnType;
+    private String headerText;
+    private int width;
+    private boolean resizable;
+    private boolean sortable;
+    private CellFormat headerFormat;
+    private CellFormat cellFormat;
+    private Object extraData;
 
-    public ColumnDefinition() {
-    }
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable,
+                            CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
 
-    public ColumnDefinition(ColumnType columnType, String headerText) {
-        this.columnType = columnType;
-        this.headerText = headerText;
-    }
-
-    public ColumnDefinition(ColumnType columnType, String headerText, int width) {
-        this.columnType = columnType;
-        this.headerText = headerText;
-        this.width = width;
-    }
-
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable,
-                            int horizontalAlignment, int verticalAlignment, Object extraData) {
-        this.columnType = columnType;
+        this.columnType = Objects.requireNonNull(columnType);
         this.headerText = headerText;
         this.width = width;
         this.resizable = resizable;
-        this.horizontalAlignment = horizontalAlignment;
-        this.verticalAlignment = verticalAlignment;
+        this.sortable = sortable;
+        this.headerFormat = Objects.requireNonNull(headerFormat);
+        this.cellFormat = Objects.requireNonNull(cellFormat);
         this.extraData = extraData;
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
+                            CellFormat cellFormat, Object extraData) {
+
+        this(columnType, headerText, width, true, true, headerFormat, cellFormat, extraData);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, CellFormat headerFormat, CellFormat cellFormat) {
+        this(columnType, headerText, width, true, true, headerFormat, cellFormat, null);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
+        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
+        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width, Object extraData) {
+        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText, int width) {
+        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    }
+
+    public ColumnDefinition(ColumnType columnType, String headerText) {
+        this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    }
+
+    public ColumnDefinition() {
+        this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
     public ColumnType getColumnType() {
@@ -71,20 +98,28 @@ public class ColumnDefinition {
         this.resizable = resizable;
     }
 
-    public int getHorizontalAlignment() {
-        return horizontalAlignment;
+    public boolean isSortable() {
+        return sortable;
     }
 
-    public void setHorizontalAlignment(int horizontalAlignment) {
-        this.horizontalAlignment = horizontalAlignment;
+    public void setSortable(boolean sortable) {
+        this.sortable = sortable;
     }
 
-    public int getVerticalAlignment() {
-        return verticalAlignment;
+    public CellFormat getHeaderFormat() {
+        return headerFormat;
     }
 
-    public void setVerticalAlignment(int verticalAlignment) {
-        this.verticalAlignment = verticalAlignment;
+    public void setHeaderFormat(CellFormat headerFormat) {
+        this.headerFormat = headerFormat;
+    }
+
+    public CellFormat getCellFormat() {
+        return cellFormat;
+    }
+
+    public void setCellFormat(CellFormat cellFormat) {
+        this.cellFormat = cellFormat;
     }
 
     public Object getExtraData() {
@@ -95,12 +130,10 @@ public class ColumnDefinition {
         this.extraData = extraData;
     }
     
-    public void applyTo(TableColumn column) {
-        if (headerText != null)
-            column.setHeaderValue(headerText);
+    public void applyTo(TableColumn column, JTable table, int columnIndex) {
+        if (headerText != null) column.setHeaderValue(headerText);
 
-        if (width >= 0)
-            column.setPreferredWidth(width);
+        if (width >= 0) column.setPreferredWidth(width);
 
         if (resizable) {
             column.setMinWidth(0);
@@ -110,8 +143,15 @@ public class ColumnDefinition {
             column.setMaxWidth(column.getPreferredWidth());
         }
 
-        column.setCellRenderer(TableCellRenderers.from(columnType, horizontalAlignment, verticalAlignment, extraData));
-        column.setCellEditor(TableCellEditors.from(columnType, horizontalAlignment, verticalAlignment, extraData));
+        TableRowSorter<?> rowSorter = (TableRowSorter<?>) table.getRowSorter();
+        if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
+
+        // TODO: improve header management!
+        if (column.getHeaderRenderer() != null)
+            headerFormat.applyTo((Component) column.getHeaderRenderer());
+
+        column.setCellRenderer(TableCellRenderers.from(columnType, cellFormat, extraData));
+        column.setCellEditor(TableCellEditors.from(columnType, cellFormat, extraData));
     }
 
     public static Builder builder() {
@@ -142,19 +182,18 @@ public class ColumnDefinition {
             return this;
         }
 
-        public Builder horizontalAlignment(int arg) {
-            columnDefinition.setHorizontalAlignment(arg);
+        public Builder sortable(boolean arg) {
+            columnDefinition.setSortable(arg);
             return this;
         }
 
-        public Builder verticalAlignment(int arg) {
-            columnDefinition.setVerticalAlignment(arg);
+        public Builder headerFormat(CellFormat arg) {
+            columnDefinition.setHeaderFormat(arg);
             return this;
         }
 
-        public Builder alignment(int arg1, int arg2) {
-            columnDefinition.setHorizontalAlignment(arg1);
-            columnDefinition.setVerticalAlignment(arg2);
+        public Builder cellFormat(CellFormat arg) {
+            columnDefinition.setCellFormat(arg);
             return this;
         }
 

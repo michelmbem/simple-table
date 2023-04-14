@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.definition;
 
 public enum ColumnType {
-    TEXT,
+    DEFAULT,
     NUMBER,
     DATETIME,
     CHECKBOX,

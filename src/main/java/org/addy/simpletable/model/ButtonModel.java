@@ -7,7 +7,6 @@ import javax.swing.*;
 public class ButtonModel {
     private String text;
     private Icon icon;
-
     private TableCellActionListener actionListener;
 
     public ButtonModel() {}

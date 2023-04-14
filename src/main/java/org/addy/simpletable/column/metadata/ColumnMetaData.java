@@ -1,5 +1,7 @@
 package org.addy.simpletable.column.metadata;
 
+import org.addy.simpletable.column.converter.CellConverter;
+
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,23 +15,21 @@ public class ColumnMetaData implements Serializable {
     private final String name;
     private Class<?> type;
     private boolean editable;
+    private CellConverter converter;
 
-    public ColumnMetaData(String name, Class<?> type, boolean editable) {
+    public ColumnMetaData(String name, Class<?> type, boolean editable, CellConverter converter) {
         this.name = Objects.requireNonNull(name);
         this.type = type;
         this.editable = editable;
+        this.converter = converter;
     }
 
     public ColumnMetaData(String name, Class<?> type) {
-        this(name, type, true);
-    }
-
-    public ColumnMetaData(String name, boolean editable) {
-        this(name, null, editable);
+        this(name, type, true, null);
     }
 
     public ColumnMetaData(String name) {
-        this(name, null, true);
+        this(name, null, true, null);
     }
 
     public String getName() {
@@ -52,6 +52,14 @@ public class ColumnMetaData implements Serializable {
         this.editable = editable;
     }
 
+    public CellConverter getConverter() {
+        return converter;
+    }
+
+    public void setConverter(CellConverter converter) {
+        this.converter = converter;
+    }
+
     public static ColumnMetaData[] fromNames(String[] names) {
         return Stream.of(names).map(ColumnMetaData::new).toArray(ColumnMetaData[]::new);
     }
@@ -72,12 +80,13 @@ public class ColumnMetaData implements Serializable {
         try {
             int columnCount = rsMetaData.getColumnCount();
 
-            for (int i = 0; i < columnCount; ++i) {
+            for (int i = 1; i <= columnCount; ++i) {
                 if (name.equals(rsMetaData.getColumnName(i)))
                     return new ColumnMetaData(
                             name,
                             Class.forName(rsMetaData.getColumnClassName(i)),
-                            !rsMetaData.isReadOnly(i));
+                            !rsMetaData.isReadOnly(i),
+                            null);
             }
 
             throw new IllegalArgumentException("Could not find a column with name " + name + " in the ResultSet");

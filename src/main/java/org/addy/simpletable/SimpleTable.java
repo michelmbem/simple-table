@@ -1,5 +1,6 @@
 package org.addy.simpletable;
 
+import org.addy.simpletable.column.definition.CellFormat;
 import org.addy.simpletable.column.definition.ColumnDefinition;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class SimpleTable extends javax.swing.JTable {
 
     private Color alternateBackground;
     private Color rolloverBackground;
-    private Insets cellInsets;
+    private Insets cellPadding;
     private int rolloverRowIndex = -1;
     private ColumnDefinition[] columnDefinitions;
 
@@ -67,12 +68,12 @@ public class SimpleTable extends javax.swing.JTable {
         this.rolloverBackground = rolloverBackground;
     }
 
-    public Insets getCellInsets() {
-        return cellInsets;
+    public Insets getCellPadding() {
+        return cellPadding;
     }
 
-    public void setCellInsets(Insets cellInsets) {
-        this.cellInsets = cellInsets;
+    public void setCellPadding(Insets cellPadding) {
+        this.cellPadding = cellPadding;
         repaint();
     }
     
@@ -91,12 +92,12 @@ public class SimpleTable extends javax.swing.JTable {
     
     public void setColumnDefinition(int index, ColumnDefinition column) {
         columnDefinitions[index] = column;
-        columnDefinitions[index].applyTo(getColumnModel().getColumn(index));
+        columnDefinitions[index].applyTo(getColumnModel().getColumn(index), this, index);
     }
 
     public void applyColumnDefinitions() {
         for (int i = 0; i < columnDefinitions.length; ++i) {
-            columnDefinitions[i].applyTo(getColumnModel().getColumn(i));
+            columnDefinitions[i].applyTo(getColumnModel().getColumn(i), this, i);
         }
     }
     
@@ -109,13 +110,19 @@ public class SimpleTable extends javax.swing.JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        component.setBorder(BorderFactory.createEmptyBorder(cellInsets.top, cellInsets.left, cellInsets.bottom, cellInsets.right));
+        component.setBorder(BorderFactory.createEmptyBorder(cellPadding.top, cellPadding.left, cellPadding.bottom, cellPadding.right));
 
         if (rolloverBackground != null && row == rolloverRowIndex) {
             component.setForeground(getForeground());
             component.setBackground(rolloverBackground);
         } else if (!(alternateBackground == null || component.getBackground().equals(getSelectionBackground()))) {
-            component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
+            CellFormat cellFormat = columnDefinitions[column].getCellFormat();
+
+            if (cellFormat.getBackground() != null) {
+                component.setBackground(cellFormat.getBackground());
+            } else {
+                component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
+            }
         }
 
         return component;
@@ -125,7 +132,7 @@ public class SimpleTable extends javax.swing.JTable {
         setRowHeight(DEFAULT_ROW_HEIGHT);
         setAlternateBackground(DEFAULT_ALTERNATE_BACKGROUND);
         setRolloverBackground(DEFAULT_ROLLOVER_BACKGROUND);
-        setCellInsets(DEFAULT_CELL_INSETS);
+        setCellPadding(DEFAULT_CELL_INSETS);
         setAutoCreateRowSorter(true);
         createRolloverListener();
     }

@@ -3,14 +3,23 @@ package org.addy.simpletable.column.renderer;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.text.NumberFormat;
 
 public class ProgressTableCellRenderer extends JProgressBar implements TableCellRenderer {
+    private NumberFormat numberFormat = null;
+
     public ProgressTableCellRenderer() {
         super();
     }
 
     public ProgressTableCellRenderer(int min, int max) {
         super(min, max);
+    }
+
+    public ProgressTableCellRenderer(int min, int max, boolean stringPainted, NumberFormat numberFormat) {
+        super(min, max);
+        setStringPainted(stringPainted);
+        this.numberFormat = numberFormat;
     }
 
     @Override
@@ -24,6 +33,9 @@ public class ProgressTableCellRenderer extends JProgressBar implements TableCell
         }
 
         setValue(((Number) value).intValue());
+
+        if (isStringPainted() && numberFormat != null)
+            setString(numberFormat.format(value));
 
         return this;
     }
@@ -69,6 +81,8 @@ public class ProgressTableCellRenderer extends JProgressBar implements TableCell
             case "value":
             case "minimum":
             case "maximum":
+            case "string":
+            case "stringPainted":
                 super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
             default:

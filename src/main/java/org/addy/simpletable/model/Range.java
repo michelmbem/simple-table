@@ -7,8 +7,8 @@ public class Range {
     public Range() {}
 
     public Range(int minimum, int maximum) {
-        this.minimum = minimum;
-        this.maximum = maximum;
+        this.minimum = Math.min(minimum, maximum);
+        this.maximum = Math.max(minimum, maximum);
     }
 
     public int getMinimum() {
