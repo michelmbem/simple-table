@@ -21,17 +21,17 @@ public class CellFormat {
     private Color foreground;
     private Color background;
     private Font font;
-    private Insets padding;
+    private Border border;
 
     public CellFormat(int horizontalAlignment, int verticalAlignment, Color foreground, Color background,
-                      Font font, Insets padding) {
+                      Font font, Border border) {
 
         this.horizontalAlignment = horizontalAlignment;
         this.verticalAlignment = verticalAlignment;
         this.foreground = foreground;
         this.background = background;
         this.font = font;
-        this.padding = padding;
+        this.border = border;
     }
 
     public CellFormat() {
@@ -39,14 +39,14 @@ public class CellFormat {
     }
 
     public CellFormat withColors(Color foreground, Color background) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, foreground, background, this.font, this.padding);
+        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, foreground, background, this.font, this.border);
     }
 
     public CellFormat withFont(Font font) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, font, this.padding);
+        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, font, this.border);
     }
 
-    public CellFormat withPadding(Insets padding) {
+    public CellFormat withBorder(Border padding) {
         return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, this.font, padding);
     }
 
@@ -82,12 +82,12 @@ public class CellFormat {
         this.background = background;
     }
 
-    public Insets getPadding() {
-        return padding;
+    public Border getBorder() {
+        return border;
     }
 
-    public void setPadding(Insets padding) {
-        this.padding = padding;
+    public void setBorder(Border border) {
+        this.border = border;
     }
 
     public void applyTo(Component component) {
@@ -98,26 +98,21 @@ public class CellFormat {
         if (component instanceof JComponent) {
             JComponent jComponent = (JComponent) component;
             if (background != null) jComponent.setOpaque(true);
-            if (padding != null) {
-                Border paddingBorder = BorderFactory.createEmptyBorder(padding.top, padding.left, padding.bottom, padding.right);
-                Border oldBorder = jComponent.getBorder();
-                Border newBorder = oldBorder != null ? BorderFactory.createCompoundBorder(paddingBorder, oldBorder) : paddingBorder;
-                jComponent.setBorder(newBorder);
-            }
-        }
+            if (border != null) jComponent.setBorder(border);
 
-        if (component instanceof JLabel) {
-            JLabel label = (JLabel) component;
-            if (horizontalAlignment >= 0) label.setHorizontalAlignment(horizontalAlignment);
-            if (verticalAlignment >= 0) label.setVerticalAlignment(verticalAlignment);
-        } else if (component instanceof AbstractButton) {
-            AbstractButton button = (AbstractButton) component;
-            if (background != null) button.setContentAreaFilled(true);
-            if (horizontalAlignment >= 0) button.setHorizontalAlignment(horizontalAlignment);
-            if (verticalAlignment >= 0) button.setVerticalAlignment(verticalAlignment);
-        } else if (component instanceof JTextField) {
-            JTextField textField = (JTextField) component;
-            if (horizontalAlignment >= 0) textField.setHorizontalAlignment(horizontalAlignment);
+            if (component instanceof JLabel) {
+                JLabel label = (JLabel) component;
+                if (horizontalAlignment >= 0) label.setHorizontalAlignment(horizontalAlignment);
+                if (verticalAlignment >= 0) label.setVerticalAlignment(verticalAlignment);
+            } else if (component instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton) component;
+                if (background != null) button.setContentAreaFilled(true);
+                if (horizontalAlignment >= 0) button.setHorizontalAlignment(horizontalAlignment);
+                if (verticalAlignment >= 0) button.setVerticalAlignment(verticalAlignment);
+            } else if (component instanceof JTextField) {
+                JTextField textField = (JTextField) component;
+                if (horizontalAlignment >= 0) textField.setHorizontalAlignment(horizontalAlignment);
+            }
         }
     }
 }

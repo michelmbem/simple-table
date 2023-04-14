@@ -1,8 +1,5 @@
 package org.addy.simpletable.column.definition;
 
-import org.addy.simpletable.column.editor.TableCellEditors;
-import org.addy.simpletable.column.renderer.TableCellRenderers;
-
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -150,8 +147,8 @@ public class ColumnDefinition {
         if (column.getHeaderRenderer() instanceof Component)
             headerFormat.applyTo((Component) column.getHeaderRenderer());
 
-        column.setCellRenderer(TableCellRenderers.from(columnType, cellFormat, extraData));
-        column.setCellEditor(TableCellEditors.from(columnType, cellFormat, extraData));
+        column.setCellRenderer(columnType.getRenderer(cellFormat, extraData));
+        column.setCellEditor(columnType.getEditor(cellFormat, extraData));
     }
 
     public static Builder builder() {
