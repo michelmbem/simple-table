@@ -29,15 +29,15 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
+        String[] tableColumns = {"0", "$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
         SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
-        tableModel.getColumns()[7].setEditable(false);
-
-        CellFormat yellowCell = CellFormat.DEFAULT.withColors(null, Color.YELLOW);
+        
+        CellFormat yellowCell = CellFormat.LINE_END.withColors(null, Color.YELLOW);
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnDefinitions(
-                new ColumnDefinition(ColumnType.HYPERLINK,"Nom", 100, CellFormat.DEFAULT, yellowCell, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnDefinition(ColumnType.LINENUMBER,"", 30, false, false, CellFormat.DEFAULT, yellowCell, null),
+                new ColumnDefinition(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
                 new ColumnDefinition(ColumnType.DEFAULT,"Prénom", 100),
                 new ColumnDefinition(ColumnType.COMBOBOX, "Sexe", 70, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
                 new ColumnDefinition(ColumnType.DATETIME, "Né(e) le", 100, "d"),

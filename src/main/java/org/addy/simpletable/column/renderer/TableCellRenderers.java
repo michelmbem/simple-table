@@ -22,6 +22,8 @@ public final class TableCellRenderers {
         TableCellRenderer renderer;
 
         switch (columnType) {
+            case CUSTOM:
+                return null;
             case NUMBER:
                 renderer = new NumberTableCellRenderer(NumberFormats.of(extraData));
                 break;
@@ -67,6 +69,9 @@ public final class TableCellRenderers {
                 }
                 break;
             }
+            case LINENUMBER:
+                renderer = new LineNumberTableCellRenderer();
+                break;
             default:
                 renderer =  new DefaultTableCellRenderer();
                 break;

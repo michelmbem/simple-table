@@ -9,5 +9,7 @@ public enum ColumnType {
     BUTTON,
     HYPERLINK,
     IMAGE,
-    PROGRESS
+    PROGRESS,
+    LINENUMBER,
+    CUSTOM
 }

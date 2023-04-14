@@ -34,7 +34,9 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int column) {
+
         if (isSelected) {
             setForeground(table.getSelectionForeground());
             setBackground(table.getSelectionBackground());
@@ -115,7 +117,7 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
             } else {
                 setImage(ImageIO.read(new FileInputStream(value.toString())));
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
             setImage(ERROR_IMAGE);
         }
     }

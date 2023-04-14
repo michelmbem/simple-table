@@ -147,7 +147,7 @@ public class ColumnDefinition {
         if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
 
         // TODO: improve header management!
-        if (column.getHeaderRenderer() != null)
+        if (column.getHeaderRenderer() instanceof Component)
             headerFormat.applyTo((Component) column.getHeaderRenderer());
 
         column.setCellRenderer(TableCellRenderers.from(columnType, cellFormat, extraData));

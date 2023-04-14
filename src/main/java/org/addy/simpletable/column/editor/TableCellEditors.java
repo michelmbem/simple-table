@@ -17,6 +17,10 @@ public final class TableCellEditors {
         DefaultCellEditor editor;
 
         switch (columnType) {
+            case IMAGE:
+            case LINENUMBER:
+            case CUSTOM:
+                return null;
             case DATETIME:
                 return new DateTimeTableCellEditor();
             case CHECKBOX:
