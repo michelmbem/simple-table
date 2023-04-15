@@ -18,6 +18,9 @@ import java.util.stream.Stream;
 import static org.addy.util.CollectionUtil.requiredFirst;
 
 /**
+ * A generic table model that virtually accepts any kind of data source.<br>
+ * Uses row and column adapters to extract rows and cells from the given data source.<br>
+ * Can automatically detect which row or column adapter based on the constructor used to create an instance.
  *
  * @author Mike
  */
@@ -174,6 +177,35 @@ public class SimpleTableModel extends AbstractTableModel {
         return editable && columns[columnIndex].isEditable() &&
                 (rowAdapter == null || rowAdapter.isCellEditable(rowIndex)) &&
                 (columnAdapter == null || columnAdapter.isCellEditable(columnIndex));
+    }
+
+    public void addRow(Object row) {
+        rowAdapter.addRow(itemSource, row);
+        fireTableDataChanged();
+    }
+
+    public void insertRowAt(int index, Object row) {
+        rowAdapter.insertRowAt(itemSource, index, row);
+        fireTableDataChanged();
+    }
+
+    public Object getRowAt(int index) {
+        return rowAdapter.getRowAt(itemSource, index);
+    }
+
+    public void setRowAt(int index, Object row) {
+        rowAdapter.setRowAt(itemSource, index, row);
+        fireTableDataChanged();
+    }
+
+    public void removeRowAt(int index) {
+        rowAdapter.removeRowAt(itemSource, index);
+        fireTableDataChanged();
+    }
+
+    public void removeAllRows() {
+        rowAdapter.removeAllRows(itemSource);
+        fireTableDataChanged();
     }
 
     private void initColumnAdapter(ColumnAdapter columnAdapter) {

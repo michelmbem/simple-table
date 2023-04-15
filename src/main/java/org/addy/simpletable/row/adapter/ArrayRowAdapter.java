@@ -10,4 +10,9 @@ public class ArrayRowAdapter extends BasicRowAdapter {
     public Object getRowAt(Object itemSource, int rowIndex) {
         return ((Object[]) itemSource)[rowIndex];
     }
+
+    @Override
+    public void setRowAt(Object itemSource, int rowIndex, Object item) {
+        ((Object[]) itemSource)[rowIndex] = item;
+    }
 }

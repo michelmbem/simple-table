@@ -12,6 +12,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
+ * An easily configurable JTable.<br>
+ * Manages alternated row backgrounds as well as row highlighting on mouse hover and automatic sorting.<br>
+ * Automatically generates cell renderers and editors for columns based on the supplied given column definitions.<br>
  *
  * @author Mike
  */

@@ -147,8 +147,8 @@ public class ColumnDefinition {
         if (column.getHeaderRenderer() instanceof Component)
             headerFormat.applyTo((Component) column.getHeaderRenderer());
 
-        column.setCellRenderer(columnType.getRenderer(cellFormat, extraData));
-        column.setCellEditor(columnType.getEditor(cellFormat, extraData));
+        column.setCellRenderer(columnType.getCellRenderer(cellFormat, extraData));
+        column.setCellEditor(columnType.getCellEditor(cellFormat, extraData));
     }
 
     public static Builder builder() {

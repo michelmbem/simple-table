@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.Vector;
 
 public abstract class ColumnType {
-    public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+    public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
         return applyCellFormat(new DefaultTableCellRenderer(), cellFormat);
     }
 
-    public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+    public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
         return applyCellFormat(new DefaultCellEditor(new JTextField()), cellFormat);
     }
 
@@ -33,38 +33,38 @@ public abstract class ColumnType {
 
     public static final ColumnType NUMBER = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new NumberTableCellRenderer(NumberFormats.of(extraData)), cellFormat);
         }
     };
 
     public static final ColumnType DATETIME = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new DateTimeTableCellRenderer(DateFormats.of(extraData)), cellFormat);
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             return new DateTimeTableCellEditor();
         }
     };
 
     public static final ColumnType CHECKBOX = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new CheckBoxTableCellRenderer(), cellFormat);
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new DefaultCellEditor(new JCheckBox()), cellFormat);
         }
     };
 
     public static final ColumnType COMBOBOX = new ColumnType() {
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             ComboBoxModel<?> comboBoxModel = getComboBoxModel(extraData);
             JComboBox<?> comboBox = new JComboBox<>(comboBoxModel);
             return applyCellFormat(new DefaultCellEditor(comboBox), cellFormat);
@@ -93,7 +93,7 @@ public abstract class ColumnType {
 
     public static final ColumnType BUTTON = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             TableCellRenderer renderer;
 
             if ((extraData == null) || (extraData instanceof TableCellActionListener)) {
@@ -111,7 +111,7 @@ public abstract class ColumnType {
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             ButtonTableCellEditor buttonTableCellEditor;
 
             if (extraData == null) {
@@ -133,12 +133,12 @@ public abstract class ColumnType {
 
     public static final ColumnType HYPERLINK = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new HyperLinkTableCellRenderer(), cellFormat);
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             HyperLinkTableCellEditor hyperLinkTableCellEditor;
 
             if (extraData == null) {
@@ -158,7 +158,7 @@ public abstract class ColumnType {
 
     public static final ColumnType IMAGE = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             TableCellRenderer renderer = extraData != null
                     ? new ImageTableCellRenderer((SizeMode) extraData)
                     : new ImageTableCellRenderer();
@@ -167,14 +167,14 @@ public abstract class ColumnType {
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             return null;
         }
     };
 
     public static final ColumnType PROGRESS = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             TableCellRenderer renderer;
 
             if (extraData instanceof ProgressModel) {
@@ -197,12 +197,12 @@ public abstract class ColumnType {
 
     public static final ColumnType LINENUMBER = new ColumnType() {
         @Override
-        public TableCellRenderer getRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
             return applyCellFormat(new LineNumberTableCellRenderer(), cellFormat);
         }
 
         @Override
-        public TableCellEditor getEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
             return null;
         }
     };
