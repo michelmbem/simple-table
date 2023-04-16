@@ -7,6 +7,7 @@ import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
 import org.addy.simpletable.row.adapter.RowAdapter;
+import org.addy.util.CollectionUtil;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
@@ -57,11 +58,11 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(Collection<?> items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(new ArrayList<>(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
+        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Collection<?> items, String... columnNames) {
-        this(new ArrayList<>(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
+        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
                 ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
