@@ -25,13 +25,11 @@ import static org.addy.util.CollectionUtil.requiredFirst;
  * @author Mike
  */
 public class SimpleTableModel extends AbstractTableModel {
-    private Object itemSource = null;
-    private ColumnMetaData[] columns = null;
-    private RowAdapter rowAdapter = null;
-    private ColumnAdapter columnAdapter = null;
+    private Object itemSource;
+    private ColumnMetaData[] columns;
+    private RowAdapter rowAdapter;
+    private ColumnAdapter columnAdapter;
     private boolean editable = true;
-
-    public SimpleTableModel() {}
 
     public SimpleTableModel(Object itemSource, ColumnMetaData[] columns, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
         this.itemSource = itemSource;
@@ -73,7 +71,12 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(ResultSet resultSet, String... columnNames) {
-        this(resultSet, ColumnMetaData.fromResultSetAndNames(resultSet, columnNames), new ResultSetRowAdapter(), new ResultSetColumnAdapter());
+        this(resultSet, ColumnMetaData.fromResultSetAndNames(resultSet, columnNames),
+                new ResultSetRowAdapter(), new ResultSetColumnAdapter());
+    }
+
+    public SimpleTableModel() {
+        this(null,(ColumnMetaData[]) null, null, null);
     }
 
     public Object getItemSource() {

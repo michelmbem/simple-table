@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.editor;
 
-import org.addy.simpletable.util.TypeConverter;
 import org.addy.swing.JCalendarCombo;
+import org.addy.util.TypeConverter;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;

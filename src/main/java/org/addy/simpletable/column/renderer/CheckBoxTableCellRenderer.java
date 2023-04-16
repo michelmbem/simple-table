@@ -1,6 +1,6 @@
 package org.addy.simpletable.column.renderer;
 
-import org.addy.simpletable.util.TypeConverter;
+import org.addy.util.TypeConverter;
 
 import javax.swing.*;
 import javax.swing.border.Border;

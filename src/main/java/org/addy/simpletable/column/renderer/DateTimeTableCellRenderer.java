@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.renderer;
 
 import org.addy.simpletable.util.DateFormats;
-import org.addy.simpletable.util.TypeConverter;
+import org.addy.util.TypeConverter;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import java.text.DateFormat;

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.addy</groupId>
-    <artifactId>SimpleTable</artifactId>
+    <artifactId>simple-table</artifactId>
     <version>2.0.0</version>
     <packaging>jar</packaging>
 
@@ -17,14 +17,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.addy.util</groupId>
-            <artifactId>AddyUtil</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.addy.swing</groupId>
-            <artifactId>AddySwingUtilities</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.addy</groupId>
+            <artifactId>addy-swing</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>de.odysseus.juel</groupId>
@@ -35,11 +30,6 @@
             <groupId>de.odysseus.juel</groupId>
             <artifactId>juel-impl</artifactId>
             <version>2.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
         </dependency>
 
         <dependency>
