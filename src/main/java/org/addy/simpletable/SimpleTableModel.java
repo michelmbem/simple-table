@@ -11,7 +11,6 @@ import org.addy.util.CollectionUtil;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
