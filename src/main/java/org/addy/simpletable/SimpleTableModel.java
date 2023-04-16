@@ -2,7 +2,7 @@ package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.*;
 import org.addy.simpletable.column.converter.CellConverter;
-import org.addy.simpletable.column.metadata.ColumnMetaData;
+import org.addy.simpletable.column.definition.ColumnDefinition;
 import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
@@ -26,12 +26,12 @@ import static org.addy.util.CollectionUtil.requiredFirst;
  */
 public class SimpleTableModel extends AbstractTableModel {
     private Object itemSource;
-    private ColumnMetaData[] columns;
+    private ColumnDefinition[] columns;
     private RowAdapter rowAdapter;
     private ColumnAdapter columnAdapter;
     private boolean editable = true;
 
-    public SimpleTableModel(Object itemSource, ColumnMetaData[] columns, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+    public SimpleTableModel(Object itemSource, ColumnDefinition[] columns, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
         this.itemSource = itemSource;
         this.columns = columns;
         this.rowAdapter = rowAdapter;
@@ -40,43 +40,43 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(Object itemSource, String[] columnNames, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
-        this(itemSource, ColumnMetaData.fromNames(columnNames), rowAdapter, columnAdapter);
+        this(itemSource, ColumnDefinition.fromNames(columnNames), rowAdapter, columnAdapter);
     }
 
     public SimpleTableModel(Object[] items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(), columnAdapter);
+        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Object[] items, String... columnNames) {
-        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(),
+        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(),
                 ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Object[][] items, String... columnNames) {
-        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(), new ArrayColumnAdapter());
+        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(), new ArrayColumnAdapter());
     }
 
     public SimpleTableModel(Collection<?> items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(new ArrayList<>(items), ColumnMetaData.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
+        this(new ArrayList<>(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Collection<?> items, String... columnNames) {
-        this(new ArrayList<>(items), ColumnMetaData.fromNames(columnNames), new ListRowAdapter(),
+        this(new ArrayList<>(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
                 ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Class<?> itemClass, String... columnNames) {
-        this(null, ColumnMetaData.fromNames(columnNames), new ListRowAdapter(),
+        this(null, ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
                 ColumnAdapters.from(Objects.requireNonNull(itemClass), columnNames));
     }
 
     public SimpleTableModel(ResultSet resultSet, String... columnNames) {
-        this(resultSet, ColumnMetaData.fromResultSetAndNames(resultSet, columnNames),
+        this(resultSet, ColumnDefinition.fromResultSetAndNames(resultSet, columnNames),
                 new ResultSetRowAdapter(), new ResultSetColumnAdapter());
     }
 
     public SimpleTableModel() {
-        this(null,(ColumnMetaData[]) null, null, null);
+        this(null,(ColumnDefinition[]) null, null, null);
     }
 
     public Object getItemSource() {
@@ -88,11 +88,11 @@ public class SimpleTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public ColumnMetaData[] getColumns() {
+    public ColumnDefinition[] getColumns() {
         return columns;
     }
 
-    public void setColumns(ColumnMetaData[] columns) {
+    public void setColumns(ColumnDefinition[] columns) {
         this.columns = columns;
         fireTableStructureChanged();
     }
@@ -142,7 +142,7 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        ColumnMetaData column = columns[columnIndex];
+        ColumnDefinition column = columns[columnIndex];
 
         if (column.getType() == null)
             column.setType(getValueAt(0, columnIndex).getClass());
@@ -215,7 +215,7 @@ public class SimpleTableModel extends AbstractTableModel {
         if (columnAdapter instanceof AssociativeColumnAdapter) {
             AssociativeColumnAdapter aca = (AssociativeColumnAdapter) columnAdapter;
             if (aca.getColumnNames() == null || aca.getColumnNames().length == 0) {
-                aca.setColumnNames(Stream.of(columns).map(ColumnMetaData::getName).toArray(String[]::new));
+                aca.setColumnNames(Stream.of(columns).map(ColumnDefinition::getName).toArray(String[]::new));
             }
         }
     }

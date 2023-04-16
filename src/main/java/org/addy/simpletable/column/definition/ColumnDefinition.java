@@ -1,206 +1,97 @@
 package org.addy.simpletable.column.definition;
 
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
+import org.addy.simpletable.column.converter.CellConverter;
+
+import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-public class ColumnDefinition {
-    private ColumnType columnType;
-    private String headerText;
-    private int width;
-    private boolean resizable;
-    private boolean sortable;
-    private CellFormat headerFormat;
-    private CellFormat cellFormat;
-    private Object extraData;
+public class ColumnDefinition implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable,
-                            CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
+    private final String name;
+    private Class<?> type;
+    private boolean editable;
+    private CellConverter converter;
 
-        this.columnType = Objects.requireNonNull(columnType);
-        this.headerText = headerText;
-        this.width = width;
-        this.resizable = resizable;
-        this.sortable = sortable;
-        this.headerFormat = Objects.requireNonNull(headerFormat);
-        this.cellFormat = Objects.requireNonNull(cellFormat);
-        this.extraData = extraData;
+    public ColumnDefinition(String name, Class<?> type, boolean editable, CellConverter converter) {
+        this.name = Objects.requireNonNull(name);
+        this.type = type;
+        this.editable = editable;
+        this.converter = converter;
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
-                            CellFormat cellFormat, Object extraData) {
-
-        this(columnType, headerText, width, true, true, headerFormat, cellFormat, extraData);
+    public ColumnDefinition(String name, Class<?> type) {
+        this(name, type, true, null);
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, CellFormat headerFormat, CellFormat cellFormat) {
-        this(columnType, headerText, width, true, true, headerFormat, cellFormat, null);
+    public ColumnDefinition(String name) {
+        this(name, null, true, null);
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    public String getName() {
+        return name;
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    public Class<?> getType() {
+        return type;
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width, Object extraData) {
-        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    public void setType(Class<?> type) {
+        this.type = type;
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText, int width) {
-        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    public boolean isEditable() {
+        return editable;
     }
 
-    public ColumnDefinition(ColumnType columnType, String headerText) {
-        this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
-    public ColumnDefinition() {
-        this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    public CellConverter getConverter() {
+        return converter;
     }
 
-    public ColumnType getColumnType() {
-        return columnType;
+    public void setConverter(CellConverter converter) {
+        this.converter = converter;
     }
 
-    public void setColumnType(ColumnType columnType) {
-        this.columnType = columnType;
+    public static ColumnDefinition[] fromNames(String[] names) {
+        return Stream.of(names).map(ColumnDefinition::new).toArray(ColumnDefinition[]::new);
     }
 
-    public String getHeaderText() {
-        return headerText;
-    }
+    public static ColumnDefinition[] fromResultSetAndNames(ResultSet resultSet, String[] names) {
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
 
-    public void setHeaderText(String headerText) {
-        this.headerText = headerText;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public boolean isResizable() {
-        return resizable;
-    }
-
-    public void setResizable(boolean resizable) {
-        this.resizable = resizable;
-    }
-
-    public boolean isSortable() {
-        return sortable;
-    }
-
-    public void setSortable(boolean sortable) {
-        this.sortable = sortable;
-    }
-
-    public CellFormat getHeaderFormat() {
-        return headerFormat;
-    }
-
-    public void setHeaderFormat(CellFormat headerFormat) {
-        this.headerFormat = headerFormat;
-    }
-
-    public CellFormat getCellFormat() {
-        return cellFormat;
-    }
-
-    public void setCellFormat(CellFormat cellFormat) {
-        this.cellFormat = cellFormat;
-    }
-
-    public Object getExtraData() {
-        return extraData;
-    }
-
-    public void setExtraData(Object extraData) {
-        this.extraData = extraData;
-    }
-    
-    public void applyTo(TableColumn column, JTable table, int columnIndex) {
-        if (headerText != null) column.setHeaderValue(headerText);
-
-        if (width >= 0) column.setPreferredWidth(width);
-
-        if (resizable) {
-            column.setMinWidth(0);
-            column.setMaxWidth(Integer.MAX_VALUE);
-        } else {
-            column.setMinWidth(column.getPreferredWidth());
-            column.setMaxWidth(column.getPreferredWidth());
+            return Stream.of(names)
+                    .map(name -> fromResultSetMetaData(metaData, name))
+                    .toArray(ColumnDefinition[]::new);
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Could not extract meta data from the given ResultSet", e);
         }
-
-        TableRowSorter<?> rowSorter = (TableRowSorter<?>) table.getRowSorter();
-        if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
-
-        // TODO: improve header management!
-        if (column.getHeaderRenderer() instanceof Component)
-            headerFormat.applyTo((Component) column.getHeaderRenderer());
-
-        column.setCellRenderer(columnType.getCellRenderer(cellFormat, extraData));
-        column.setCellEditor(columnType.getCellEditor(cellFormat, extraData));
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
+    private static ColumnDefinition fromResultSetMetaData(ResultSetMetaData metaData, String name) {
+        try {
+            int columnCount = metaData.getColumnCount();
 
+            for (int i = 1; i <= columnCount; ++i) {
+                if (name.equals(metaData.getColumnName(i)))
+                    return new ColumnDefinition(
+                            name,
+                            Class.forName(metaData.getColumnClassName(i)),
+                            !metaData.isReadOnly(i),
+                            null);
+            }
 
-    public static class Builder {
-        private final ColumnDefinition columnDefinition = new ColumnDefinition();
-
-        public Builder columnType(ColumnType arg) {
-            columnDefinition.setColumnType(arg);
-            return this;
-        }
-
-        public Builder headerText(String arg) {
-            columnDefinition.setHeaderText(arg);
-            return this;
-        }
-
-        public Builder width(int arg) {
-            columnDefinition.setWidth(arg);
-            return this;
-        }
-
-        public Builder resizable(boolean arg) {
-            columnDefinition.setResizable(arg);
-            return this;
-        }
-
-        public Builder sortable(boolean arg) {
-            columnDefinition.setSortable(arg);
-            return this;
-        }
-
-        public Builder headerFormat(CellFormat arg) {
-            columnDefinition.setHeaderFormat(arg);
-            return this;
-        }
-
-        public Builder cellFormat(CellFormat arg) {
-            columnDefinition.setCellFormat(arg);
-            return this;
-        }
-
-        public Builder extraData(Object arg) {
-            columnDefinition.setExtraData(arg);
-            return this;
-        }
-
-        public ColumnDefinition build() {
-            return columnDefinition;
+            throw new IllegalArgumentException("Could not find a column with name " + name + " in the ResultSet");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new IllegalArgumentException("An error occurred while introspecting column " + name, e);
         }
     }
 }

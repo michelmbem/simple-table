@@ -1,7 +1,7 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.column.definition.CellFormat;
-import org.addy.simpletable.column.definition.ColumnDefinition;
+import org.addy.simpletable.column.config.CellFormat;
+import org.addy.simpletable.column.config.ColumnConfig;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -10,6 +10,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 /**
  * An easily configurable JTable.<br>
@@ -24,34 +25,58 @@ public class SimpleTable extends javax.swing.JTable {
     public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 240);
     public static final Insets DEFAULT_CELL_INSETS = new Insets(2, 4, 2, 4);
 
+    private ColumnConfig[] columnConfigs;
     private Color alternateBackground;
     private Color rolloverBackground;
     private Insets cellPadding;
     private int rolloverRowIndex = -1;
-    private ColumnDefinition[] columnDefinitions;
 
     public SimpleTable() {
         super();
         initializeTable();
-        generateColumnDefinitions();
+        generateColumnConfigs();
     }
 
     public SimpleTable(TableModel model) {
         super(model);
         initializeTable();
-        generateColumnDefinitions();
+        generateColumnConfigs();
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm) {
         super(tm, cm);
         initializeTable();
-        generateColumnDefinitions();
+        generateColumnConfigs();
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm, ListSelectionModel sm) {
         super(tm, cm, sm);
         initializeTable();
-        generateColumnDefinitions();
+        generateColumnConfigs();
+    }
+
+    public ColumnConfig[] getColumnConfigs() {
+        return columnConfigs;
+    }
+
+    public void setColumnConfigs(ColumnConfig... columnConfigs) {
+        this.columnConfigs = Objects.requireNonNull(columnConfigs);
+        applyColumnConfigs();
+    }
+
+    public ColumnConfig getColumnConfig(int index) {
+        return columnConfigs[index];
+    }
+
+    public void setColumnConfig(int index, ColumnConfig columnConfig) {
+        columnConfigs[index] = Objects.requireNonNull(columnConfig);
+        columnConfig.applyTo(getColumnModel().getColumn(index), this, index);
+    }
+
+    public void applyColumnConfigs() {
+        for (int i = 0; i < columnConfigs.length; ++i) {
+            columnConfigs[i].applyTo(getColumnModel().getColumn(i), this, i);
+        }
     }
 
     public Color getAlternateBackground() {
@@ -80,34 +105,10 @@ public class SimpleTable extends javax.swing.JTable {
         repaint();
     }
     
-    public ColumnDefinition[] getColumnDefinitions() {
-        return columnDefinitions;
-    }
-    
-    public void setColumnDefinitions(ColumnDefinition... columnDefinitions) {
-        this.columnDefinitions = columnDefinitions;
-        applyColumnDefinitions();
-    }
-    
-    public ColumnDefinition getColumnDefinition(int index) {
-        return columnDefinitions[index];
-    }
-    
-    public void setColumnDefinition(int index, ColumnDefinition column) {
-        columnDefinitions[index] = column;
-        columnDefinitions[index].applyTo(getColumnModel().getColumn(index), this, index);
-    }
-
-    public void applyColumnDefinitions() {
-        for (int i = 0; i < columnDefinitions.length; ++i) {
-            columnDefinitions[i].applyTo(getColumnModel().getColumn(i), this, i);
-        }
-    }
-    
     @Override
     public void setModel(TableModel dataModel) {
         super.setModel(dataModel);
-        generateColumnDefinitions();
+        generateColumnConfigs();
     }
 
     @Override
@@ -119,7 +120,7 @@ public class SimpleTable extends javax.swing.JTable {
             component.setForeground(getForeground());
             component.setBackground(rolloverBackground);
         } else if (!(alternateBackground == null || component.getBackground().equals(getSelectionBackground()))) {
-            CellFormat cellFormat = columnDefinitions[column].getCellFormat();
+            CellFormat cellFormat = columnConfigs[column].getCellFormat();
 
             if (cellFormat.getBackground() != null) {
                 component.setBackground(cellFormat.getBackground());
@@ -140,11 +141,11 @@ public class SimpleTable extends javax.swing.JTable {
         createRolloverListener();
     }
 
-    protected void generateColumnDefinitions() {
-        columnDefinitions = new ColumnDefinition[getColumnCount()];
+    protected void generateColumnConfigs() {
+        columnConfigs = new ColumnConfig[getColumnCount()];
 
-        for (int i = 0; i < columnDefinitions.length; ++i) {
-            columnDefinitions[i] = new ColumnDefinition();
+        for (int i = 0; i < columnConfigs.length; ++i) {
+            columnConfigs[i] = new ColumnConfig();
         }
     }
 
