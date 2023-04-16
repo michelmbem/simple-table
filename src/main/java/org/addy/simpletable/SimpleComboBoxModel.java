@@ -7,7 +7,6 @@ import org.addy.util.CollectionUtil;
 
 import javax.swing.*;
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * A generic combobox model that virtually accepts any kind of data source.<br>
@@ -17,13 +16,13 @@ import java.util.Objects;
  * @author Mike
  */
 public class SimpleComboBoxModel<E> extends AbstractListModel<E> implements ComboBoxModel<E> {
-    private final Object itemSource;
-    private final RowAdapter rowAdapter;
+    private Object itemSource;
+    private RowAdapter rowAdapter;
     private E selectedItem = null;
 
     public SimpleComboBoxModel(Object itemSource, RowAdapter rowAdapter) {
-        this.itemSource = Objects.requireNonNull(itemSource);
-        this.rowAdapter = Objects.requireNonNull(rowAdapter);
+        this.itemSource = itemSource;
+        this.rowAdapter = rowAdapter;
     }
 
     public SimpleComboBoxModel(E[]  items) {
@@ -34,17 +33,31 @@ public class SimpleComboBoxModel<E> extends AbstractListModel<E> implements Comb
         this(CollectionUtil.toList(items), new ListRowAdapter());
     }
 
+    public SimpleComboBoxModel() {
+        this(null, null);
+    }
+
     public Object getItemSource() {
         return itemSource;
+    }
+
+    public void setItemSource(Object itemSource) {
+        this.itemSource = itemSource;
+        fireContentsChanged(this, 0, getSize());
     }
 
     public RowAdapter getRowAdapter() {
         return rowAdapter;
     }
 
+    public void setRowAdapter(RowAdapter rowAdapter) {
+        this.rowAdapter = rowAdapter;
+        fireContentsChanged(this, 0, getSize());
+    }
+
     @Override
     public int getSize() {
-        return rowAdapter.getRowCount(itemSource);
+        return !(itemSource == null || rowAdapter == null) ? rowAdapter.getRowCount(itemSource) : 0;
     }
 
     @Override
@@ -65,27 +78,27 @@ public class SimpleComboBoxModel<E> extends AbstractListModel<E> implements Comb
     public void addItem(E anItem) {
         int index = getSize();
         rowAdapter.addRow(itemSource, anItem);
-        fireIntervalAdded(itemSource, index, index);
+        fireIntervalAdded(this, index, index);
     }
 
     public void insertItemAt(int index, E anItem) {
         rowAdapter.insertRowAt(itemSource, index, anItem);
-        fireIntervalAdded(itemSource, index, index);
+        fireIntervalAdded(this, index, index);
     }
 
     public void setItemAt(int index, E anItem) {
         rowAdapter.setRowAt(itemSource, index, anItem);
-        fireContentsChanged(itemSource, index, index);
+        fireContentsChanged(this, index, index);
     }
 
     public void removeItemAt(int index) {
         rowAdapter.removeRowAt(itemSource, index);
-        fireIntervalRemoved(itemSource, index, index);
+        fireIntervalRemoved(this, index, index);
     }
 
     public void removeAllItems() {
         int size = getSize();
         rowAdapter.removeAllRows(itemSource);
-        fireIntervalRemoved(itemSource, 0, size);
+        fireIntervalRemoved(this, 0, size);
     }
 }
