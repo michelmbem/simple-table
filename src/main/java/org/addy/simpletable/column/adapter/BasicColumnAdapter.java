@@ -1,14 +1,12 @@
-package org.addy.simpletable.rows;
+package org.addy.simpletable.column.adapter;
 
 /**
  *
  * @author Mike
  */
-public abstract class BasicRowAdapter implements RowAdapter {
-
+public abstract class BasicColumnAdapter implements ColumnAdapter {
     @Override
     public boolean isCellEditable(int columnIndex) {
         return true;
     }
-
 }

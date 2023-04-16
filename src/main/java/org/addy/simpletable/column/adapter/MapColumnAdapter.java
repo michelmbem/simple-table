@@ -1,4 +1,4 @@
-package org.addy.simpletable.rows;
+package org.addy.simpletable.column.adapter;
 
 import java.util.Map;
 
@@ -6,9 +6,8 @@ import java.util.Map;
  *
  * @author Mike
  */
-public class MapRowAdapter extends RowAdapterWithColumnNames {
-
-    public MapRowAdapter(String... columnNames) {
+public class MapColumnAdapter extends AssociativeColumnAdapter {
+    public MapColumnAdapter(String... columnNames) {
         super(columnNames);
     }
 
@@ -21,5 +20,4 @@ public class MapRowAdapter extends RowAdapterWithColumnNames {
     public void setValueAt(Object item, int columnIndex, Object value) {
         ((Map) item).put(columnNames[columnIndex], value);
     }
-
 }

@@ -1,11 +1,10 @@
-package org.addy.simpletable.rows;
+package org.addy.simpletable.column.adapter;
 
 /**
  *
  * @author Mike
  */
-public class ArrayRowAdapter extends BasicRowAdapter {
-
+public class ArrayColumnAdapter extends BasicColumnAdapter {
     @Override
     public Object getValueAt(Object item, int columnIndex) {
         return ((Object[]) item)[columnIndex];
@@ -15,5 +14,4 @@ public class ArrayRowAdapter extends BasicRowAdapter {
     public void setValueAt(Object item, int columnIndex, Object value) {
         ((Object[]) item)[columnIndex] = value;
     }
-
 }

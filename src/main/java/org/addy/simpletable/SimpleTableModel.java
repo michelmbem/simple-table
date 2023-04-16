@@ -1,84 +1,100 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.rows.RowAdapter;
-import org.addy.simpletable.rows.RowAdapterWithColumnNames;
-import org.addy.simpletable.rows.BeanRowAdapter;
+import org.addy.simpletable.column.adapter.*;
+import org.addy.simpletable.column.converter.CellConverter;
+import org.addy.simpletable.column.metadata.ColumnMetaData;
+import org.addy.simpletable.row.adapter.ArrayRowAdapter;
+import org.addy.simpletable.row.adapter.ListRowAdapter;
+import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
+import org.addy.simpletable.row.adapter.RowAdapter;
 
+import javax.swing.table.AbstractTableModel;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static org.addy.util.CollectionUtil.requiredFirst;
 
 /**
+ * A generic table model that virtually accepts any kind of data source.<br>
+ * Uses row and column adapters to extract rows and cells from the given data source.<br>
+ * Can automatically detect which row or column adapter based on the constructor used to create an instance.
  *
  * @author Mike
  */
-public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
-
-    private static final String DIFFERENT_SIZE_MESSAGE = "columnNames and columnClasses must either be both null or have the same length";
-    private static final String OUT_OF_BOUNDS_MESSAGE = "index is out of the bounds of the item's indices";
-
-    private String[] columnNames;
-    private Class[] columnClasses;
-    private List items;
+public class SimpleTableModel extends AbstractTableModel {
+    private Object itemSource;
+    private ColumnMetaData[] columns;
     private RowAdapter rowAdapter;
+    private ColumnAdapter columnAdapter;
     private boolean editable = true;
 
+    public SimpleTableModel(Object itemSource, ColumnMetaData[] columns, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+        this.itemSource = itemSource;
+        this.columns = columns;
+        this.rowAdapter = rowAdapter;
+        this.columnAdapter = columnAdapter;
+        initColumnAdapter(columnAdapter);
+    }
+
+    public SimpleTableModel(Object itemSource, String[] columnNames, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+        this(itemSource, ColumnMetaData.fromNames(columnNames), rowAdapter, columnAdapter);
+    }
+
+    public SimpleTableModel(Object[] items, String[] columnNames, ColumnAdapter columnAdapter) {
+        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(), columnAdapter);
+    }
+
+    public SimpleTableModel(Object[] items, String... columnNames) {
+        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(),
+                ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
+    }
+
+    public SimpleTableModel(Object[][] items, String... columnNames) {
+        this(items, ColumnMetaData.fromNames(columnNames), new ArrayRowAdapter(), new ArrayColumnAdapter());
+    }
+
+    public SimpleTableModel(Collection<?> items, String[] columnNames, ColumnAdapter columnAdapter) {
+        this(new ArrayList<>(items), ColumnMetaData.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
+    }
+
+    public SimpleTableModel(Collection<?> items, String... columnNames) {
+        this(new ArrayList<>(items), ColumnMetaData.fromNames(columnNames), new ListRowAdapter(),
+                ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
+    }
+
+    public SimpleTableModel(Class<?> itemClass, String... columnNames) {
+        this(null, ColumnMetaData.fromNames(columnNames), new ListRowAdapter(),
+                ColumnAdapters.from(Objects.requireNonNull(itemClass), columnNames));
+    }
+
+    public SimpleTableModel(ResultSet resultSet, String... columnNames) {
+        this(resultSet, ColumnMetaData.fromResultSetAndNames(resultSet, columnNames),
+                new ResultSetRowAdapter(), new ResultSetColumnAdapter());
+    }
+
     public SimpleTableModel() {
-        this(null, null, null, null);
+        this(null,(ColumnMetaData[]) null, null, null);
     }
 
-    public SimpleTableModel(String[] columnNames, Class[] columnClasses, List items, RowAdapter rowAdapter) {
-        if ((columnNames == null && columnClasses != null)
-                || (columnNames != null && columnClasses == null)
-                || (columnNames != null && columnNames.length != columnClasses.length)) {
-
-            throw new IllegalArgumentException(DIFFERENT_SIZE_MESSAGE);
-        }
-
-        this.columnNames = columnNames;
-        this.columnClasses = columnClasses;
-        this.items = items;
-        this.rowAdapter = rowAdapter;
-        initRowAdapter(rowAdapter);
+    public Object getItemSource() {
+        return itemSource;
     }
 
-    public SimpleTableModel(String[] columnNames, List items, RowAdapter rowAdapter) {
-        this.columnNames = columnNames;
-        this.items = items;
-        this.rowAdapter = rowAdapter;
-        initRowAdapter(rowAdapter);
-        initColumnClasses();
-    }
-
-    public SimpleTableModel(Class itemClass, String... propertyNames) {
-        this(propertyNames, new ArrayList(), new BeanRowAdapter(itemClass, propertyNames));
-    }
-
-    public String[] getColumnNames() {
-        return columnNames;
-    }
-
-    public void setColumnNames(String[] columnNames) {
-        this.columnNames = columnNames;
-        fireTableStructureChanged();
-    }
-
-    public Class[] getColumnClasses() {
-        return columnClasses;
-    }
-
-    public void setColumnClasses(Class[] columnClasses) {
-        this.columnClasses = columnClasses;
-        fireTableStructureChanged();
-    }
-
-    public List getItems() {
-        return items;
-    }
-
-    public void setItems(List items) {
-        this.items = items;
+    public void setItemSource(Object itemSource) {
+        this.itemSource = itemSource;
         fireTableDataChanged();
+    }
+
+    public ColumnMetaData[] getColumns() {
+        return columns;
+    }
+
+    public void setColumns(ColumnMetaData[] columns) {
+        this.columns = columns;
+        fireTableStructureChanged();
     }
 
     public RowAdapter getRowAdapter() {
@@ -87,8 +103,17 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
 
     public void setRowAdapter(RowAdapter rowAdapter) {
         this.rowAdapter = rowAdapter;
-        initRowAdapter(rowAdapter);
         fireTableDataChanged();
+    }
+
+    public ColumnAdapter getColumnAdapter() {
+        return columnAdapter;
+    }
+
+    public void setColumnAdapter(ColumnAdapter columnAdapter) {
+        this.columnAdapter = columnAdapter;
+        initColumnAdapter(columnAdapter);
+        fireTableStructureChanged();
     }
 
     public boolean isEditable() {
@@ -102,173 +127,96 @@ public class SimpleTableModel extends javax.swing.table.AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return items != null ? items.size() : 0;
+        return !(itemSource == null || rowAdapter == null) ? rowAdapter.getRowCount(itemSource) : 0;
     }
 
     @Override
     public int getColumnCount() {
-        return columnNames != null ? columnNames.length : 0;
+        return columns != null ? columns.length : 0;
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-        return columnNames[columnIndex];
+        return columns[columnIndex].getName();
     }
 
     @Override
-    public Class getColumnClass(int columnIndex) {
-        return columnClasses[columnIndex];
+    public Class<?> getColumnClass(int columnIndex) {
+        ColumnMetaData column = columns[columnIndex];
+
+        if (column.getType() == null)
+            column.setType(getValueAt(0, columnIndex).getClass());
+
+        return column.getType();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object item = items.get(rowIndex);
-        return !(item == null || rowAdapter == null)
-                ? rowAdapter.getValueAt(item, columnIndex)
+        CellConverter converter = columns[columnIndex].getConverter();
+        Object row = rowAdapter.getRowAt(itemSource, rowIndex);
+        Object value = !(row == null || columnAdapter == null)
+                ? columnAdapter.getValueAt(row, columnIndex)
                 : null;
+
+        return converter != null ? converter.model2view(value, row) : value;
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        Object item = items.get(rowIndex);
-        if (!(item == null || rowAdapter == null)) {
-            rowAdapter.setValueAt(item, columnIndex, value);
+        CellConverter converter = columns[columnIndex].getConverter();
+        Object row = rowAdapter.getRowAt(itemSource, rowIndex);
+
+        if (!(row == null || columnAdapter == null)) {
+            if (converter != null)
+                value = converter.view2model(value, row);
+
+            columnAdapter.setValueAt(row, columnIndex, value);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return editable && (rowAdapter == null || rowAdapter.isCellEditable(columnIndex));
+        return editable && columns[columnIndex].isEditable() &&
+                (rowAdapter == null || rowAdapter.isCellEditable(rowIndex)) &&
+                (columnAdapter == null || columnAdapter.isCellEditable(columnIndex));
     }
 
-    public void addItem(Object item) {
-        if (items == null) {
-            items = new ArrayList();
-        }
-
-        int index = items.size();
-        items.add(item);
-        fireTableRowsInserted(index, index);
+    public void addRow(Object row) {
+        rowAdapter.addRow(itemSource, row);
+        fireTableDataChanged();
     }
 
-    public void addItem(int index, Object item) {
-        if (items == null) {
-            if (index == 0) {
-                items = new ArrayList();
-            } else {
-                throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-            }
-        } else if (index > items.size()) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        items.add(index, item);
-        fireTableRowsInserted(index, index);
+    public void insertRowAt(int index, Object row) {
+        rowAdapter.insertRowAt(itemSource, index, row);
+        fireTableDataChanged();
     }
 
-    public Object getItem(int index) {
-        if (items == null || index < 0 || items.size() <= index) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        return items.get(index);
+    public Object getRowAt(int index) {
+        return rowAdapter.getRowAt(itemSource, index);
     }
 
-    public void setItem(int index, Object item) {
-        if (items == null || index < 0 || items.size() <= index) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        items.set(index, item);
-        fireTableRowsUpdated(index, index);
+    public void setRowAt(int index, Object row) {
+        rowAdapter.setRowAt(itemSource, index, row);
+        fireTableDataChanged();
     }
 
-    public void removeItem(int index) {
-        if (items == null || index < 0 || items.size() <= index) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        items.remove(index);
-        fireTableRowsDeleted(index, index);
+    public void removeRowAt(int index) {
+        rowAdapter.removeRowAt(itemSource, index);
+        fireTableDataChanged();
     }
 
-    public void removeItem(Object item) {
-        int index = items.indexOf(item);
-        if (index >= 0) {
-            items.remove(index);
-            fireTableRowsDeleted(index, index);
-        }
+    public void removeAllRows() {
+        rowAdapter.removeAllRows(itemSource);
+        fireTableDataChanged();
     }
 
-    public void addItems(Collection items) {
-        if (items == null) {
-            items = new ArrayList(items);
-            fireTableRowsInserted(0, items.size());
-        } else {
-            int index = this.items.size();
-            this.items.addAll(items);
-            fireTableRowsInserted(index, index + items.size());
-        }
-    }
-
-    public void addItems(int index, Collection items) {
-        if (this.items == null) {
-            if (index == 0) {
-                this.items = new ArrayList(items);
-                fireTableRowsInserted(0, items.size());
-            } else {
-                throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-            }
-        } else if (index > this.items.size()) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        this.items.addAll(index, items);
-        fireTableRowsInserted(index, index + items.size());
-    }
-
-    public void removeItems(int index, int count) {
-        if (items == null || index < 0 || items.size() <= index + count) {
-            throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        }
-
-        for (int i = 0; i < count; ++i) {
-            items.remove(index);
-        }
-
-        fireTableRowsDeleted(index, index + count);
-    }
-
-    public void clearItems() {
-        int size = items.size();
-        items.clear();
-        fireTableRowsDeleted(0, size - 1);
-    }
-
-    private void initRowAdapter(RowAdapter ra) {
-        if (ra instanceof RowAdapterWithColumnNames) {
-            RowAdapterWithColumnNames rawcn = (RowAdapterWithColumnNames) ra;
-            if (rawcn.getColumnNames() == null || rawcn.getColumnNames().length == 0) {
-                rawcn.setColumnNames(columnNames);
+    private void initColumnAdapter(ColumnAdapter columnAdapter) {
+        if (columnAdapter instanceof AssociativeColumnAdapter) {
+            AssociativeColumnAdapter aca = (AssociativeColumnAdapter) columnAdapter;
+            if (aca.getColumnNames() == null || aca.getColumnNames().length == 0) {
+                aca.setColumnNames(Stream.of(columns).map(ColumnMetaData::getName).toArray(String[]::new));
             }
         }
     }
-
-    private void initColumnClasses() {
-        if (columnNames != null) {
-            this.columnClasses = new Class[columnNames.length];
-            if (items != null && items.size() > 0) {
-                for (int i = 0; i < columnNames.length; ++i) {
-                    this.columnClasses[i] = this.getValueAt(0, i).getClass();
-                }
-            } else if (rowAdapter instanceof BeanRowAdapter) {
-                BeanRowAdapter bra = (BeanRowAdapter) rowAdapter;
-                for (int i = 0; i < columnNames.length; ++i) {
-                    this.columnClasses[i] = bra.getColumnClassAt(i);
-                }
-            }
-        }
-    }
-
 }
