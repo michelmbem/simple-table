@@ -2,9 +2,11 @@ package org.addy.simpletable;
 
 import org.addy.simpletable.column.config.CellFormat;
 import org.addy.simpletable.column.config.ColumnConfig;
+import org.addy.swing.KnownColor;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -19,12 +21,7 @@ import java.util.Objects;
  *
  * @author Mike
  */
-public class SimpleTable extends javax.swing.JTable {
-    public static final int DEFAULT_ROW_HEIGHT = 20;
-    public static final Color DEFAULT_ALTERNATE_BACKGROUND = new Color(225, 240, 255);
-    public static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 240);
-    public static final Insets DEFAULT_CELL_INSETS = new Insets(2, 4, 2, 4);
-
+public class SimpleTable extends JTable {
     private ColumnConfig[] columnConfigs;
     private Color alternateBackground;
     private Color rolloverBackground;
@@ -95,15 +92,6 @@ public class SimpleTable extends javax.swing.JTable {
     public void setRolloverBackground(Color rolloverBackground) {
         this.rolloverBackground = rolloverBackground;
     }
-
-    public Insets getCellPadding() {
-        return cellPadding;
-    }
-
-    public void setCellPadding(Insets cellPadding) {
-        this.cellPadding = cellPadding;
-        repaint();
-    }
     
     @Override
     public void setModel(TableModel dataModel) {
@@ -114,29 +102,37 @@ public class SimpleTable extends javax.swing.JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        component.setBorder(BorderFactory.createEmptyBorder(cellPadding.top, cellPadding.left, cellPadding.bottom, cellPadding.right));
+        columnConfigs[column].getCellFormat().applyTo(component);
 
-        if (rolloverBackground != null && row == rolloverRowIndex) {
-            component.setForeground(getForeground());
-            component.setBackground(rolloverBackground);
-        } else if (!(alternateBackground == null || component.getBackground().equals(getSelectionBackground()))) {
-            CellFormat cellFormat = columnConfigs[column].getCellFormat();
+        if (!component.getBackground().equals(getSelectionBackground())) {
+            if (rolloverBackground != null && row == rolloverRowIndex) {
+                component.setForeground(getForeground());
+                component.setBackground(rolloverBackground);
+            } else if (alternateBackground != null) {
+                CellFormat cellFormat = columnConfigs[column].getCellFormat();
 
-            if (cellFormat.getBackground() != null) {
-                component.setBackground(cellFormat.getBackground());
-            } else {
-                component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
+                if (cellFormat.getBackground() != null) {
+                    component.setBackground(cellFormat.getBackground());
+                } else {
+                    component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
+                }
             }
         }
 
         return component;
     }
 
+    @Override
+    public Component prepareEditor(TableCellEditor editor, int row, int column) {
+        JComponent component = (JComponent) super.prepareEditor(editor, row, column);
+        columnConfigs[column].getCellFormat().applyTo(component);
+        return component;
+    }
+
     protected void initializeTable() {
-        setRowHeight(DEFAULT_ROW_HEIGHT);
-        setAlternateBackground(DEFAULT_ALTERNATE_BACKGROUND);
-        setRolloverBackground(DEFAULT_ROLLOVER_BACKGROUND);
-        setCellPadding(DEFAULT_CELL_INSETS);
+        setRowHeight(20);
+        setAlternateBackground(KnownColor.WHITE_BLUE);
+        setRolloverBackground(KnownColor.IVORY);
         setAutoCreateRowSorter(true);
         createRolloverListener();
     }

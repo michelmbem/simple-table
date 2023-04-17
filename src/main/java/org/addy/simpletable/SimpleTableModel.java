@@ -214,7 +214,8 @@ public class SimpleTableModel extends AbstractTableModel {
     private void initColumnAdapter(ColumnAdapter columnAdapter) {
         if (columnAdapter instanceof AssociativeColumnAdapter) {
             AssociativeColumnAdapter aca = (AssociativeColumnAdapter) columnAdapter;
-            if (aca.getColumnNames() == null || aca.getColumnNames().length == 0) {
+
+            if (CollectionUtil.isEmpty(aca.getColumnNames())) {
                 aca.setColumnNames(Stream.of(columns).map(ColumnDefinition::getName).toArray(String[]::new));
             }
         }

@@ -36,15 +36,15 @@ public final class Demo {
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnConfigs(
-                new ColumnConfig(ColumnType.LINENUMBER,"", 30, false, false, CellFormat.DEFAULT, yellowCell, null),
-                new ColumnConfig(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnConfig(ColumnType.DEFAULT,"Prénom", 100),
-                new ColumnConfig(ColumnType.COMBOBOX, "Sexe", 70, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
-                new ColumnConfig(ColumnType.DATETIME, "Né(e) le", 100, "d"),
-                new ColumnConfig(ColumnType.NUMBER,"Taille", 80, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
+                new ColumnConfig(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
+                new ColumnConfig(ColumnType.HYPERLINK,"Nom", 115, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnConfig(ColumnType.DEFAULT,"Prénom", 125),
+                new ColumnConfig(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
+                new ColumnConfig(ColumnType.DATETIME, "Né(e) le", 135, "d"),
+                new ColumnConfig(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
                 new ColumnConfig(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
-                new ColumnConfig(ColumnType.CHECKBOX,"Marié(e)?", 80, false, true),
-                new ColumnConfig(ColumnType.IMAGE,"Photo", 70, false, false));
+                new ColumnConfig(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
+                new ColumnConfig(ColumnType.IMAGE,"Photo", 75, false, false));
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

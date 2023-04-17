@@ -1,25 +1,36 @@
 package org.addy.simpletable.column.renderer;
 
+import org.addy.util.TypeConverter;
+
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.text.NumberFormat;
 
-public class ProgressTableCellRenderer extends JProgressBar implements TableCellRenderer {
-    private NumberFormat numberFormat = null;
+public class ProgressTableCellRenderer extends JPanel implements TableCellRenderer {
+    private final JProgressBar progressBar ;
+    private final NumberFormat numberFormat;
 
-    public ProgressTableCellRenderer() {
-        super();
+    public ProgressTableCellRenderer(int min, int max, boolean stringPainted, NumberFormat numberFormat) {
+        super(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints(
+                0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+
+        progressBar = new JProgressBar(min, max);
+        progressBar.setStringPainted(stringPainted);
+        add(progressBar, gbc);
+
+        this.numberFormat = numberFormat;
     }
 
     public ProgressTableCellRenderer(int min, int max) {
-        super(min, max);
+        this(min, max, false, null);
     }
 
-    public ProgressTableCellRenderer(int min, int max, boolean stringPainted, NumberFormat numberFormat) {
-        super(min, max);
-        setStringPainted(stringPainted);
-        this.numberFormat = numberFormat;
+    public ProgressTableCellRenderer() {
+        this(0, 100, false, null);
     }
 
     @Override
@@ -34,61 +45,11 @@ public class ProgressTableCellRenderer extends JProgressBar implements TableCell
             setBackground(table.getBackground());
         }
 
-        setValue(((Number) value).intValue());
+        progressBar.setValue(TypeConverter.toInt(value));
 
-        if (isStringPainted() && numberFormat != null)
-            setString(numberFormat.format(value));
+        if (progressBar.isStringPainted() && numberFormat != null)
+            progressBar.setString(numberFormat.format(value));
 
         return this;
-    }
-
-    @Override
-    public void invalidate() {
-        // Unused!
-    }
-
-    @Override
-    public void validate() {
-        // Unused!
-    }
-
-    @Override
-    public void revalidate() {
-        // Unused!
-    }
-
-    @Override
-    public void repaint(long tm, int x, int y, int width, int height) {
-        // Unused!
-    }
-
-    @Override
-    public void repaint(Rectangle r) {
-        // Unused!
-    }
-
-    @Override
-    public void repaint() {
-        // Unused!
-    }
-
-    @Override
-    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-        // Unused!
-    }
-
-    @Override
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        switch (propertyName) {
-            case "value":
-            case "minimum":
-            case "maximum":
-            case "string":
-            case "stringPainted":
-                super.firePropertyChange(propertyName, oldValue, newValue);
-                break;
-            default:
-                break;
-        }
     }
 }

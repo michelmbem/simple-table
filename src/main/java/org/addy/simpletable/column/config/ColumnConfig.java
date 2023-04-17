@@ -3,7 +3,6 @@ package org.addy.simpletable.column.config;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
 import java.util.Objects;
 
 public class ColumnConfig {
@@ -143,12 +142,8 @@ public class ColumnConfig {
         TableRowSorter<?> rowSorter = (TableRowSorter<?>) table.getRowSorter();
         if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
 
-        // TODO: improve header management!
-        if (column.getHeaderRenderer() instanceof Component)
-            headerFormat.applyTo((Component) column.getHeaderRenderer());
-
-        column.setCellRenderer(columnType.getCellRenderer(cellFormat, extraData));
-        column.setCellEditor(columnType.getCellEditor(cellFormat, extraData));
+        column.setCellRenderer(columnType.getRenderer(extraData));
+        column.setCellEditor(columnType.getEditor(extraData));
     }
 
     public static Builder builder() {

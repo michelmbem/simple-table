@@ -5,16 +5,18 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public class CellFormat {
-    public static CellFormat DEFAULT = new CellFormat();
-    public static CellFormat FIRST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.LEADING, null, null, null, null);
-    public static CellFormat PAGE_START = new CellFormat(SwingConstants.CENTER, SwingConstants.LEADING, null, null, null, null);
-    public static CellFormat FIRST_LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.LEADING, null, null, null, null);
-    public static CellFormat LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.CENTER, null, null, null, null);
-    public static CellFormat CENTER = new CellFormat(SwingConstants.CENTER, SwingConstants.CENTER, null, null, null, null);
-    public static CellFormat LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.CENTER, null, null, null, null);
-    public static CellFormat LAST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.TRAILING, null, null, null, null);
-    public static CellFormat PAGE_END = new CellFormat(SwingConstants.CENTER, SwingConstants.TRAILING, null, null, null, null);
-    public static CellFormat LAST_lINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.TRAILING, null, null, null, null);
+    public static final Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(2, 4, 2, 4);
+
+    public static final CellFormat DEFAULT = new CellFormat();
+    public static final CellFormat FIRST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat PAGE_START = new CellFormat(SwingConstants.CENTER, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat FIRST_LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat CENTER = new CellFormat(SwingConstants.CENTER, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat LAST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat PAGE_END = new CellFormat(SwingConstants.CENTER, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat LAST_lINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
 
     private int horizontalAlignment;
     private int verticalAlignment;
@@ -35,7 +37,7 @@ public class CellFormat {
     }
 
     public CellFormat() {
-        this(-1, -1, null, null, null, null);
+        this(-1, -1, null, null, null, DEFAULT_BORDER);
     }
 
     public CellFormat withColors(Color foreground, Color background) {
@@ -80,6 +82,14 @@ public class CellFormat {
 
     public void setBackground(Color background) {
         this.background = background;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
     }
 
     public Border getBorder() {

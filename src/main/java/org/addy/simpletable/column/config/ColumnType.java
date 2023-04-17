@@ -10,64 +10,68 @@ import org.addy.simpletable.model.ProgressModel;
 import org.addy.simpletable.model.Range;
 import org.addy.simpletable.util.DateFormats;
 import org.addy.simpletable.util.NumberFormats;
+import org.addy.swing.SimpleComboBoxModel;
 import org.addy.swing.SizeMode;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.Collections;
 
 public abstract class ColumnType {
-    public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-        return applyCellFormat(new DefaultTableCellRenderer(), cellFormat);
+    public TableCellRenderer getRenderer(Object configObject) {
+        return new DefaultTableCellRenderer();
     }
 
-    public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-        return applyCellFormat(new DefaultCellEditor(new JTextField()), cellFormat);
+    public TableCellEditor getEditor(Object configObject) {
+        return new DefaultCellEditor(new JTextField());
     }
 
     public static final ColumnType DEFAULT = new ColumnType() {};
 
     public static final ColumnType NUMBER = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new NumberTableCellRenderer(NumberFormats.of(extraData)), cellFormat);
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new NumberTableCellRenderer(NumberFormats.of(configObject));
         }
     };
 
     public static final ColumnType DATETIME = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new DateTimeTableCellRenderer(DateFormats.of(extraData)), cellFormat);
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new DateTimeTableCellRenderer(DateFormats.of(configObject));
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-            return new DateTimeTableCellEditor();
+        public TableCellEditor getEditor(Object configObject) {
+            return configObject != null
+                    ? new DateTimeTableCellEditor(configObject.toString())
+                    : new DateTimeTableCellEditor();
         }
     };
 
     public static final ColumnType CHECKBOX = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new CheckBoxTableCellRenderer(), cellFormat);
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new CheckBoxTableCellRenderer();
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new DefaultCellEditor(new JCheckBox()), cellFormat);
+        public TableCellEditor getEditor(Object configObject) {
+            JCheckBox checkBox = new JCheckBox();
+            checkBox.setBorderPainted(true);
+            return new DefaultCellEditor(checkBox);
         }
     };
 
     public static final ColumnType COMBOBOX = new ColumnType() {
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-            ComboBoxModel<?> comboBoxModel = getComboBoxModel(extraData);
+        public TableCellEditor getEditor(Object configObject) {
+            ComboBoxModel<?> comboBoxModel = getComboBoxModel(configObject);
             JComboBox<?> comboBox = new JComboBox<>(comboBoxModel);
-            return applyCellFormat(new DefaultCellEditor(comboBox), cellFormat);
+            return new DefaultCellEditor(comboBox);
         }
 
         private ComboBoxModel<?> getComboBoxModel(Object data) {
@@ -80,140 +84,127 @@ public abstract class ColumnType {
                 return (ComboBoxModel<?>) data;
 
             if (dataType.isArray())
-                return new DefaultComboBoxModel<>((Object[]) data);
+                return new SimpleComboBoxModel<>((Object[]) data);
 
             if (Collection.class.isAssignableFrom(dataType)) {
-                Vector<?> vector = new Vector<>((Collection<?>) data);
-                return new DefaultComboBoxModel<>(vector);
+                return new SimpleComboBoxModel<>((Collection<?>) data);
             }
 
-            throw new IllegalArgumentException("Could not create a combobox model with the given data");
+            return new SimpleComboBoxModel<>(Collections.singleton(data));
         }
     };
 
     public static final ColumnType BUTTON = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            TableCellRenderer renderer;
+        public TableCellRenderer getRenderer(Object configObject) {
+            ButtonTableCellRenderer renderer;
 
-            if ((extraData == null) || (extraData instanceof TableCellActionListener)) {
+            if ((configObject == null) || (configObject instanceof TableCellActionListener)) {
                 renderer = new ButtonTableCellRenderer();
-            } else if (extraData instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) extraData;
+            } else if (configObject instanceof ButtonModel) {
+                ButtonModel buttonModel = (ButtonModel) configObject;
                 renderer = new ButtonTableCellRenderer(buttonModel.getText(), buttonModel.getIcon());
-            } else if (extraData instanceof Icon) {
-                renderer = new ButtonTableCellRenderer((Icon) extraData);
+            } else if (configObject instanceof Icon) {
+                renderer = new ButtonTableCellRenderer((Icon) configObject);
             } else {
-                renderer = new ButtonTableCellRenderer(extraData.toString());
+                renderer = new ButtonTableCellRenderer(configObject.toString());
             }
 
-            return applyCellFormat(renderer, cellFormat);
+            return renderer;
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-            ButtonTableCellEditor buttonTableCellEditor;
+        public TableCellEditor getEditor(Object configObject) {
+            ButtonTableCellEditor editor;
 
-            if (extraData == null) {
-                buttonTableCellEditor = new ButtonTableCellEditor(null);
-            } else if (extraData instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) extraData;
-                buttonTableCellEditor = new ButtonTableCellEditor(buttonModel.getText(), buttonModel.getIcon(), buttonModel.getActionListener());
-            } else if (extraData instanceof TableCellActionListener) {
-                buttonTableCellEditor = new ButtonTableCellEditor((TableCellActionListener) extraData);
-            } else if (extraData instanceof Icon) {
-                buttonTableCellEditor = new ButtonTableCellEditor((Icon) extraData, null);
+            if (configObject == null) {
+                editor = new ButtonTableCellEditor(null);
+            } else if (configObject instanceof ButtonModel) {
+                ButtonModel buttonModel = (ButtonModel) configObject;
+                editor = new ButtonTableCellEditor(buttonModel.getText(), buttonModel.getIcon(), buttonModel.getActionListener());
+            } else if (configObject instanceof TableCellActionListener) {
+                editor = new ButtonTableCellEditor((TableCellActionListener) configObject);
+            } else if (configObject instanceof Icon) {
+                editor = new ButtonTableCellEditor((Icon) configObject, null);
             } else {
-                buttonTableCellEditor = new ButtonTableCellEditor(extraData.toString(), null);
+                editor = new ButtonTableCellEditor(configObject.toString(), null);
             }
 
-            return buttonTableCellEditor;
+            return editor;
         }
     };
 
     public static final ColumnType HYPERLINK = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new HyperLinkTableCellRenderer(), cellFormat);
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new HyperLinkTableCellRenderer();
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
-            HyperLinkTableCellEditor hyperLinkTableCellEditor;
+        public TableCellEditor getEditor(Object configObject) {
+            HyperLinkTableCellEditor editor;
 
-            if (extraData == null) {
-                hyperLinkTableCellEditor = new HyperLinkTableCellEditor(null);
-            } else if (extraData instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) extraData;
-                hyperLinkTableCellEditor = new HyperLinkTableCellEditor(buttonModel.getText(), buttonModel.getActionListener());
-            } else if (extraData instanceof TableCellActionListener) {
-                hyperLinkTableCellEditor = new HyperLinkTableCellEditor((TableCellActionListener) extraData);
+            if (configObject == null) {
+                editor = new HyperLinkTableCellEditor(null);
+            } else if (configObject instanceof ButtonModel) {
+                ButtonModel buttonModel = (ButtonModel) configObject;
+                editor = new HyperLinkTableCellEditor(buttonModel.getText(), buttonModel.getActionListener());
+            } else if (configObject instanceof TableCellActionListener) {
+                editor = new HyperLinkTableCellEditor((TableCellActionListener) configObject);
             } else {
-                hyperLinkTableCellEditor = new HyperLinkTableCellEditor(extraData.toString(), null);
+                editor = new HyperLinkTableCellEditor(configObject.toString(), null);
             }
 
-            return hyperLinkTableCellEditor;
+            return editor;
         }
     };
 
     public static final ColumnType IMAGE = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            TableCellRenderer renderer = extraData != null
-                    ? new ImageTableCellRenderer((SizeMode) extraData)
+        public TableCellRenderer getRenderer(Object configObject) {
+            return configObject != null
+                    ? new ImageTableCellRenderer((SizeMode) configObject)
                     : new ImageTableCellRenderer();
-
-            return applyCellFormat(renderer, cellFormat);
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getEditor(Object configObject) {
             return null;
         }
     };
 
     public static final ColumnType PROGRESS = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
+        public TableCellRenderer getRenderer(Object configObject) {
             TableCellRenderer renderer;
 
-            if (extraData instanceof ProgressModel) {
-                ProgressModel progressModel = (ProgressModel) extraData;
+            if (configObject instanceof ProgressModel) {
+                ProgressModel progressModel = (ProgressModel) configObject;
                 renderer = new ProgressTableCellRenderer(
                         progressModel.getRange().getMinimum(),
                         progressModel.getRange().getMaximum(),
                         progressModel.isStringPainted(),
                         progressModel.getNumberFormat());
-            } else if (extraData instanceof Range) {
-                Range range = (Range) extraData;
+            } else if (configObject instanceof Range) {
+                Range range = (Range) configObject;
                 renderer = new ProgressTableCellRenderer(range.getMinimum(), range.getMaximum());
             } else {
                 renderer = new ProgressTableCellRenderer();
             }
 
-            return applyCellFormat(renderer, cellFormat);
+            return renderer;
         }
     };
 
     public static final ColumnType LINENUMBER = new ColumnType() {
         @Override
-        public TableCellRenderer getCellRenderer(CellFormat cellFormat, Object extraData) {
-            return applyCellFormat(new LineNumberTableCellRenderer(), cellFormat);
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new LineNumberTableCellRenderer();
         }
 
         @Override
-        public TableCellEditor getCellEditor(CellFormat cellFormat, Object extraData) {
+        public TableCellEditor getEditor(Object configObject) {
             return null;
         }
     };
-
-    protected static TableCellRenderer applyCellFormat(TableCellRenderer renderer, CellFormat cellFormat) {
-        cellFormat.applyTo((Component) renderer);
-        return renderer;
-    }
-
-    protected static DefaultCellEditor applyCellFormat(DefaultCellEditor editor, CellFormat cellFormat) {
-        cellFormat.applyTo(editor.getComponent());
-        return editor;
-    }
 }
