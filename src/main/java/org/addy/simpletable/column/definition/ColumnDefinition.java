@@ -1,6 +1,7 @@
 package org.addy.simpletable.column.definition;
 
 import org.addy.simpletable.column.converter.CellConverter;
+import org.addy.simpletable.column.validator.CellValidator;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -16,20 +17,22 @@ public class ColumnDefinition implements Serializable {
     private Class<?> type;
     private boolean editable;
     private CellConverter converter;
+    private CellValidator validator;
 
-    public ColumnDefinition(String name, Class<?> type, boolean editable, CellConverter converter) {
+    public ColumnDefinition(String name, Class<?> type, boolean editable, CellConverter converter, CellValidator validator) {
         this.name = Objects.requireNonNull(name);
         this.type = type;
         this.editable = editable;
         this.converter = converter;
+        this.validator = validator;
     }
 
     public ColumnDefinition(String name, Class<?> type) {
-        this(name, type, true, null);
+        this(name, type, true, null, null);
     }
 
     public ColumnDefinition(String name) {
-        this(name, null, true, null);
+        this(name, null, true, null, null);
     }
 
     public String getName() {
@@ -60,6 +63,14 @@ public class ColumnDefinition implements Serializable {
         this.converter = converter;
     }
 
+    public CellValidator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(CellValidator validator) {
+        this.validator = validator;
+    }
+
     public static ColumnDefinition[] fromNames(String[] names) {
         return Stream.of(names).map(ColumnDefinition::new).toArray(ColumnDefinition[]::new);
     }
@@ -86,6 +97,7 @@ public class ColumnDefinition implements Serializable {
                             name,
                             Class.forName(metaData.getColumnClassName(i)),
                             !metaData.isReadOnly(i),
+                            null,
                             null);
             }
 

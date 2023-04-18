@@ -62,6 +62,10 @@ public class ColumnConfig {
         this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
+    public static ColumnConfig lineNumbers(String headerText, int width) {
+        return new ColumnConfig(ColumnType.LINENUMBER, headerText, width, false, false, CellFormat.DEFAULT, CellFormat.LINE_END, null);
+    }
+
     public ColumnType getColumnType() {
         return columnType;
     }

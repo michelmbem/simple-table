@@ -3,6 +3,9 @@ package org.addy.simpletable;
 import org.addy.simpletable.column.adapter.*;
 import org.addy.simpletable.column.converter.CellConverter;
 import org.addy.simpletable.column.definition.ColumnDefinition;
+import org.addy.simpletable.column.validator.CellValidator;
+import org.addy.simpletable.column.validator.ValidationException;
+import org.addy.simpletable.column.validator.ValidationResult;
 import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
@@ -164,11 +167,19 @@ public class SimpleTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         CellConverter converter = columns[columnIndex].getConverter();
+        CellValidator validator = columns[columnIndex].getValidator();
         Object row = rowAdapter.getRowAt(itemSource, rowIndex);
 
         if (!(row == null || columnAdapter == null)) {
             if (converter != null)
                 value = converter.view2model(value, row);
+
+            if (validator != null) {
+                ValidationResult result = validator.validate(value, row);
+
+                if (!result.isValid())
+                    throw new ValidationException(result.getMessage());
+            }
 
             columnAdapter.setValueAt(row, columnIndex, value);
             fireTableCellUpdated(rowIndex, columnIndex);

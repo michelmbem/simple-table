@@ -4,6 +4,7 @@ import org.addy.simpletable.column.adapter.ELColumnAdapter;
 import org.addy.simpletable.column.config.CellFormat;
 import org.addy.simpletable.column.config.ColumnConfig;
 import org.addy.simpletable.column.config.ColumnType;
+import org.addy.simpletable.column.validator.CellValidators;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.Range;
@@ -31,6 +32,7 @@ public final class Demo {
 
         String[] tableColumns = {"0", "$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
         SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
+        tableModel.getColumns()[2].setValidator(CellValidators.notEmpty());
         
         CellFormat yellowCell = CellFormat.LINE_END.withColors(null, Color.YELLOW);
         SimpleTable table = new SimpleTable(tableModel);
@@ -151,6 +153,9 @@ public final class Demo {
         }
 
         public void setDateOfBirth(LocalDate dateOfBirth) {
+            if (dateOfBirth.isAfter(LocalDate.now()))
+                throw new IllegalArgumentException("The date of birth cannot be after the current date");
+
             this.dateOfBirth = dateOfBirth;
         }
 
