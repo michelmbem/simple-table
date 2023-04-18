@@ -1,12 +1,14 @@
 package org.addy.simpletable.column.editor;
 
+import java.awt.Component;
+
+import javax.swing.AbstractCellEditor;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import javax.swing.table.TableCellEditor;
+
 import org.addy.swing.JCalendarCombo;
 import org.addy.util.TypeConverter;
-
-import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 
 public class DateTimeTableCellEditor extends AbstractCellEditor implements TableCellEditor {
     private final JCalendarCombo calendarCombo = new JCalendarCombo();
@@ -22,16 +24,13 @@ public class DateTimeTableCellEditor extends AbstractCellEditor implements Table
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        TableCellRenderer renderer = table.getCellRenderer(row, column);
-        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, true, row, column);
-
-        if (c instanceof JComponent) {
-            calendarCombo.setBorder(((JComponent) c).getBorder());
-        }
-
-        if (columnClass == null) {
+        if (columnClass == null)
             columnClass = table.getModel().getColumnClass(column);
-        }
+
+        Component c = table.getCellRenderer(row, column).getTableCellRendererComponent(table, value, isSelected, true, row, column);
+
+        if (c instanceof JComponent)
+            calendarCombo.setBorder(((JComponent) c).getBorder());
 
         if (value != null) {
             calendarCombo.setDate(TypeConverter.toDate(value));
@@ -52,7 +51,6 @@ public class DateTimeTableCellEditor extends AbstractCellEditor implements Table
     private void initDatePicker(String dateFormat) {
         calendarCombo.setDateFormat(mapFormat(dateFormat));
         calendarCombo.setCheckBoxVisible(true);
-        calendarCombo.getSpinner().setBorder(null);
     }
 
     private String mapFormat(String dateFormat) {

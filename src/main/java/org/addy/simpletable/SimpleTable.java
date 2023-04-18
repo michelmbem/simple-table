@@ -25,7 +25,6 @@ public class SimpleTable extends JTable {
     private ColumnConfig[] columnConfigs;
     private Color alternateBackground;
     private Color rolloverBackground;
-    private Insets cellPadding;
     private int rolloverRowIndex = -1;
 
     public SimpleTable() {
@@ -102,7 +101,7 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        columnConfigs[column].getCellFormat().applyTo(component);
+        columnConfigs[column].getCellFormat().applyTo(component, false);
 
         if (!component.getBackground().equals(getSelectionBackground())) {
             if (rolloverBackground != null && row == rolloverRowIndex) {
@@ -125,7 +124,7 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareEditor(TableCellEditor editor, int row, int column) {
         JComponent component = (JComponent) super.prepareEditor(editor, row, column);
-        columnConfigs[column].getCellFormat().applyTo(component);
+        columnConfigs[column].getCellFormat().applyTo(component, true);
         return component;
     }
 

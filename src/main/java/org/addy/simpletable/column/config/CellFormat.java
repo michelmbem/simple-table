@@ -100,7 +100,7 @@ public class CellFormat {
         this.border = border;
     }
 
-    public void applyTo(Component component) {
+    public void applyTo(Component component, boolean isEditor) {
         if (foreground != null) component.setForeground(foreground);
         if (background != null) component.setBackground(background);
         if (font != null) component.setFont(font);
@@ -108,7 +108,7 @@ public class CellFormat {
         if (component instanceof JComponent) {
             JComponent jComponent = (JComponent) component;
             if (background != null) jComponent.setOpaque(true);
-            if (border != null) jComponent.setBorder(border);
+            if (!(border == null || isEditor)) jComponent.setBorder(border);
 
             if (component instanceof JLabel) {
                 JLabel label = (JLabel) component;
