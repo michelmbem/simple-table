@@ -39,10 +39,10 @@ public final class Demo {
         table.setRowHeight(28);
         table.setColumnConfigs(
                 new ColumnConfig(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
-                new ColumnConfig(ColumnType.HYPERLINK,"Nom", 115, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnConfig(ColumnType.HYPERLINK,"Nom", 125, (TableCellActionListener) Demo::buttonClicked),
                 new ColumnConfig(ColumnType.DEFAULT,"Prénom", 125),
                 new ColumnConfig(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
-                new ColumnConfig(ColumnType.DATETIME, "Né(e) le", 135, "d"),
+                new ColumnConfig(ColumnType.DATETIME, "Né(e) le", 125, "d"),
                 new ColumnConfig(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
                 new ColumnConfig(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
                 new ColumnConfig(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),

@@ -1,14 +1,11 @@
 package org.addy.simpletable.column.editor;
 
-import java.awt.Component;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.table.TableCellEditor;
-
 import org.addy.swing.JCalendarCombo;
 import org.addy.util.TypeConverter;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
 
 public class DateTimeTableCellEditor extends AbstractCellEditor implements TableCellEditor {
     private final JCalendarCombo calendarCombo = new JCalendarCombo();
@@ -26,11 +23,6 @@ public class DateTimeTableCellEditor extends AbstractCellEditor implements Table
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if (columnClass == null)
             columnClass = table.getModel().getColumnClass(column);
-
-        Component c = table.getCellRenderer(row, column).getTableCellRendererComponent(table, value, isSelected, true, row, column);
-
-        if (c instanceof JComponent)
-            calendarCombo.setBorder(((JComponent) c).getBorder());
 
         if (value != null) {
             calendarCombo.setDate(TypeConverter.toDate(value));
