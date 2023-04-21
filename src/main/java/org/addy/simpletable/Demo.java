@@ -153,7 +153,7 @@ public final class Demo {
         }
 
         public void setDateOfBirth(LocalDate dateOfBirth) {
-            if (dateOfBirth.isAfter(LocalDate.now()))
+            if (dateOfBirth != null && dateOfBirth.isAfter(LocalDate.now()))
                 throw new IllegalArgumentException("The date of birth cannot be after the current date");
 
             this.dateOfBirth = dateOfBirth;

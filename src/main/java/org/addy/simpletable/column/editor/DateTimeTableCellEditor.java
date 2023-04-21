@@ -6,8 +6,12 @@ import org.addy.util.TypeConverter;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class DateTimeTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+public class DateTimeTableCellEditor extends AbstractCellEditor
+        implements TableCellEditor, PropertyChangeListener {
+
     private final JCalendarCombo calendarCombo = new JCalendarCombo();
     private Class<?> columnClass = null;
 
@@ -25,7 +29,7 @@ public class DateTimeTableCellEditor extends AbstractCellEditor implements Table
             columnClass = table.getModel().getColumnClass(column);
 
         if (value != null) {
-            calendarCombo.setDate(TypeConverter.toDate(value));
+            calendarCombo.setDateTime(TypeConverter.toLocalDateTime(value));
         } else {
             calendarCombo.setChecked(false);
         }
@@ -36,13 +40,21 @@ public class DateTimeTableCellEditor extends AbstractCellEditor implements Table
     @Override
     public Object getCellEditorValue() {
         return calendarCombo.isChecked()
-                ? TypeConverter.toType(calendarCombo.getDate(), columnClass)
+                ? TypeConverter.toType(calendarCombo.getDateTime(), columnClass)
                 : null;
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (e.getSource() == calendarCombo.getCalendar() && "selectedDateTime".equals(e.getPropertyName())) {
+            stopCellEditing();
+        }
+    }
+
     private void initDatePicker(String dateFormat) {
-        calendarCombo.setDateFormat(mapFormat(dateFormat));
+        calendarCombo.setDateTimeFormat(mapFormat(dateFormat));
         calendarCombo.setCheckBoxVisible(true);
+        calendarCombo.getCalendar().addPropertyChangeListener(this);
     }
 
     private String mapFormat(String dateFormat) {
