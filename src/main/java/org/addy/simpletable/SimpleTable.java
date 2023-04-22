@@ -1,6 +1,5 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.column.config.CellFormat;
 import org.addy.simpletable.column.config.ColumnConfig;
 import org.addy.swing.KnownColor;
 
@@ -22,57 +21,33 @@ import java.util.Objects;
  * @author Mike
  */
 public class SimpleTable extends JTable {
-    private ColumnConfig[] columnConfigs;
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
+    private ColumnConfig[] columnConfigs = null;
 
     public SimpleTable() {
         super();
-        initializeTable();
-        generateColumnConfigs();
+        setRowHeight(20);
+        setAlternateBackground(KnownColor.WHITE_BLUE);
+        setRolloverBackground(KnownColor.IVORY);
+        setAutoCreateRowSorter(true);
+        createRolloverListener();
     }
 
     public SimpleTable(TableModel model) {
-        super(model);
-        initializeTable();
-        generateColumnConfigs();
+        this();
+        setModel(model);
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm) {
-        super(tm, cm);
-        initializeTable();
-        generateColumnConfigs();
+        this(tm);
+        setColumnModel(cm);
     }
 
     public SimpleTable(TableModel tm, TableColumnModel cm, ListSelectionModel sm) {
-        super(tm, cm, sm);
-        initializeTable();
-        generateColumnConfigs();
-    }
-
-    public ColumnConfig[] getColumnConfigs() {
-        return columnConfigs;
-    }
-
-    public void setColumnConfigs(ColumnConfig... columnConfigs) {
-        this.columnConfigs = Objects.requireNonNull(columnConfigs);
-        applyColumnConfigs();
-    }
-
-    public ColumnConfig getColumnConfig(int index) {
-        return columnConfigs[index];
-    }
-
-    public void setColumnConfig(int index, ColumnConfig columnConfig) {
-        columnConfigs[index] = Objects.requireNonNull(columnConfig);
-        columnConfig.applyTo(getColumnModel().getColumn(index), this, index);
-    }
-
-    public void applyColumnConfigs() {
-        for (int i = 0; i < columnConfigs.length; ++i) {
-            columnConfigs[i].applyTo(getColumnModel().getColumn(i), this, i);
-        }
+        this(tm, cm);
+        setSelectionModel(sm);
     }
 
     public Color getAlternateBackground() {
@@ -91,27 +66,56 @@ public class SimpleTable extends JTable {
     public void setRolloverBackground(Color rolloverBackground) {
         this.rolloverBackground = rolloverBackground;
     }
-    
-    @Override
-    public void setModel(TableModel dataModel) {
-        super.setModel(dataModel);
-        generateColumnConfigs();
+
+    public ColumnConfig[] getColumnConfigs() {
+        return columnConfigs;
+    }
+
+    public void setColumnConfigs(ColumnConfig... columnConfigs) {
+        this.columnConfigs = Objects.requireNonNull(columnConfigs);
+        applyColumnConfigs();
+    }
+
+    public ColumnConfig getColumnConfig(int index) {
+        return columnConfigs != null && index < columnConfigs.length ? columnConfigs[index] : null;
+    }
+
+    public void generateColumnConfigs() {
+        columnConfigs = new ColumnConfig[getColumnCount()];
+        TableModel model = getModel();
+
+        if (model != null) {
+            for (int i = 0; i < columnConfigs.length; ++i) {
+                columnConfigs[i] = ColumnConfig.of(model.getColumnClass(i));
+            }
+
+            applyColumnConfigs();
+        }
+    }
+
+    public void applyColumnConfigs() {
+        if (columnConfigs != null) {
+            for (int i = 0; i < columnConfigs.length; ++i) {
+                columnConfigs[i].applyTo(getColumnModel().getColumn(i), this, i);
+            }
+        }
     }
 
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        columnConfigs[column].getCellFormat().applyTo(component, false);
+        ColumnConfig columnConfig = getColumnConfig(column);
+
+        if (columnConfig != null)
+            columnConfig.getCellFormat().applyTo(component, false);
 
         if (!component.getBackground().equals(getSelectionBackground())) {
             if (rolloverBackground != null && row == rolloverRowIndex) {
                 component.setForeground(getForeground());
                 component.setBackground(rolloverBackground);
             } else if (alternateBackground != null) {
-                CellFormat cellFormat = columnConfigs[column].getCellFormat();
-
-                if (cellFormat.getBackground() != null) {
-                    component.setBackground(cellFormat.getBackground());
+                if (columnConfig != null && columnConfig.getCellFormat().getBackground() != null) {
+                    component.setBackground(columnConfig.getCellFormat().getBackground());
                 } else {
                     component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
                 }
@@ -124,24 +128,12 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareEditor(TableCellEditor editor, int row, int column) {
         JComponent component = (JComponent) super.prepareEditor(editor, row, column);
-        columnConfigs[column].getCellFormat().applyTo(component, true);
+        ColumnConfig columnConfig = getColumnConfig(column);
+
+        if (columnConfig != null)
+            columnConfig.getCellFormat().applyTo(component, true);
+
         return component;
-    }
-
-    protected void initializeTable() {
-        setRowHeight(20);
-        setAlternateBackground(KnownColor.WHITE_BLUE);
-        setRolloverBackground(KnownColor.IVORY);
-        setAutoCreateRowSorter(true);
-        createRolloverListener();
-    }
-
-    protected void generateColumnConfigs() {
-        columnConfigs = new ColumnConfig[getColumnCount()];
-
-        for (int i = 0; i < columnConfigs.length; ++i) {
-            columnConfigs[i] = new ColumnConfig();
-        }
     }
 
     protected void createRolloverListener() {

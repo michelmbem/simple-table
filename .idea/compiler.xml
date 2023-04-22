@@ -9,8 +9,5 @@
         <module name="simple-table" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="SimpleTable" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

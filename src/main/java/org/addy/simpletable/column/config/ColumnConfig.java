@@ -1,8 +1,13 @@
 package org.addy.simpletable.column.config;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.time.temporal.Temporal;
+import java.util.Date;
 import java.util.Objects;
 
 public class ColumnConfig {
@@ -64,6 +69,25 @@ public class ColumnConfig {
 
     public static ColumnConfig lineNumbers(String headerText, int width) {
         return new ColumnConfig(ColumnType.LINENUMBER, headerText, width, false, false, CellFormat.DEFAULT, CellFormat.LINE_END, null);
+    }
+
+    public static ColumnConfig of(Class<?> columnClass) {
+        if (ClassUtils.isAssignable(columnClass, Boolean.class, true))
+            return new ColumnConfig(ColumnType.CHECKBOX, null);
+
+        if (ClassUtils.isAssignable(columnClass, Number.class, true))
+            return new ColumnConfig(ColumnType.NUMBER, null);
+
+        if (ClassUtils.isAssignable(columnClass, Date.class) || ClassUtils.isAssignable(columnClass, Temporal.class))
+            return new ColumnConfig(ColumnType.DATETIME, null);
+
+        if (ClassUtils.isAssignable(columnClass, Image.class) || ClassUtils.isAssignable(columnClass, ImageIcon.class))
+            return new ColumnConfig(ColumnType.DATETIME, null);
+
+        if (columnClass.isEnum())
+            return new ColumnConfig(ColumnType.COMBOBOX, null);
+
+        return  new ColumnConfig();
     }
 
     public ColumnType getColumnType() {
