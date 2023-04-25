@@ -33,6 +33,14 @@ public class ColumnSpecs {
         this.extraData = extraData;
     }
 
+    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
+        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    }
+
+    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
+        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    }
+
     public ColumnSpecs(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
                        CellFormat cellFormat, Object extraData) {
 
@@ -43,20 +51,16 @@ public class ColumnSpecs {
         this(columnType, headerText, width, true, true, headerFormat, cellFormat, null);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
-    }
-
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
-    }
-
     public ColumnSpecs(ColumnType columnType, String headerText, int width, Object extraData) {
         this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
     public ColumnSpecs(ColumnType columnType, String headerText, int width) {
         this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    }
+
+    public ColumnSpecs(ColumnType columnType, String headerText, Object extraData) {
+        this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
     public ColumnSpecs(ColumnType columnType, String headerText) {

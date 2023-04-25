@@ -40,7 +40,7 @@ public final class Demo {
         table.setColumnSpecs(
                 new ColumnSpecs(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
                 new ColumnSpecs(ColumnType.HYPERLINK,"Nom", 125, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnSpecs(ColumnType.DEFAULT,"Prénom", 125),
+                new ColumnSpecs(ColumnType.TEXT,"Prénom", 125),
                 new ColumnSpecs(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
                 new ColumnSpecs(ColumnType.DATETIME, "Né(e) le", 125, "d"),
                 new ColumnSpecs(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),

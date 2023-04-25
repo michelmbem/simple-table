@@ -48,8 +48,8 @@ public class CellFormat {
         return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, font, this.border);
     }
 
-    public CellFormat withBorder(Border padding) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, this.font, padding);
+    public CellFormat withBorder(Border border) {
+        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, this.font, border);
     }
 
     public int getHorizontalAlignment() {

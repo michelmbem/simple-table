@@ -3,7 +3,14 @@ package org.addy.simpletable.column.specs;
 import org.addy.simpletable.column.editor.ButtonTableCellEditor;
 import org.addy.simpletable.column.editor.DateTimeTableCellEditor;
 import org.addy.simpletable.column.editor.HyperLinkTableCellEditor;
-import org.addy.simpletable.column.renderer.*;
+import org.addy.simpletable.column.renderer.ButtonTableCellRenderer;
+import org.addy.simpletable.column.renderer.CheckBoxTableCellRenderer;
+import org.addy.simpletable.column.renderer.DateTimeTableCellRenderer;
+import org.addy.simpletable.column.renderer.HyperLinkTableCellRenderer;
+import org.addy.simpletable.column.renderer.ImageTableCellRenderer;
+import org.addy.simpletable.column.renderer.LineNumberTableCellRenderer;
+import org.addy.simpletable.column.renderer.NumberTableCellRenderer;
+import org.addy.simpletable.column.renderer.ProgressTableCellRenderer;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
 import org.addy.simpletable.model.ProgressModel;
@@ -17,24 +24,42 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Collections;
 
 public abstract class ColumnType {
     public TableCellRenderer getRenderer(Object configObject) {
-        return new DefaultTableCellRenderer();
+        return null;
     }
 
     public TableCellEditor getEditor(Object configObject) {
-        return new DefaultCellEditor(new JTextField());
+        return null;
     }
 
     public static final ColumnType DEFAULT = new ColumnType() {};
+
+    public static final ColumnType TEXT = new ColumnType() {
+        @Override
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new DefaultTableCellRenderer();
+        }
+
+        @Override
+        public TableCellEditor getEditor(Object configObject) {
+            return new DefaultCellEditor(new JTextField());
+        }
+    };
 
     public static final ColumnType NUMBER = new ColumnType() {
         @Override
         public TableCellRenderer getRenderer(Object configObject) {
             return new NumberTableCellRenderer(NumberFormats.of(configObject));
+        }
+
+        @Override
+        public TableCellEditor getEditor(Object configObject) {
+            return new DefaultCellEditor(new JFormattedTextField(NumberFormats.of(configObject)));
         }
     };
 
@@ -166,11 +191,6 @@ public abstract class ColumnType {
                     ? new ImageTableCellRenderer((SizeMode) configObject)
                     : new ImageTableCellRenderer();
         }
-
-        @Override
-        public TableCellEditor getEditor(Object configObject) {
-            return null;
-        }
     };
 
     public static final ColumnType PROGRESS = new ColumnType() {
@@ -194,17 +214,24 @@ public abstract class ColumnType {
 
             return renderer;
         }
+
+        @Override
+        public TableCellEditor getEditor(Object configObject) {
+            NumberFormat numberFormat = configObject instanceof  ProgressModel
+                    ? ((ProgressModel) configObject).getNumberFormat()
+                    : NumberFormat.getPercentInstance();
+
+            JFormattedTextField textField = new JFormattedTextField(numberFormat);
+            textField.setHorizontalAlignment(SwingConstants.TRAILING);
+
+            return new DefaultCellEditor(textField);
+        }
     };
 
     public static final ColumnType LINENUMBER = new ColumnType() {
         @Override
         public TableCellRenderer getRenderer(Object configObject) {
             return new LineNumberTableCellRenderer();
-        }
-
-        @Override
-        public TableCellEditor getEditor(Object configObject) {
-            return null;
         }
     };
 }
