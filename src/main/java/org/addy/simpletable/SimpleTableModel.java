@@ -147,8 +147,14 @@ public class SimpleTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         ColumnDefinition column = columns[columnIndex];
 
-        if (column.getType() == null)
-            column.setType(getValueAt(0, columnIndex).getClass());
+        if (column.getType() == null) {
+            if (getRowCount() > 0)
+                column.setType(getValueAt(0, columnIndex).getClass());
+            else if (columnAdapter instanceof BeanColumnAdapter)
+                column.setType(((BeanColumnAdapter) columnAdapter).getColumnClassAt(columnIndex));
+            else
+                column.setType(Object.class);
+        }
 
         return column.getType();
     }
