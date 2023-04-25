@@ -1,9 +1,9 @@
 package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.ELColumnAdapter;
-import org.addy.simpletable.column.config.CellFormat;
-import org.addy.simpletable.column.config.ColumnConfig;
-import org.addy.simpletable.column.config.ColumnType;
+import org.addy.simpletable.column.specs.CellFormat;
+import org.addy.simpletable.column.specs.ColumnSpecs;
+import org.addy.simpletable.column.specs.ColumnType;
 import org.addy.simpletable.column.validator.CellValidators;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
@@ -37,16 +37,16 @@ public final class Demo {
         CellFormat yellowCell = CellFormat.LINE_END.withColors(null, Color.YELLOW);
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
-        table.setColumnConfigs(
-                new ColumnConfig(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
-                new ColumnConfig(ColumnType.HYPERLINK,"Nom", 125, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnConfig(ColumnType.DEFAULT,"Prénom", 125),
-                new ColumnConfig(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
-                new ColumnConfig(ColumnType.DATETIME, "Né(e) le", 125, "d"),
-                new ColumnConfig(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
-                new ColumnConfig(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
-                new ColumnConfig(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
-                new ColumnConfig(ColumnType.IMAGE,"Photo", 75, false, false));
+        table.setColumnSpecs(
+                new ColumnSpecs(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
+                new ColumnSpecs(ColumnType.HYPERLINK,"Nom", 125, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnSpecs(ColumnType.DEFAULT,"Prénom", 125),
+                new ColumnSpecs(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
+                new ColumnSpecs(ColumnType.DATETIME, "Né(e) le", 125, "d"),
+                new ColumnSpecs(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
+                new ColumnSpecs(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
+                new ColumnSpecs(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
+                new ColumnSpecs(ColumnType.IMAGE,"Photo", 75, false, false));
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

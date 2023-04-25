@@ -68,7 +68,7 @@ public class ButtonTableCellEditor extends AbstractCellEditor implements TableCe
             Border focusBorder = ((JComponent) c).getBorder();
 
             if (table instanceof SimpleTable) {
-                Border rendererBorder = ((SimpleTable) table).getColumnConfig(column).getCellFormat().getBorder();
+                Border rendererBorder = ((SimpleTable) table).getColumnSpecsAt(column).getCellFormat().getBorder();
                 button.setBorder(new CompoundBorder(focusBorder, rendererBorder));
             } else {
                 button.setBorder(focusBorder);

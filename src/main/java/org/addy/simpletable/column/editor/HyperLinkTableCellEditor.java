@@ -13,7 +13,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.TableCellEditor;
 
 import org.addy.simpletable.SimpleTable;
-import org.addy.simpletable.column.config.ColumnConfig;
+import org.addy.simpletable.column.specs.ColumnSpecs;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
@@ -55,10 +55,10 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
             Border focusBorder = ((JComponent) c).getBorder();
 
             if (table instanceof SimpleTable) {
-                ColumnConfig columnConfig = ((SimpleTable) table).getColumnConfig(column);
+                ColumnSpecs columnSpecs = ((SimpleTable) table).getColumnSpecsAt(column);
 
-                if (columnConfig != null) {
-                    Border rendererBorder = columnConfig.getCellFormat().getBorder();
+                if (columnSpecs != null) {
+                    Border rendererBorder = columnSpecs.getCellFormat().getBorder();
                     label.setBorder(new CompoundBorder(focusBorder, rendererBorder));
                 } else {
                     label.setBorder(focusBorder);

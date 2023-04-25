@@ -1,4 +1,4 @@
-package org.addy.simpletable.column.config;
+package org.addy.simpletable.column.specs;
 
 import org.addy.simpletable.column.editor.ButtonTableCellEditor;
 import org.addy.simpletable.column.editor.DateTimeTableCellEditor;

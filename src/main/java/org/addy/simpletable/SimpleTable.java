@@ -1,6 +1,6 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.column.config.ColumnConfig;
+import org.addy.simpletable.column.specs.ColumnSpecs;
 import org.addy.swing.KnownColor;
 
 import javax.swing.*;
@@ -24,7 +24,7 @@ public class SimpleTable extends JTable {
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
-    private ColumnConfig[] columnConfigs = null;
+    private ColumnSpecs[] columnSpecs = null;
 
     public SimpleTable() {
         super();
@@ -67,36 +67,36 @@ public class SimpleTable extends JTable {
         this.rolloverBackground = rolloverBackground;
     }
 
-    public ColumnConfig[] getColumnConfigs() {
-        return columnConfigs;
+    public ColumnSpecs[] getColumnSpecs() {
+        return columnSpecs;
     }
 
-    public void setColumnConfigs(ColumnConfig... columnConfigs) {
-        this.columnConfigs = Objects.requireNonNull(columnConfigs);
-        applyColumnConfigs();
+    public void setColumnSpecs(ColumnSpecs... columnSpecs) {
+        this.columnSpecs = Objects.requireNonNull(columnSpecs);
+        applyColumnSpecs();
     }
 
-    public ColumnConfig getColumnConfig(int index) {
-        return columnConfigs != null && index < columnConfigs.length ? columnConfigs[index] : null;
+    public ColumnSpecs getColumnSpecsAt(int index) {
+        return columnSpecs != null && index < columnSpecs.length ? columnSpecs[index] : null;
     }
 
-    public void generateColumnConfigs() {
-        columnConfigs = new ColumnConfig[getColumnCount()];
+    public void generateColumnSpecs() {
+        columnSpecs = new ColumnSpecs[getColumnCount()];
         TableModel model = getModel();
 
         if (model != null) {
-            for (int i = 0; i < columnConfigs.length; ++i) {
-                columnConfigs[i] = ColumnConfig.of(model.getColumnClass(i));
+            for (int i = 0; i < columnSpecs.length; ++i) {
+                columnSpecs[i] = ColumnSpecs.of(model.getColumnClass(i));
             }
 
-            applyColumnConfigs();
+            applyColumnSpecs();
         }
     }
 
-    public void applyColumnConfigs() {
-        if (columnConfigs != null) {
-            for (int i = 0; i < columnConfigs.length; ++i) {
-                columnConfigs[i].applyTo(getColumnModel().getColumn(i), this, i);
+    public void applyColumnSpecs() {
+        if (columnSpecs != null) {
+            for (int i = 0; i < columnSpecs.length; ++i) {
+                columnSpecs[i].applyTo(getColumnModel().getColumn(i), this, i);
             }
         }
     }
@@ -104,18 +104,18 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        ColumnConfig columnConfig = getColumnConfig(column);
+        ColumnSpecs colSpecs = getColumnSpecsAt(column);
 
-        if (columnConfig != null)
-            columnConfig.getCellFormat().applyTo(component, false);
+        if (colSpecs != null)
+            colSpecs.getCellFormat().applyTo(component, false);
 
         if (!component.getBackground().equals(getSelectionBackground())) {
             if (rolloverBackground != null && row == rolloverRowIndex) {
                 component.setForeground(getForeground());
                 component.setBackground(rolloverBackground);
             } else if (alternateBackground != null) {
-                if (columnConfig != null && columnConfig.getCellFormat().getBackground() != null) {
-                    component.setBackground(columnConfig.getCellFormat().getBackground());
+                if (!(colSpecs == null || colSpecs.getCellFormat().getBackground() == null)) {
+                    component.setBackground(colSpecs.getCellFormat().getBackground());
                 } else {
                     component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
                 }
@@ -128,10 +128,10 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareEditor(TableCellEditor editor, int row, int column) {
         JComponent component = (JComponent) super.prepareEditor(editor, row, column);
-        ColumnConfig columnConfig = getColumnConfig(column);
+        ColumnSpecs colSpecs = getColumnSpecsAt(column);
 
-        if (columnConfig != null)
-            columnConfig.getCellFormat().applyTo(component, true);
+        if (colSpecs != null)
+            colSpecs.getCellFormat().applyTo(component, true);
 
         return component;
     }
