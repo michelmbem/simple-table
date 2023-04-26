@@ -79,7 +79,7 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
                     throw new IllegalArgumentException("Could not find a " + columnNames[i] + " property in class " + itemClass.getName());
             }
         } catch (IntrospectionException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }
