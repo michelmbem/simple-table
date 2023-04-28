@@ -1,4 +1,4 @@
-package org.addy.simpletable.column.specs;
+package org.addy.simpletable.column.spec;
 
 import org.apache.commons.lang3.ClassUtils;
 
@@ -10,7 +10,7 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.Objects;
 
-public class ColumnSpecs {
+public class ColumnSpec {
     private ColumnType columnType;
     private String headerText;
     private int width;
@@ -20,8 +20,8 @@ public class ColumnSpecs {
     private CellFormat cellFormat;
     private Object extraData;
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable,
-                       CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable,
+                      CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
 
         this.columnType = Objects.requireNonNull(columnType);
         this.headerText = headerText;
@@ -33,65 +33,65 @@ public class ColumnSpecs {
         this.extraData = extraData;
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
         this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
         this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
-                       CellFormat cellFormat, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
+                      CellFormat cellFormat, Object extraData) {
 
         this(columnType, headerText, width, true, true, headerFormat, cellFormat, extraData);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, CellFormat headerFormat, CellFormat cellFormat) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, CellFormat headerFormat, CellFormat cellFormat) {
         this(columnType, headerText, width, true, true, headerFormat, cellFormat, null);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width, Object extraData) {
         this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, int width) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width) {
         this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, Object extraData) {
         this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
-    public ColumnSpecs(ColumnType columnType, String headerText) {
+    public ColumnSpec(ColumnType columnType, String headerText) {
         this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public ColumnSpecs() {
+    public ColumnSpec() {
         this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public static ColumnSpecs lineNumbers(String headerText, int width) {
-        return new ColumnSpecs(ColumnType.LINENUMBER, headerText, width, false, false, CellFormat.DEFAULT, CellFormat.LINE_END, null);
+    public static ColumnSpec lineNumbers(String headerText, int width) {
+        return new ColumnSpec(ColumnType.LINENUMBER, headerText, width, false, false, CellFormat.DEFAULT, CellFormat.LINE_END, null);
     }
 
-    public static ColumnSpecs of(Class<?> columnClass) {
+    public static ColumnSpec of(Class<?> columnClass) {
         if (ClassUtils.isAssignable(columnClass, Boolean.class, true))
-            return new ColumnSpecs(ColumnType.CHECKBOX, null);
+            return new ColumnSpec(ColumnType.CHECKBOX, null);
 
         if (ClassUtils.isAssignable(columnClass, Number.class, true))
-            return new ColumnSpecs(ColumnType.NUMBER, null);
+            return new ColumnSpec(ColumnType.NUMBER, null);
 
         if (ClassUtils.isAssignable(columnClass, Date.class) || ClassUtils.isAssignable(columnClass, Temporal.class))
-            return new ColumnSpecs(ColumnType.DATETIME, null);
+            return new ColumnSpec(ColumnType.DATETIME, null);
 
         if (ClassUtils.isAssignable(columnClass, Image.class) || ClassUtils.isAssignable(columnClass, ImageIcon.class))
-            return new ColumnSpecs(ColumnType.DATETIME, null);
+            return new ColumnSpec(ColumnType.DATETIME, null);
 
         if (columnClass.isEnum())
-            return new ColumnSpecs(ColumnType.COMBOBOX, null);
+            return new ColumnSpec(ColumnType.COMBOBOX, null);
 
-        return  new ColumnSpecs();
+        return  new ColumnSpec();
     }
 
     public ColumnType getColumnType() {
@@ -184,50 +184,50 @@ public class ColumnSpecs {
 
 
     public static class Builder {
-        private final ColumnSpecs columnSpecs = new ColumnSpecs();
+        private final ColumnSpec columnSpec = new ColumnSpec();
 
         public Builder columnType(ColumnType arg) {
-            columnSpecs.setColumnType(arg);
+            columnSpec.setColumnType(arg);
             return this;
         }
 
         public Builder headerText(String arg) {
-            columnSpecs.setHeaderText(arg);
+            columnSpec.setHeaderText(arg);
             return this;
         }
 
         public Builder width(int arg) {
-            columnSpecs.setWidth(arg);
+            columnSpec.setWidth(arg);
             return this;
         }
 
         public Builder resizable(boolean arg) {
-            columnSpecs.setResizable(arg);
+            columnSpec.setResizable(arg);
             return this;
         }
 
         public Builder sortable(boolean arg) {
-            columnSpecs.setSortable(arg);
+            columnSpec.setSortable(arg);
             return this;
         }
 
         public Builder headerFormat(CellFormat arg) {
-            columnSpecs.setHeaderFormat(arg);
+            columnSpec.setHeaderFormat(arg);
             return this;
         }
 
         public Builder cellFormat(CellFormat arg) {
-            columnSpecs.setCellFormat(arg);
+            columnSpec.setCellFormat(arg);
             return this;
         }
 
         public Builder extraData(Object arg) {
-            columnSpecs.setExtraData(arg);
+            columnSpec.setExtraData(arg);
             return this;
         }
 
-        public ColumnSpecs build() {
-            return columnSpecs;
+        public ColumnSpec build() {
+            return columnSpec;
         }
     }
 }

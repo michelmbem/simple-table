@@ -1,15 +1,15 @@
-package org.addy.simpletable.column.specs;
+package org.addy.simpletable.column.spec;
 
 import org.addy.simpletable.column.editor.ButtonTableCellEditor;
 import org.addy.simpletable.column.editor.DateTimeTableCellEditor;
 import org.addy.simpletable.column.editor.HyperLinkTableCellEditor;
+import org.addy.simpletable.column.editor.RangeTableCellEditor;
 import org.addy.simpletable.column.renderer.ButtonTableCellRenderer;
 import org.addy.simpletable.column.renderer.CheckBoxTableCellRenderer;
-import org.addy.simpletable.column.renderer.DateTimeTableCellRenderer;
+import org.addy.simpletable.column.renderer.FormattedTableCellRenderer;
 import org.addy.simpletable.column.renderer.HyperLinkTableCellRenderer;
 import org.addy.simpletable.column.renderer.ImageTableCellRenderer;
 import org.addy.simpletable.column.renderer.LineNumberTableCellRenderer;
-import org.addy.simpletable.column.renderer.NumberTableCellRenderer;
 import org.addy.simpletable.column.renderer.ProgressTableCellRenderer;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
@@ -24,9 +24,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 public abstract class ColumnType {
     public TableCellRenderer getRenderer(Object configObject) {
@@ -54,7 +54,7 @@ public abstract class ColumnType {
     public static final ColumnType NUMBER = new ColumnType() {
         @Override
         public TableCellRenderer getRenderer(Object configObject) {
-            return new NumberTableCellRenderer(NumberFormats.of(configObject));
+            return new FormattedTableCellRenderer(NumberFormats.of(configObject));
         }
 
         @Override
@@ -66,7 +66,7 @@ public abstract class ColumnType {
     public static final ColumnType DATETIME = new ColumnType() {
         @Override
         public TableCellRenderer getRenderer(Object configObject) {
-            return new DateTimeTableCellRenderer(DateFormats.of(configObject));
+            return new FormattedTableCellRenderer(DateFormats.of(configObject), Date.class);
         }
 
         @Override
@@ -93,6 +93,11 @@ public abstract class ColumnType {
 
     public static final ColumnType COMBOBOX = new ColumnType() {
         @Override
+        public TableCellRenderer getRenderer(Object configObject) {
+            return new DefaultTableCellRenderer();
+        }
+
+        @Override
         public TableCellEditor getEditor(Object configObject) {
             ComboBoxModel<?> comboBoxModel = getComboBoxModel(configObject);
             JComboBox<?> comboBox = new JComboBox<>(comboBoxModel);
@@ -100,21 +105,10 @@ public abstract class ColumnType {
         }
 
         private ComboBoxModel<?> getComboBoxModel(Object data) {
-            if (data == null)
-                return new DefaultComboBoxModel<>();
-
-            Class<?> dataType = data.getClass();
-
-            if (ComboBoxModel.class.isAssignableFrom(dataType))
-                return (ComboBoxModel<?>) data;
-
-            if (dataType.isArray())
-                return new SimpleComboBoxModel<>((Object[]) data);
-
-            if (Collection.class.isAssignableFrom(dataType)) {
-                return new SimpleComboBoxModel<>((Collection<?>) data);
-            }
-
+            if (data == null) return new SimpleComboBoxModel<>();
+            if (data instanceof ComboBoxModel) return (ComboBoxModel<?>) data;
+            if (data instanceof Collection) return new SimpleComboBoxModel<>((Collection<?>) data);
+            if (data.getClass().isArray()) return new SimpleComboBoxModel<>((Object[]) data);
             return new SimpleComboBoxModel<>(Collections.singleton(data));
         }
     };
@@ -217,14 +211,21 @@ public abstract class ColumnType {
 
         @Override
         public TableCellEditor getEditor(Object configObject) {
-            NumberFormat numberFormat = configObject instanceof  ProgressModel
-                    ? ((ProgressModel) configObject).getNumberFormat()
-                    : NumberFormat.getPercentInstance();
+            TableCellEditor editor;
 
-            JFormattedTextField textField = new JFormattedTextField(numberFormat);
-            textField.setHorizontalAlignment(SwingConstants.TRAILING);
+            if (configObject instanceof ProgressModel) {
+                ProgressModel progressModel = (ProgressModel) configObject;
+                editor = new RangeTableCellEditor(
+                        progressModel.getRange().getMinimum(),
+                        progressModel.getRange().getMaximum());
+            } else if (configObject instanceof Range) {
+                Range range = (Range) configObject;
+                editor = new RangeTableCellEditor(range.getMinimum(), range.getMaximum());
+            } else {
+                editor = new RangeTableCellEditor();
+            }
 
-            return new DefaultCellEditor(textField);
+            return editor;
         }
     };
 

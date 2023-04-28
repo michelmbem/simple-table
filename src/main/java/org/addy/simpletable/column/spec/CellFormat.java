@@ -1,4 +1,4 @@
-package org.addy.simpletable.column.specs;
+package org.addy.simpletable.column.spec;
 
 import javax.swing.*;
 import javax.swing.border.Border;

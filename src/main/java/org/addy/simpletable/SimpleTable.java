@@ -1,6 +1,6 @@
 package org.addy.simpletable;
 
-import org.addy.simpletable.column.specs.ColumnSpecs;
+import org.addy.simpletable.column.spec.ColumnSpec;
 import org.addy.swing.KnownColor;
 
 import javax.swing.*;
@@ -24,7 +24,7 @@ public class SimpleTable extends JTable {
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
-    private ColumnSpecs[] columnSpecs = null;
+    private ColumnSpec[] columnSpecs = null;
 
     public SimpleTable() {
         super();
@@ -67,26 +67,35 @@ public class SimpleTable extends JTable {
         this.rolloverBackground = rolloverBackground;
     }
 
-    public ColumnSpecs[] getColumnSpecs() {
+    public ColumnSpec[] getColumnSpecs() {
         return columnSpecs;
     }
 
-    public void setColumnSpecs(ColumnSpecs... columnSpecs) {
+    public void setColumnSpecs(ColumnSpec... columnSpecs) {
         this.columnSpecs = Objects.requireNonNull(columnSpecs);
         applyColumnSpecs();
     }
 
-    public ColumnSpecs getColumnSpecsAt(int index) {
-        return columnSpecs != null && index < columnSpecs.length ? columnSpecs[index] : null;
+    public ColumnSpec getColumnSpec(int columnIndex) {
+        return columnSpecs != null && columnIndex < columnSpecs.length ? columnSpecs[columnIndex] : null;
+    }
+
+    public void setColumnSpec(int columnIndex, ColumnSpec columnSpec) {
+        if (columnSpecs != null && columnIndex < columnSpecs.length) {
+            columnSpecs[columnIndex] = columnSpec;
+            columnSpec.applyTo(getColumnModel().getColumn(columnIndex), this, columnIndex);
+        } else {
+            throw new ArrayIndexOutOfBoundsException(columnIndex);
+        }
     }
 
     public void generateColumnSpecs() {
-        columnSpecs = new ColumnSpecs[getColumnCount()];
+        columnSpecs = new ColumnSpec[getColumnCount()];
         TableModel model = getModel();
 
         if (model != null) {
             for (int i = 0; i < columnSpecs.length; ++i) {
-                columnSpecs[i] = ColumnSpecs.of(model.getColumnClass(i));
+                columnSpecs[i] = ColumnSpec.of(model.getColumnClass(i));
             }
 
             applyColumnSpecs();
@@ -104,7 +113,7 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        ColumnSpecs colSpecs = getColumnSpecsAt(column);
+        ColumnSpec colSpecs = getColumnSpec(column);
 
         if (colSpecs != null)
             colSpecs.getCellFormat().applyTo(component, false);
@@ -128,7 +137,7 @@ public class SimpleTable extends JTable {
     @Override
     public Component prepareEditor(TableCellEditor editor, int row, int column) {
         JComponent component = (JComponent) super.prepareEditor(editor, row, column);
-        ColumnSpecs colSpecs = getColumnSpecsAt(column);
+        ColumnSpec colSpecs = getColumnSpec(column);
 
         if (colSpecs != null)
             colSpecs.getCellFormat().applyTo(component, true);

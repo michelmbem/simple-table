@@ -1,23 +1,16 @@
 package org.addy.simpletable.column.editor;
 
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.table.TableCellEditor;
-
-import org.addy.simpletable.SimpleTable;
-import org.addy.simpletable.column.specs.ColumnSpecs;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
 import org.addy.simpletable.util.HyperLink;
+import org.addy.simpletable.util.UIHelper;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class HyperLinkTableCellEditor extends AbstractCellEditor implements TableCellEditor {
     public static final String COMMAND = "LINK_CLICK";
@@ -46,28 +39,7 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if (this.table == null) setTable(table);
 
-        Component c = table.getCellRenderer(row, column).getTableCellRendererComponent(table, value, isSelected, true, row, column);
-        
-        label.setForeground(c.getForeground());
-        label.setBackground(c.getBackground());
-
-        if (c instanceof JComponent) {
-            Border focusBorder = ((JComponent) c).getBorder();
-
-            if (table instanceof SimpleTable) {
-                ColumnSpecs columnSpecs = ((SimpleTable) table).getColumnSpecsAt(column);
-
-                if (columnSpecs != null) {
-                    Border rendererBorder = columnSpecs.getCellFormat().getBorder();
-                    label.setBorder(new CompoundBorder(focusBorder, rendererBorder));
-                } else {
-                    label.setBorder(focusBorder);
-                }
-            } else {
-                label.setBorder(focusBorder);
-            }
-        }
-
+        UIHelper.prepareEditor(label, table, value, isSelected, row, column);
         setEditedValue(value);
 
         return label;
