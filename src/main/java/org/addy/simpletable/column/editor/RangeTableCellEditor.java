@@ -7,9 +7,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 
-public class RangeTableCellEditor extends AbstractCellEditor
-        implements TableCellEditor {
-
+public class RangeTableCellEditor extends AbstractCellEditor implements TableCellEditor {
     private final JPanel panel;
     private final JSlider slider;
 

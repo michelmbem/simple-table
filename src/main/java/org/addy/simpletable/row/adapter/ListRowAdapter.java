@@ -2,7 +2,7 @@ package org.addy.simpletable.row.adapter;
 
 import java.util.List;
 
-public class ListRowAdapter extends BasicRowAdapter {
+public class ListRowAdapter implements RowAdapter {
     @Override
     public int getRowCount(Object itemSource) {
         return ((List) itemSource).size();

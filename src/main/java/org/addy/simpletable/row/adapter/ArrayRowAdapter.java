@@ -1,6 +1,6 @@
 package org.addy.simpletable.row.adapter;
 
-public class ArrayRowAdapter extends BasicRowAdapter {
+public class ArrayRowAdapter implements RowAdapter {
     @Override
     public int getRowCount(Object itemSource) {
         return ((Object[]) itemSource).length;

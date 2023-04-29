@@ -4,7 +4,7 @@ package org.addy.simpletable.column.adapter;
  *
  * @author Mike
  */
-public abstract class AssociativeColumnAdapter extends BasicColumnAdapter {
+public abstract class AssociativeColumnAdapter implements ColumnAdapter {
     protected String[] columnNames;
     
     protected AssociativeColumnAdapter(String... columnNames) {

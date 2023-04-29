@@ -4,7 +4,7 @@ package org.addy.simpletable.column.adapter;
  *
  * @author Mike
  */
-public class ArrayColumnAdapter extends BasicColumnAdapter {
+public class ArrayColumnAdapter implements ColumnAdapter {
     @Override
     public Object getValueAt(Object item, int columnIndex) {
         return ((Object[]) item)[columnIndex];

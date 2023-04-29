@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class ResultSetRowAdapter extends BasicRowAdapter {
+public class ResultSetRowAdapter implements RowAdapter {
     @Override
     public int getRowCount(Object itemSource) {
         ResultSet resultSet = (ResultSet) itemSource;
@@ -82,22 +82,22 @@ public class ResultSetRowAdapter extends BasicRowAdapter {
 
     private void upadteResultSet(ResultSet resultSet, Object item) throws SQLException {
         if (item instanceof Map) {
-            Object[] array = (Object[]) item;
+            Map<String, ?> map = (Map<String, ?>) item;
 
-            for (int i = 0; i < array.length; ++i) {
-                resultSet.updateObject(i + 1, array[i]);
+            for (String key : map.keySet()) {
+                resultSet.updateObject(key, map.get(key));
             }
-        } if (item instanceof List) {
+        } else if (item instanceof List) {
             List<?> list = (List<?>) item;
 
             for (int i = 0; i < list.size(); ++i) {
                 resultSet.updateObject(i + 1, list.get(i));
             }
         } else if (item!= null && item.getClass().isArray()) {
-            Map<String, ?> map = (Map<String, ?>) item;
+            Object[] array = (Object[]) item;
 
-            for (String key : map.keySet()) {
-                resultSet.updateObject(key, map.get(key));
+            for (int i = 0; i < array.length; ++i) {
+                resultSet.updateObject(i + 1, array[i]);
             }
         } else {
             throw new IllegalArgumentException("Cannot update a RecordSet with the given item");

@@ -6,7 +6,7 @@ import java.util.List;
  *
  * @author Mike
  */
-public class ListColumnAdapter extends BasicColumnAdapter {
+public class ListColumnAdapter implements ColumnAdapter {
     @Override
     public Object getValueAt(Object item, int columnIndex) {
         return ((List) item).get(columnIndex);

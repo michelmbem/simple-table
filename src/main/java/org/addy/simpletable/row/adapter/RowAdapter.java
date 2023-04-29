@@ -1,7 +1,6 @@
 package org.addy.simpletable.row.adapter;
 
 public interface RowAdapter {
-    boolean isCellEditable(int rowIndex);
     int getRowCount(Object itemSource);
     Object getRowAt(Object itemSource, int rowIndex);
 
@@ -23,5 +22,9 @@ public interface RowAdapter {
 
     default void removeAllRows(Object itemSource) {
         throw new IllegalStateException("itemSource doesn't support removing items");
+    }
+
+    default boolean isCellEditable(int rowIndex) {
+        return true;
     }
 }
