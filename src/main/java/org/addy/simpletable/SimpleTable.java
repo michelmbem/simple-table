@@ -28,6 +28,7 @@ public class SimpleTable extends JTable {
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
     private ColumnSpec[] columnSpecs = null;
+    private RowHeaderView rowHeaderView = null;
 
     public SimpleTable() {
         super();
@@ -114,6 +115,19 @@ public class SimpleTable extends JTable {
         }
     }
 
+    public RowHeaderView getRowHeaderView() {
+        return rowHeaderView;
+    }
+
+    public void createRowHeaders(JScrollPane scrollPane, ColumnType columnType, String headerText, int width, CellFormat cellFormat) {
+        rowHeaderView = new RowHeaderView(this, columnType, headerText, width, cellFormat);
+        JViewport rowHeader = new JViewport();
+        rowHeader.setView(rowHeaderView);
+        rowHeader.setPreferredSize(rowHeaderView.getPreferredSize());
+        scrollPane.setRowHeader(rowHeader);
+        scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeaderView.getTableHeader());
+    }
+
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
@@ -147,15 +161,6 @@ public class SimpleTable extends JTable {
             colSpecs.getCellFormat().applyTo(component, true);
 
         return component;
-    }
-
-    public void createRowHeaders(JScrollPane scrollPane, ColumnType columnType, String headerText, int width, CellFormat cellFormat) {
-        RowHeaderView rowHeaderView = new RowHeaderView(this, columnType, headerText, width, cellFormat);
-        JViewport rowHeader = new JViewport();
-        rowHeader.setView(rowHeaderView);
-        rowHeader.setPreferredSize(rowHeaderView.getPreferredSize());
-        scrollPane.setRowHeader(rowHeader);
-        scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeaderView.getTableHeader());
     }
 
     protected void createRolloverListener() {
