@@ -74,11 +74,6 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
     }
 
     @Override
-    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-        // Unused!
-    }
-
-    @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         switch (propertyName) {
             case "text":

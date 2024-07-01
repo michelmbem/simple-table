@@ -38,9 +38,9 @@ public final class Demo {
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnSpecs(
-                new ColumnSpec(ColumnType.LINENUMBER,"", 25, false, false, CellFormat.DEFAULT, yellowCell, null),
-                new ColumnSpec(ColumnType.HYPERLINK,"Nom", 125, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnSpec(ColumnType.TEXT,"Prénom", 125),
+                new ColumnSpec(ColumnType.LINENUMBER,"", 35, false, false, CellFormat.DEFAULT, yellowCell, null),
+                new ColumnSpec(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
+                new ColumnSpec(ColumnType.TEXT,"Prénom", 100),
                 new ColumnSpec(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
                 new ColumnSpec(ColumnType.DATETIME, "Né(e) le", 125, "d"),
                 new ColumnSpec(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),

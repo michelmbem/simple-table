@@ -39,7 +39,7 @@ public class SimpleTableModel extends AbstractTableModel {
         this.columns = columns;
         this.rowAdapter = rowAdapter;
         this.columnAdapter = columnAdapter;
-        initColumnAdapter(columnAdapter);
+        initColumnAdapter();
     }
 
     public SimpleTableModel(Object itemSource, String[] columnNames, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
@@ -115,7 +115,7 @@ public class SimpleTableModel extends AbstractTableModel {
 
     public void setColumnAdapter(ColumnAdapter columnAdapter) {
         this.columnAdapter = columnAdapter;
-        initColumnAdapter(columnAdapter);
+        initColumnAdapter();
         fireTableStructureChanged();
     }
 
@@ -228,7 +228,7 @@ public class SimpleTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    private void initColumnAdapter(ColumnAdapter columnAdapter) {
+    private void initColumnAdapter() {
         if (columnAdapter instanceof AssociativeColumnAdapter) {
             AssociativeColumnAdapter aca = (AssociativeColumnAdapter) columnAdapter;
 

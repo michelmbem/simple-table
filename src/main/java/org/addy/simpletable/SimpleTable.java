@@ -29,6 +29,7 @@ public class SimpleTable extends JTable {
     public SimpleTable() {
         super();
         setRowHeight(20);
+        setAutoResizeMode(AUTO_RESIZE_OFF);
         setAlternateBackground(KnownColor.WHITE_BLUE);
         setRolloverBackground(KnownColor.IVORY);
         setAutoCreateRowSorter(true);

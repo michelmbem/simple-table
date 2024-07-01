@@ -86,7 +86,7 @@ public class ColumnSpec {
             return new ColumnSpec(ColumnType.DATETIME, null);
 
         if (ClassUtils.isAssignable(columnClass, Image.class) || ClassUtils.isAssignable(columnClass, ImageIcon.class))
-            return new ColumnSpec(ColumnType.DATETIME, null);
+            return new ColumnSpec(ColumnType.IMAGE, null);
 
         if (columnClass.isEnum())
             return new ColumnSpec(ColumnType.COMBOBOX, null);

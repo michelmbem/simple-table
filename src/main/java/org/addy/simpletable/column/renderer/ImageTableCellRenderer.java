@@ -82,11 +82,6 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     }
 
     @Override
-    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-        // Unused!
-    }
-
-    @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         switch (propertyName) {
             case "image":
