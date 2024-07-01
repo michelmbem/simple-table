@@ -35,7 +35,7 @@ public class ResultSetRowAdapter implements RowAdapter {
         ResultSet resultSet = (ResultSet) itemSource;
 
         try {
-            upadteResultSet(resultSet, item);
+            updateResultSet(resultSet, item);
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -47,7 +47,7 @@ public class ResultSetRowAdapter implements RowAdapter {
 
         try {
             resultSet.moveToInsertRow();
-            upadteResultSet(resultSet, item);
+            updateResultSet(resultSet, item);
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -80,7 +80,7 @@ public class ResultSetRowAdapter implements RowAdapter {
         }
     }
 
-    private void upadteResultSet(ResultSet resultSet, Object item) throws SQLException {
+    private void updateResultSet(ResultSet resultSet, Object item) throws SQLException {
         if (item instanceof Map) {
             Map<String, ?> map = (Map<String, ?>) item;
 
