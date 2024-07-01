@@ -1,6 +1,9 @@
 package org.addy.simpletable;
 
+import org.addy.simpletable.column.spec.CellFormat;
 import org.addy.simpletable.column.spec.ColumnSpec;
+import org.addy.simpletable.column.spec.ColumnType;
+import org.addy.simpletable.row.header.RowHeaderView;
 import org.addy.swing.KnownColor;
 
 import javax.swing.*;
@@ -144,6 +147,15 @@ public class SimpleTable extends JTable {
             colSpecs.getCellFormat().applyTo(component, true);
 
         return component;
+    }
+
+    public void createRowHeaders(JScrollPane scrollPane, ColumnType columnType, String headerText, int width, CellFormat cellFormat) {
+        RowHeaderView rowHeaderView = new RowHeaderView(this, columnType, headerText, width, cellFormat);
+        JViewport rowHeader = new JViewport();
+        rowHeader.setView(rowHeaderView);
+        rowHeader.setPreferredSize(rowHeaderView.getPreferredSize());
+        scrollPane.setRowHeader(rowHeader);
+        scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeaderView.getTableHeader());
     }
 
     protected void createRolloverListener() {

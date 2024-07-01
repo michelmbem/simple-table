@@ -30,15 +30,13 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        String[] tableColumns = {"0", "$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
+        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
         SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
-        tableModel.getColumns()[2].setValidator(CellValidators.notEmpty());
+        tableModel.getColumns()[1].setValidator(CellValidators.notEmpty());
         
-        CellFormat yellowCell = CellFormat.LINE_END.withColors(null, Color.YELLOW);
         SimpleTable table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnSpecs(
-                new ColumnSpec(ColumnType.LINENUMBER,"", 35, false, false, CellFormat.DEFAULT, yellowCell, null),
                 new ColumnSpec(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
                 new ColumnSpec(ColumnType.TEXT,"Prénom", 100),
                 new ColumnSpec(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
@@ -48,9 +46,12 @@ public final class Demo {
                 new ColumnSpec(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
                 new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
 
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 35, CellFormat.LINE_END);
+
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setContentPane(new JScrollPane(table));
+        frame.setContentPane(scrollPane);
         frame.pack();
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);

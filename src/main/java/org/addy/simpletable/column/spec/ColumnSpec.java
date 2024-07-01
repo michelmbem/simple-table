@@ -71,10 +71,6 @@ public class ColumnSpec {
         this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public static ColumnSpec lineNumbers(String headerText, int width) {
-        return new ColumnSpec(ColumnType.LINENUMBER, headerText, width, false, false, CellFormat.DEFAULT, CellFormat.LINE_END, null);
-    }
-
     public static ColumnSpec of(Class<?> columnClass) {
         if (ClassUtils.isAssignable(columnClass, Boolean.class, true))
             return new ColumnSpec(ColumnType.CHECKBOX, null);
