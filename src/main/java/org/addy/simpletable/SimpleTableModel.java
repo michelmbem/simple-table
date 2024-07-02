@@ -74,7 +74,7 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(ResultSet resultSet, String... columnNames) {
-        this(resultSet, ColumnDefinition.fromResultSetAndNames(resultSet, columnNames),
+        this(resultSet, ColumnDefinition.fromResultSet(resultSet, columnNames),
                 new ResultSetRowAdapter(), new ResultSetColumnAdapter());
     }
 
@@ -161,42 +161,36 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        CellConverter converter = columns[columnIndex].getConverter();
         Object row = rowAdapter.getRowAt(itemSource, rowIndex);
-        Object value = !(row == null || columnAdapter == null)
-                ? columnAdapter.getValueAt(row, columnIndex)
-                : null;
-
+        Object value = row != null ? columnAdapter.getValueAt(row, columnIndex) : null;
+        CellConverter converter = columns[columnIndex].getConverter();
         return converter != null ? converter.model2view(value, row) : value;
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        CellConverter converter = columns[columnIndex].getConverter();
-        CellValidator validator = columns[columnIndex].getValidator();
         Object row = rowAdapter.getRowAt(itemSource, rowIndex);
+        if (row == null) return;
 
-        if (!(row == null || columnAdapter == null)) {
-            if (converter != null)
-                value = converter.view2model(value, row);
+        CellConverter converter = columns[columnIndex].getConverter();
+        if (converter != null) value = converter.view2model(value, row);
 
-            if (validator != null) {
-                ValidationResult result = validator.validate(value, row);
-
-                if (!result.isValid())
-                    throw new ValidationException(result.getMessage());
-            }
-
-            columnAdapter.setValueAt(row, columnIndex, value);
-            fireTableCellUpdated(rowIndex, columnIndex);
+        CellValidator validator = columns[columnIndex].getValidator();
+        if (validator != null) {
+            ValidationResult result = validator.validate(value, row);
+            if (!result.isValid()) throw new ValidationException(result.getMessage());
         }
+
+        columnAdapter.setValueAt(row, columnIndex, value);
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return editable && columns[columnIndex].isEditable() &&
-                (rowAdapter == null || rowAdapter.isCellEditable(rowIndex)) &&
-                (columnAdapter == null || columnAdapter.isCellEditable(columnIndex));
+        return editable &&
+                columns[columnIndex].isEditable() &&
+                rowAdapter.isCellEditable(rowIndex) &&
+                columnAdapter.isCellEditable(columnIndex);
     }
 
     public void addRow(Object row) {

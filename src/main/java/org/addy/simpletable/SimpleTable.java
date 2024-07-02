@@ -109,7 +109,7 @@ public class SimpleTable extends JTable {
 
     public void applyColumnSpecs() {
         if (columnSpecs != null) {
-            for (int i = 0; i < columnSpecs.length; ++i) {
+            for (int i = 0; i < columnSpecs.length && i < getColumnCount(); ++i) {
                 columnSpecs[i].applyTo(getColumnModel().getColumn(i), this, i);
             }
         }

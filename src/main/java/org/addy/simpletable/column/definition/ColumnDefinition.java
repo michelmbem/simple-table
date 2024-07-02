@@ -75,35 +75,35 @@ public class ColumnDefinition implements Serializable {
         return Stream.of(names).map(ColumnDefinition::new).toArray(ColumnDefinition[]::new);
     }
 
-    public static ColumnDefinition[] fromResultSetAndNames(ResultSet resultSet, String[] names) {
+    public static ColumnDefinition[] fromResultSet(ResultSet resultSet, String[] columnNames) {
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
 
-            return Stream.of(names)
-                    .map(name -> fromResultSetMetaData(metaData, name))
+            return Stream.of(columnNames)
+                    .map(columnName -> fromResultSetMetaData(metaData, columnName))
                     .toArray(ColumnDefinition[]::new);
         } catch (SQLException e) {
             throw new IllegalArgumentException("Could not extract meta data from the given ResultSet", e);
         }
     }
 
-    private static ColumnDefinition fromResultSetMetaData(ResultSetMetaData metaData, String name) {
+    private static ColumnDefinition fromResultSetMetaData(ResultSetMetaData metaData, String columnName) {
         try {
             int columnCount = metaData.getColumnCount();
 
             for (int i = 1; i <= columnCount; ++i) {
-                if (name.equals(metaData.getColumnName(i)))
+                if (columnName.equalsIgnoreCase(metaData.getColumnName(i)))
                     return new ColumnDefinition(
-                            name,
+                            columnName,
                             Class.forName(metaData.getColumnClassName(i)),
                             !metaData.isReadOnly(i),
                             null,
                             null);
             }
 
-            throw new IllegalArgumentException("Could not find a column with name " + name + " in the ResultSet");
+            throw new IllegalArgumentException("Could not find a column with the name " + columnName + " in the ResultSet");
         } catch (SQLException | ClassNotFoundException e) {
-            throw new IllegalArgumentException("An error occurred while introspecting column " + name, e);
+            throw new IllegalArgumentException("An error occurred while introspecting column " + columnName, e);
         }
     }
 }
