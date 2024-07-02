@@ -47,7 +47,7 @@ public final class Demo {
                 new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
 
         JScrollPane scrollPane = new JScrollPane(table);
-        table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 35, CellFormat.LINE_END);
+        table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
 
         JFrame frame = new JFrame("SimpleTable demo");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

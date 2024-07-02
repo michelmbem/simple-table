@@ -1,5 +1,6 @@
 package org.addy.simpletable.column.spec;
 
+import org.addy.simpletable.column.renderer.TableHeaderCellRenderer;
 import org.apache.commons.lang3.ClassUtils;
 
 import javax.swing.*;
@@ -169,6 +170,10 @@ public class ColumnSpec {
 
         TableRowSorter<?> rowSorter = (TableRowSorter<?>) table.getRowSorter();
         if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
+
+        TableHeaderCellRenderer headerRenderer = new TableHeaderCellRenderer(table.getTableHeader().getDefaultRenderer());
+        headerRenderer.setCellFormat(headerFormat);
+        column.setHeaderRenderer(headerRenderer);
 
         column.setCellRenderer(columnType.getRenderer(extraData));
         column.setCellEditor(columnType.getEditor(extraData));
