@@ -6,17 +6,14 @@ import java.sql.SQLException;
 public class ResultSetColumnAdapter extends AssociativeColumnAdapter {
     private final FieldExtractor fieldExtractor;
 
-    public ResultSetColumnAdapter(boolean extractByName, String... columnNames) {
-        super(columnNames);
-        fieldExtractor = extractByName ? new ByNameFieldExtractor() : new ByIndexFieldExtractor();
+    public ResultSetColumnAdapter() {
+        super();
+        fieldExtractor = new ByIndexFieldExtractor();
     }
 
     public ResultSetColumnAdapter(String... columnNames) {
-        this(true, columnNames);
-    }
-
-    public ResultSetColumnAdapter() {
-        this(false);
+        super(columnNames);
+        fieldExtractor = new ByNameFieldExtractor() ;
     }
 
     @Override
