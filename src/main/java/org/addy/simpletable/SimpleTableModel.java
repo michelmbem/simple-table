@@ -23,7 +23,7 @@ import static org.addy.util.CollectionUtil.requiredFirst;
 /**
  * A generic table model that virtually accepts any kind of data source.<br>
  * Uses row and column adapters to extract rows and cells from the given data source.<br>
- * Can automatically detect which row or column adapter based on the constructor used to create an instance.
+ * Can automatically detect which row or column adapter to use based on the constructor used to create an instance.
  *
  * @author Mike
  */
@@ -75,7 +75,11 @@ public class SimpleTableModel extends AbstractTableModel {
 
     public SimpleTableModel(ResultSet resultSet, String... columnNames) {
         this(resultSet, ColumnDefinition.fromResultSet(resultSet, columnNames),
-                new ResultSetRowAdapter(), new ResultSetColumnAdapter());
+                new ResultSetRowAdapter(), new ResultSetColumnAdapter(columnNames));
+    }
+
+    public SimpleTableModel(ResultSet resultSet) {
+        this(resultSet, ColumnDefinition.fromResultSet(resultSet), new ResultSetRowAdapter(), new ResultSetColumnAdapter());
     }
 
     public SimpleTableModel() {
@@ -150,8 +154,8 @@ public class SimpleTableModel extends AbstractTableModel {
         if (column.getType() == null) {
             if (getRowCount() > 0)
                 column.setType(getValueAt(0, columnIndex).getClass());
-            else if (columnAdapter instanceof BeanColumnAdapter)
-                column.setType(((BeanColumnAdapter) columnAdapter).getColumnClassAt(columnIndex));
+            else if (columnAdapter instanceof BeanColumnAdapter bca)
+                column.setType(bca.getColumnClassAt(columnIndex));
             else
                 column.setType(Object.class);
         }
@@ -223,12 +227,9 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     private void configureColumnAdapter() {
-        if (columnAdapter instanceof AssociativeColumnAdapter) {
-            AssociativeColumnAdapter aca = (AssociativeColumnAdapter) columnAdapter;
-
-            if (CollectionUtil.isEmpty(aca.getColumnNames())) {
-                aca.setColumnNames(Stream.of(columns).map(ColumnDefinition::getName).toArray(String[]::new));
-            }
+        if (columnAdapter instanceof AssociativeColumnAdapter aca &&
+                CollectionUtil.isEmpty(aca.getColumnNames())) {
+            aca.setColumnNames(Stream.of(columns).map(ColumnDefinition::getName).toArray(String[]::new));
         }
     }
 }

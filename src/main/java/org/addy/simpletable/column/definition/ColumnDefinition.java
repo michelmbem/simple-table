@@ -3,6 +3,7 @@ package org.addy.simpletable.column.definition;
 import org.addy.simpletable.column.converter.CellConverter;
 import org.addy.simpletable.column.validator.CellValidator;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class ColumnDefinition implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String name;
@@ -75,6 +77,27 @@ public class ColumnDefinition implements Serializable {
         return Stream.of(names).map(ColumnDefinition::new).toArray(ColumnDefinition[]::new);
     }
 
+    public static ColumnDefinition[] fromResultSet(ResultSet resultSet) {
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            var columns = new ColumnDefinition[metaData.getColumnCount()];
+
+            for (int i = 1; i <= columns.length; ++i) {
+                columns[i - 1] = new ColumnDefinition(
+                        metaData.getColumnName(i),
+                        Class.forName(metaData.getColumnClassName(i)),
+                        !metaData.isReadOnly(i),
+                        null,
+                        null
+                );
+            }
+
+            return columns;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not extract meta data from the given ResultSet", e);
+        }
+    }
+
     public static ColumnDefinition[] fromResultSet(ResultSet resultSet, String[] columnNames) {
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -98,7 +121,8 @@ public class ColumnDefinition implements Serializable {
                             Class.forName(metaData.getColumnClassName(i)),
                             !metaData.isReadOnly(i),
                             null,
-                            null);
+                            null
+                    );
             }
 
             throw new IllegalArgumentException("Could not find a column with the name " + columnName + " in the ResultSet");
