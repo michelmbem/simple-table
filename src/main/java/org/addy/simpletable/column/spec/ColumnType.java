@@ -27,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public abstract class ColumnType {
     public TableCellRenderer getRenderer(Object configObject) {
@@ -106,8 +107,8 @@ public abstract class ColumnType {
 
         private ComboBoxModel<?> getComboBoxModel(Object data) {
             if (data == null) return new SimpleComboBoxModel<>();
-            if (data instanceof ComboBoxModel) return (ComboBoxModel<?>) data;
-            if (data instanceof Collection) return new SimpleComboBoxModel<>((Collection<?>) data);
+            if (data instanceof ComboBoxModel<?> cbm) return cbm;
+            if (data instanceof Collection<?> col) return new SimpleComboBoxModel<>(col);
             if (data.getClass().isArray()) return new SimpleComboBoxModel<>((Object[]) data);
             return new SimpleComboBoxModel<>(Collections.singleton(data));
         }
@@ -118,16 +119,14 @@ public abstract class ColumnType {
         public TableCellRenderer getRenderer(Object configObject) {
             ButtonTableCellRenderer renderer;
 
-            if ((configObject == null) || (configObject instanceof TableCellActionListener)) {
+            if ((configObject == null) || (configObject instanceof TableCellActionListener))
                 renderer = new ButtonTableCellRenderer();
-            } else if (configObject instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) configObject;
-                renderer = new ButtonTableCellRenderer(buttonModel.getText(), buttonModel.getIcon());
-            } else if (configObject instanceof Icon) {
-                renderer = new ButtonTableCellRenderer((Icon) configObject);
-            } else {
+            else if (configObject instanceof ButtonModel bm)
+                renderer = new ButtonTableCellRenderer(bm.getText(), bm.getIcon());
+            else if (configObject instanceof Icon icon)
+                renderer = new ButtonTableCellRenderer(icon);
+            else
                 renderer = new ButtonTableCellRenderer(configObject.toString());
-            }
 
             return renderer;
         }
@@ -136,18 +135,16 @@ public abstract class ColumnType {
         public TableCellEditor getEditor(Object configObject) {
             ButtonTableCellEditor editor;
 
-            if (configObject == null) {
+            if (configObject == null)
                 editor = new ButtonTableCellEditor(null);
-            } else if (configObject instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) configObject;
-                editor = new ButtonTableCellEditor(buttonModel.getText(), buttonModel.getIcon(), buttonModel.getActionListener());
-            } else if (configObject instanceof TableCellActionListener) {
-                editor = new ButtonTableCellEditor((TableCellActionListener) configObject);
-            } else if (configObject instanceof Icon) {
-                editor = new ButtonTableCellEditor((Icon) configObject, null);
-            } else {
+            else if (configObject instanceof ButtonModel bm)
+                editor = new ButtonTableCellEditor(bm.getText(), bm.getIcon(), bm.getActionListener());
+            else if (configObject instanceof TableCellActionListener tcal)
+                editor = new ButtonTableCellEditor(tcal);
+            else if (configObject instanceof Icon icon)
+                editor = new ButtonTableCellEditor(icon, null);
+            else
                 editor = new ButtonTableCellEditor(configObject.toString(), null);
-            }
 
             return editor;
         }
@@ -163,16 +160,14 @@ public abstract class ColumnType {
         public TableCellEditor getEditor(Object configObject) {
             HyperLinkTableCellEditor editor;
 
-            if (configObject == null) {
+            if (configObject == null)
                 editor = new HyperLinkTableCellEditor(null);
-            } else if (configObject instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) configObject;
-                editor = new HyperLinkTableCellEditor(buttonModel.getText(), buttonModel.getActionListener());
-            } else if (configObject instanceof TableCellActionListener) {
-                editor = new HyperLinkTableCellEditor((TableCellActionListener) configObject);
-            } else {
+            else if (configObject instanceof ButtonModel bm)
+                editor = new HyperLinkTableCellEditor(bm.getText(), bm.getActionListener());
+            else if (configObject instanceof TableCellActionListener tcal)
+                editor = new HyperLinkTableCellEditor(tcal);
+            else
                 editor = new HyperLinkTableCellEditor(configObject.toString(), null);
-            }
 
             return editor;
         }
@@ -192,19 +187,17 @@ public abstract class ColumnType {
         public TableCellRenderer getRenderer(Object configObject) {
             TableCellRenderer renderer;
 
-            if (configObject instanceof ProgressModel) {
-                ProgressModel progressModel = (ProgressModel) configObject;
+            if (configObject instanceof ProgressModel pm)
                 renderer = new ProgressTableCellRenderer(
-                        progressModel.getRange().getMinimum(),
-                        progressModel.getRange().getMaximum(),
-                        progressModel.isStringPainted(),
-                        progressModel.getNumberFormat());
-            } else if (configObject instanceof Range) {
-                Range range = (Range) configObject;
+                    pm.getRange().getMinimum(),
+                    pm.getRange().getMaximum(),
+                    pm.isStringPainted(),
+                    pm.getNumberFormat()
+                );
+            else if (configObject instanceof Range range)
                 renderer = new ProgressTableCellRenderer(range.getMinimum(), range.getMaximum());
-            } else {
+            else
                 renderer = new ProgressTableCellRenderer();
-            }
 
             return renderer;
         }
@@ -213,17 +206,12 @@ public abstract class ColumnType {
         public TableCellEditor getEditor(Object configObject) {
             TableCellEditor editor;
 
-            if (configObject instanceof ProgressModel) {
-                ProgressModel progressModel = (ProgressModel) configObject;
-                editor = new RangeTableCellEditor(
-                        progressModel.getRange().getMinimum(),
-                        progressModel.getRange().getMaximum());
-            } else if (configObject instanceof Range) {
-                Range range = (Range) configObject;
+            if (configObject instanceof ProgressModel pm)
+                editor = new RangeTableCellEditor(pm.getRange().getMinimum(), pm.getRange().getMaximum());
+            else if (configObject instanceof Range range)
                 editor = new RangeTableCellEditor(range.getMinimum(), range.getMaximum());
-            } else {
+            else
                 editor = new RangeTableCellEditor();
-            }
 
             return editor;
         }

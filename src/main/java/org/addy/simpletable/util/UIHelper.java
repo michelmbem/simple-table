@@ -17,11 +17,11 @@ public final class UIHelper {
         editor.setForeground(c.getForeground());
         editor.setBackground(c.getBackground());
 
-        if (c instanceof JComponent) {
-            Border focusBorder = ((JComponent) c).getBorder();
+        if (c instanceof JComponent jc) {
+            Border focusBorder = jc.getBorder();
 
-            if (table instanceof SimpleTable) {
-                ColumnSpec columnSpec = ((SimpleTable) table).getColumnSpec(column);
+            if (table instanceof SimpleTable simpleTable) {
+                ColumnSpec columnSpec = simpleTable.getColumnSpec(column);
 
                 if (columnSpec != null) {
                     Border rendererBorder = columnSpec.getCellFormat().getBorder();

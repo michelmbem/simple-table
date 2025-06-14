@@ -1,24 +1,25 @@
 package org.addy.simpletable.column.converter;
 
-import org.addy.simpletable.model.ListItem;
+import org.addy.swing.ListItem;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 public class ListItemCellConverter implements CellConverter {
     private final List<ListItem<?>> listItems;
 
-    public ListItemCellConverter(Collection<? extends ListItem<?>> listItems) {
-        this.listItems = new ArrayList<>(Objects.requireNonNull(listItems));
+    public ListItemCellConverter(List<ListItem<?>> listItems) {
+        this.listItems = Objects.requireNonNull(listItems);
     }
 
     public ListItemCellConverter(ListItem<?>... listItems) {
-        this.listItems = Arrays.asList(Objects.requireNonNull(listItems));
+        this.listItems = List.of(listItems);
     }
 
     @Override
     public Object model2view(Object modelValue, Object rowItem) {
         return listItems.stream()
-                .filter(listItem -> listItem.getValue().equals(modelValue))
+                .filter(listItem -> listItem.value().equals(modelValue))
                 .findFirst()
                 .orElse(null);
     }
@@ -26,6 +27,6 @@ public class ListItemCellConverter implements CellConverter {
     @Override
     public Object view2model(Object editorValue, Object rowItem) {
         var listItem = (ListItem<?>) editorValue;
-        return listItem != null ? listItem.getValue() : null;
+        return listItem != null ? listItem.value() : null;
     }
 }
