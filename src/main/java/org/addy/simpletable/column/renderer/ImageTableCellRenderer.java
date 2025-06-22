@@ -3,12 +3,10 @@ package org.addy.simpletable.column.renderer;
 import org.addy.swing.JPictureBox;
 import org.addy.swing.SizeMode;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 
@@ -83,36 +81,15 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
 
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        switch (propertyName) {
-            case "image":
-            case "sizeMode":
-                super.firePropertyChange(propertyName, oldValue, newValue);
-                break;
-            default:
-                break;
+        if (propertyName.equals("image") || propertyName.equals("sizeMode")) {
+            super.firePropertyChange(propertyName, oldValue, newValue);
         }
     }
 
     private void setValue(Object value) {
         try {
-            if (value == null) {
-                setImage(null);
-            } else if (value instanceof Image) {
-                setImage((Image) value);
-            } else if (value instanceof ImageIcon) {
-                setImage(((ImageIcon) value).getImage());
-            } else if (value instanceof InputStream) {
-                setImage(ImageIO.read((InputStream) value));
-            } else if (value instanceof File) {
-                setImage(ImageIO.read((File) value));
-            } else if (value instanceof URL) {
-                setImage(ImageIO.read((URL) value));
-            } else if (value instanceof byte[]) {
-                setImage(ImageIO.read(new ByteArrayInputStream((byte[]) value)));
-            } else {
-                setImage(ImageIO.read(new FileInputStream(value.toString())));
-            }
-        } catch (IOException e) {
+            setImageSource(value);
+        } catch (IllegalArgumentException e) {
             setImage(ERROR_IMAGE);
         }
     }
