@@ -7,26 +7,21 @@ public final class NumberFormats {
     private NumberFormats() {}
 
     public static NumberFormat of(Object value) {
-        if (value == null) return NumberFormat.getInstance();
+        if (value == null)
+            return NumberFormat.getInstance();
 
-        if (value instanceof NumberFormat) return (NumberFormat) value;
+        if (value instanceof NumberFormat numberFormat)
+            return numberFormat;
 
-        switch (value.toString()) {
-            case "g":
-                return NumberFormat.getNumberInstance();
-            case "$":
-            case "c":
-            case "currency":
-                return NumberFormat.getCurrencyInstance();
-            case "%":
-            case "p":
-            case "percent":
-                return NumberFormat.getPercentInstance();
-            default: {
-                DecimalFormat decimalFormat = new DecimalFormat(value.toString());
+        return switch (value.toString()) {
+            case "g" -> NumberFormat.getNumberInstance();
+            case "$", "c", "currency" -> NumberFormat.getCurrencyInstance();
+            case "%", "p", "percent" -> NumberFormat.getPercentInstance();
+            default -> {
+                var decimalFormat = new DecimalFormat(value.toString());
                 decimalFormat.setParseBigDecimal(true);
-                return decimalFormat;
+                yield decimalFormat;
             }
-        }
+        };
     }
 }

@@ -105,22 +105,18 @@ public class CellFormat {
         if (background != null) component.setBackground(background);
         if (font != null) component.setFont(font);
 
-        if (component instanceof JComponent) {
-            JComponent jComponent = (JComponent) component;
+        if (component instanceof JComponent jComponent) {
             if (background != null) jComponent.setOpaque(true);
             if (!(border == null || isEditor)) jComponent.setBorder(border);
 
-            if (component instanceof JLabel) {
-                JLabel label = (JLabel) component;
+            if (component instanceof JLabel label) {
                 if (horizontalAlignment >= 0) label.setHorizontalAlignment(horizontalAlignment);
                 if (verticalAlignment >= 0) label.setVerticalAlignment(verticalAlignment);
-            } else if (component instanceof AbstractButton) {
-                AbstractButton button = (AbstractButton) component;
+            } else if (component instanceof AbstractButton button) {
                 if (background != null) button.setContentAreaFilled(true);
                 if (horizontalAlignment >= 0) button.setHorizontalAlignment(horizontalAlignment);
                 if (verticalAlignment >= 0) button.setVerticalAlignment(verticalAlignment);
-            } else if (component instanceof JTextField) {
-                JTextField textField = (JTextField) component;
+            } else if (component instanceof JTextField textField) {
                 if (horizontalAlignment >= 0) textField.setHorizontalAlignment(horizontalAlignment);
             }
         }
