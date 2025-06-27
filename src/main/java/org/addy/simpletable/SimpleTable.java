@@ -19,11 +19,13 @@ import java.util.Objects;
 /**
  * An easily configurable JTable.<br>
  * Manages alternated row backgrounds as well as row highlighting on mouse hover and automatic sorting.<br>
- * Automatically generates cell renderers and editors for columns based on the supplied given column definitions.<br>
+ * Automatically generates cell renderers and editors for columns based on the given column specifications.<br>
  *
  * @author Mike
  */
 public class SimpleTable extends JTable {
+    public static final int DEFAULT_ROW_HEIGHT = 20;
+
     private Color alternateBackground;
     private Color rolloverBackground;
     private int rolloverRowIndex = -1;
@@ -32,7 +34,7 @@ public class SimpleTable extends JTable {
 
     public SimpleTable() {
         super();
-        setRowHeight(20);
+        setRowHeight(DEFAULT_ROW_HEIGHT);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setAlternateBackground(KnownColor.WHITE_BLUE);
         setRolloverBackground(KnownColor.IVORY);
@@ -95,23 +97,25 @@ public class SimpleTable extends JTable {
     }
 
     public void generateColumnSpecs() {
-        columnSpecs = new ColumnSpec[getColumnCount()];
         TableModel model = getModel();
+        if (model == null) return;
 
-        if (model != null) {
-            for (int i = 0; i < columnSpecs.length; ++i) {
-                columnSpecs[i] = ColumnSpec.of(model.getColumnClass(i));
-            }
-
-            applyColumnSpecs();
+        columnSpecs = new ColumnSpec[getColumnCount()];
+        for (int i = 0; i < columnSpecs.length; ++i) {
+            columnSpecs[i] = ColumnSpec.of(model.getColumnClass(i));
         }
+
+        applyColumnSpecs();
     }
 
     public void applyColumnSpecs() {
-        if (columnSpecs != null) {
-            for (int i = 0; i < columnSpecs.length && i < getColumnCount(); ++i) {
-                columnSpecs[i].applyTo(getColumnModel().getColumn(i), this, i);
-            }
+        if (columnSpecs == null) return;
+
+        TableColumnModel columnModel = getColumnModel();
+        int columnCount = columnModel.getColumnCount();
+
+        for (int i = 0; i < columnSpecs.length && i < columnCount; ++i) {
+            columnSpecs[i].applyTo(columnModel.getColumn(i), this, i);
         }
     }
 
