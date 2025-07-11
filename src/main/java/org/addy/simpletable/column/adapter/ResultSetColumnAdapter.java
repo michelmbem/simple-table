@@ -57,7 +57,7 @@ public class ResultSetColumnAdapter extends AssociativeColumnAdapter {
 
         @Override
         public void setValue(ResultSet rs, int columnIndex, Object value) throws SQLException {
-            rs.updateObject(columnIndex, value);
+            rs.updateObject(columnIndex + 1, value);
         }
     }
 

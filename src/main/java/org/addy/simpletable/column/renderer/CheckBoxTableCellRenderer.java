@@ -71,13 +71,10 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         switch (propertyName) {
-            case "text":
-            case "displayedMnemonic":
-            case "selected":
+            case "text", "displayedMnemonic", "selected":
                 super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
-            case "font":
-            case "foreground":
+            case "font", "foreground":
                 if (oldValue != newValue && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)
                     super.firePropertyChange(propertyName, oldValue, newValue);
                 break;

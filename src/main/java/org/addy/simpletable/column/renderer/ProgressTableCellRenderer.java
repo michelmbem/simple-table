@@ -14,7 +14,7 @@ public class ProgressTableCellRenderer extends JPanel implements TableCellRender
     public ProgressTableCellRenderer(int min, int max, boolean stringPainted, NumberFormat numberFormat) {
         super(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints(
+        var gbc = new GridBagConstraints(
                 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 

@@ -12,7 +12,8 @@ public class TableHeaderCellRenderer implements TableCellRenderer {
     private CellFormat cellFormat;
 
     public TableHeaderCellRenderer(TableCellRenderer wrappedCellRenderer) {
-        this.wrappedCellRenderer = Objects.requireNonNull(wrappedCellRenderer, "TableHeaderCellRenderer requires a valid TableCellRenderer");
+        this.wrappedCellRenderer = Objects.requireNonNull(wrappedCellRenderer,
+                "TableHeaderCellRenderer requires a valid TableCellRenderer");
     }
 
     @Override

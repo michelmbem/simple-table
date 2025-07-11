@@ -1,5 +1,7 @@
 package org.addy.simpletable.column.adapter;
 
+import org.addy.util.CollectionUtil;
+
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,9 @@ public final class ColumnAdapters {
             return new MapColumnAdapter(columnNames);
 
         if (ResultSet.class.isAssignableFrom(itemType))
-            return new ResultSetColumnAdapter(columnNames);
+            return CollectionUtil.isEmpty(columnNames)
+                    ? new ResultSetColumnAdapter()
+                    : new ResultSetColumnAdapter(columnNames);
 
         return new BeanColumnAdapter(itemType, columnNames);
     }

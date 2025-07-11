@@ -47,14 +47,14 @@ public class ELColumnAdapter extends AssociativeColumnAdapter {
         columnExpressions = new ValueExpression[this.columnNames.length];
 
         for (int i = 0; i < columnNames.length; i++) {
-            String expression = String.format("${%s}", columnNames[i]);
+            String expression = String.format("#{%s}", columnNames[i]);
             columnExpressions[i] = factory.createValueExpression(context, expression, Object.class);
         }
     }
 
     private void bindItemToContext(Object item) {
         if (currentItemExpression == null)
-            currentItemExpression = factory.createValueExpression(context, "${$}", item.getClass());
+            currentItemExpression = factory.createValueExpression(context, "#{$}", item.getClass());
 
         currentItemExpression.setValue(context, item);
     }

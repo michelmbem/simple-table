@@ -28,11 +28,10 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
         if (columnClass == null)
             columnClass = table.getModel().getColumnClass(column);
 
-        if (value != null) {
+        if (value != null)
             calendarCombo.setDateTime(TypeConverter.toLocalDateTime(value));
-        } else {
+        else
             calendarCombo.setChecked(false);
-        }
 
         return calendarCombo;
     }
@@ -58,20 +57,12 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
     }
 
     private String mapFormat(String dateFormat) {
-        switch (dateFormat) {
-            case "g":
-                return "yyyy-MM-dd HH:mm:ss";
-            case "dt":
-            case "datetime":
-                return "dd/MM/yyyy HH:mm:ss";
-            case "d":
-            case "date":
-                return "dd/MM/yyyy";
-            case "t":
-            case "time":
-                return "HH:mm:ss";
-            default:
-                return dateFormat;
-        }
+        return switch (dateFormat) {
+            case "g" -> "yyyy-MM-dd HH:mm:ss";
+            case "dt", "datetime" -> "dd/MM/yyyy HH:mm:ss";
+            case "d", "date" -> "dd/MM/yyyy";
+            case "t", "time" -> "HH:mm:ss";
+            default -> dateFormat;
+        };
     }
 }

@@ -13,7 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class HyperLinkTableCellEditor extends AbstractCellEditor implements TableCellEditor {
-    public static final String COMMAND = "LINK_CLICK";
+    public static final String COMMAND = "LINK CLICK";
 
     private final JLabel label;
     private final TableCellActionListener actionListener;
@@ -73,14 +73,12 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
         this.editedValue = editedValue;
 
         if (useCellValue) {
-            if (editedValue == null) {
+            if (editedValue == null)
                 label.setText("");
-            } else if (editedValue instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) editedValue;
-                label.setText(HyperLink.format(buttonModel.getText()));
-            } else {
+            else if (editedValue instanceof ButtonModel bm)
+                label.setText(HyperLink.format(bm.getText()));
+            else
                 label.setText(HyperLink.format(editedValue));
-            }
         }
     }
 
@@ -94,7 +92,7 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
             fireEditingStopped();
 
             if (actionListener != null) {
-                TableCellActionEvent e1 = new TableCellActionEvent(table, row, column, editedValue, COMMAND);
+                var e1 = new TableCellActionEvent(table, row, column, editedValue, COMMAND);
                 actionListener.actionPerformed(e1);
             }
         }

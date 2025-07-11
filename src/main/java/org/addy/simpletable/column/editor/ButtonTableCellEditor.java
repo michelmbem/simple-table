@@ -14,7 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-    public static final String COMMAND = "BUTTON_CLICK";
+    public static final String COMMAND = "BUTTON CLICK";
 
     private final JButton button;
     private final TableCellActionListener actionListener;
@@ -71,7 +71,7 @@ public class ButtonTableCellEditor extends AbstractCellEditor implements TableCe
         fireEditingStopped();
 
         if (actionListener != null) {
-            TableCellActionEvent e1 = new TableCellActionEvent(table, row, column, editedValue, COMMAND);
+            var e1 = new TableCellActionEvent(table, row, column, editedValue, COMMAND);
             actionListener.actionPerformed(e1);
         }
     }
@@ -102,13 +102,12 @@ public class ButtonTableCellEditor extends AbstractCellEditor implements TableCe
             if (editedValue == null) {
                 button.setText("");
                 button.setIcon(null);
-            } else if (editedValue instanceof ButtonModel) {
-                ButtonModel buttonModel = (ButtonModel) editedValue;
-                button.setText(buttonModel.getText());
-                button.setIcon(buttonModel.getIcon());
-            } else if (editedValue instanceof Icon) {
+            } else if (editedValue instanceof ButtonModel bm) {
+                button.setText(bm.getText());
+                button.setIcon(bm.getIcon());
+            } else if (editedValue instanceof Icon icon) {
                 button.setText("");
-                button.setIcon((Icon) editedValue);
+                button.setIcon(icon);
             } else {
                 button.setText(editedValue.toString());
                 button.setIcon(null);

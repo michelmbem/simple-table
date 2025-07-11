@@ -76,13 +76,10 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         switch (propertyName) {
-            case "text":
-            case "displayedMnemonic":
-            case "icon":
+            case "text", "displayedMnemonic", "icon":
                 super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
-            case "font":
-            case "foreground":
+            case "font", "foreground":
                 if (oldValue != newValue && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)
                     super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
@@ -95,13 +92,12 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
         if (value == null) {
             setText("");
             setIcon(null);
-        } else if (value instanceof ButtonModel) {
-            ButtonModel buttonModel = (ButtonModel) value;
-            setText(buttonModel.getText());
-            setIcon(buttonModel.getIcon());
-        } else if (value instanceof Icon) {
+        } else if (value instanceof ButtonModel bm) {
+            setText(bm.getText());
+            setIcon(bm.getIcon());
+        } else if (value instanceof Icon icon) {
             setText("");
-            setIcon((Icon) value);
+            setIcon(icon);
         } else {
             setText(value.toString());
             setIcon(null);

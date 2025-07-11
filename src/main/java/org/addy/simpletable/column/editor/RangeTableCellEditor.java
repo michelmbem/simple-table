@@ -14,7 +14,7 @@ public class RangeTableCellEditor extends AbstractCellEditor implements TableCel
     public RangeTableCellEditor(int min, int max) {
         this.panel = new JPanel(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints(
+        var gbc = new GridBagConstraints(
                 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 

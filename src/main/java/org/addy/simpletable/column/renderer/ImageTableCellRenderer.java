@@ -81,7 +81,7 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
 
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        if (propertyName.equals("image") || propertyName.equals("sizeMode")) {
+        if (propertyName.equals("imageSource") || propertyName.equals("image") || propertyName.equals("sizeMode")) {
             super.firePropertyChange(propertyName, oldValue, newValue);
         }
     }
