@@ -1,7 +1,7 @@
 package org.addy.simpletable.util;
 
 import de.odysseus.el.util.SimpleContext;
-import org.addy.util.CollectionUtil;
+import org.addy.util.ArrayUtil;
 
 import javax.el.ExpressionFactory;
 import java.util.LinkedList;
@@ -81,7 +81,7 @@ public final class ELEngine {
 
         @SafeVarargs
         public static <T extends Comparable<T>> T min(T first, T... next) {
-            if (CollectionUtil.isEmpty(next)) return first;
+            if (ArrayUtil.isEmpty(next)) return first;
 
             T minimum = first;
 
@@ -96,7 +96,7 @@ public final class ELEngine {
 
         @SafeVarargs
         public static <T extends Comparable<T>> T max(T first, T... next) {
-            if (CollectionUtil.isEmpty(next)) return first;
+            if (ArrayUtil.isEmpty(next)) return first;
 
             T maximum = first;
 

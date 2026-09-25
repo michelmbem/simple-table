@@ -10,6 +10,7 @@ import org.addy.simpletable.row.adapter.ArrayRowAdapter;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.simpletable.row.adapter.ResultSetRowAdapter;
 import org.addy.simpletable.row.adapter.RowAdapter;
+import org.addy.util.ArrayUtil;
 import org.addy.util.CollectionUtil;
 
 import javax.swing.table.AbstractTableModel;
@@ -18,7 +19,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.addy.util.CollectionUtil.requiredFirst;
+import static org.addy.util.ArrayUtil.requiredFirst;
 
 /**
  * A generic table model that virtually accepts any kind of data source.<br>
@@ -34,7 +35,9 @@ public class SimpleTableModel extends AbstractTableModel {
     private ColumnAdapter columnAdapter;
     private boolean editable = true;
 
-    public SimpleTableModel(Object itemSource, ColumnDefinition[] columns, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+    public SimpleTableModel(Object itemSource, ColumnDefinition[] columns,
+                            RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+
         this.itemSource = itemSource;
         this.columns = columns;
         this.rowAdapter = rowAdapter;
@@ -42,7 +45,9 @@ public class SimpleTableModel extends AbstractTableModel {
         configureColumnAdapter();
     }
 
-    public SimpleTableModel(Object itemSource, String[] columnNames, RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+    public SimpleTableModel(Object itemSource, String[] columnNames,
+                            RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
+
         this(itemSource, ColumnDefinition.fromNames(columnNames), rowAdapter, columnAdapter);
     }
 
@@ -60,12 +65,13 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(Collection<?> items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(), columnAdapter);
+        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames),
+                new ListRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Collection<?> items, String... columnNames) {
         this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
-                ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
+                ColumnAdapters.from(CollectionUtil.requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Class<?> itemClass, String... columnNames) {
@@ -79,7 +85,8 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(ResultSet resultSet) {
-        this(resultSet, ColumnDefinition.fromResultSet(resultSet), new ResultSetRowAdapter(), new ResultSetColumnAdapter());
+        this(resultSet, ColumnDefinition.fromResultSet(resultSet),
+                new ResultSetRowAdapter(), new ResultSetColumnAdapter());
     }
 
     public SimpleTableModel() {
@@ -227,8 +234,8 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     private void configureColumnAdapter() {
-        if (columnAdapter instanceof AssociativeColumnAdapter aca &&
-                CollectionUtil.isEmpty(aca.getColumnNames())) {
+        if (columnAdapter instanceof AssociativeColumnAdapter aca
+                && ArrayUtil.isEmpty(aca.getColumnNames())) {
             aca.setColumnNames(Stream.of(columns).map(ColumnDefinition::getName).toArray(String[]::new));
         }
     }
