@@ -1,6 +1,6 @@
 package org.addy.simpletable.column.renderer;
 
-import org.addy.util.TypeConverter;
+import org.addy.util.ValueConverter;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -45,7 +45,7 @@ public class ProgressTableCellRenderer extends JPanel implements TableCellRender
             setBackground(table.getBackground());
         }
 
-        progressBar.setValue(TypeConverter.toInt(value));
+        progressBar.setValue(ValueConverter.toInt(value));
 
         if (progressBar.isStringPainted() && numberFormat != null)
             progressBar.setString(numberFormat.format(value));

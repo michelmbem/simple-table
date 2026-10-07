@@ -1,6 +1,6 @@
 package org.addy.simpletable.column.renderer;
 
-import org.addy.util.TypeConverter;
+import org.addy.util.ValueConverter;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import java.text.Format;
@@ -21,7 +21,7 @@ public class FormattedTableCellRenderer extends DefaultTableCellRenderer {
     @Override
     protected void setValue(Object value) {
         if (renderedType != null)
-            value = TypeConverter.toType(value, renderedType);
+            value = ValueConverter.toType(value, renderedType);
 
         setText(value != null ? format.format(value) : "");
     }

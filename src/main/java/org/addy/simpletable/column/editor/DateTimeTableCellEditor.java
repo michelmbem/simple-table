@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.editor;
 
 import org.addy.swing.JCalendarCombo;
-import org.addy.util.TypeConverter;
+import org.addy.util.ValueConverter;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -29,7 +29,7 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
             columnClass = table.getModel().getColumnClass(column);
 
         if (value != null)
-            calendarCombo.setDateTime(TypeConverter.toLocalDateTime(value));
+            calendarCombo.setDateTime(ValueConverter.toLocalDateTime(value));
         else
             calendarCombo.setChecked(false);
 
@@ -39,7 +39,7 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
     @Override
     public Object getCellEditorValue() {
         return calendarCombo.isChecked()
-                ? TypeConverter.toType(calendarCombo.getDateTime(), columnClass)
+                ? ValueConverter.toType(calendarCombo.getDateTime(), columnClass)
                 : null;
     }
 

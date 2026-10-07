@@ -1,8 +1,8 @@
 package org.addy.simpletable.column.validator;
 
+import org.addy.util.ObjectUtil;
 import org.addy.util.StringUtil;
-import org.addy.util.TypeConverter;
-import org.apache.commons.lang3.ObjectUtils;
+import org.addy.util.ValueConverter;
 
 public final class CellValidators {
     private static final String EMAIL_PATTERN = "^[\\\\w!#$%&’*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}$";
@@ -16,26 +16,26 @@ public final class CellValidators {
     }
 
     public static CellValidator notEmpty() {
-        return (cellValue, rowItem) -> !ObjectUtils.isEmpty(cellValue)
+        return (cellValue, rowItem) -> !ObjectUtil.isEmpty(cellValue)
                 ? new ValidationResult()
                 : new ValidationResult(false, "This member should not be empty");
     }
 
     public static <T> CellValidator min(Comparable<T> minValue) {
-        return (cellValue, rowItem) -> minValue.compareTo((T) TypeConverter.toType(cellValue, minValue.getClass())) <= 0
+        return (cellValue, rowItem) -> minValue.compareTo((T) ValueConverter.toType(cellValue, minValue.getClass())) <= 0
                 ? new ValidationResult()
                 : new ValidationResult(false, "This member should be greater than or equal to " + minValue);
     }
 
     public static <T> CellValidator max(Comparable<T> maxValue) {
-        return (cellValue, rowItem) -> maxValue.compareTo((T) TypeConverter.toType(cellValue, maxValue.getClass())) >= 0
+        return (cellValue, rowItem) -> maxValue.compareTo((T) ValueConverter.toType(cellValue, maxValue.getClass())) >= 0
                 ? new ValidationResult()
                 : new ValidationResult(false, "This member should be less than or equal to " + maxValue);
     }
 
     public static <T> CellValidator range(Comparable<T> minValue, Comparable<T> maxValue) {
         return (cellValue, rowItem) -> {
-            T convertedValue = (T) TypeConverter.toType(cellValue, minValue.getClass());
+            T convertedValue = (T) ValueConverter.toType(cellValue, minValue.getClass());
             return (minValue.compareTo(convertedValue) <= 0) && (maxValue.compareTo(convertedValue) >= 0)
                     ? new ValidationResult()
                     : new ValidationResult(false, "This member should be between " + minValue + " and " + maxValue);

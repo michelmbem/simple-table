@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.editor;
 
 import org.addy.simpletable.util.UIHelper;
-import org.addy.util.TypeConverter;
+import org.addy.util.ValueConverter;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -29,7 +29,7 @@ public class RangeTableCellEditor extends AbstractCellEditor implements TableCel
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         UIHelper.prepareEditor(panel, table, value, isSelected, row, column);
-        slider.setValue(TypeConverter.toInt(value));
+        slider.setValue(ValueConverter.toInt(value));
 
         return slider;
     }

@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.spec;
 
 import org.addy.simpletable.column.renderer.TableHeaderCellRenderer;
-import org.apache.commons.lang3.ClassUtils;
+import org.addy.util.TypeUtil;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -73,16 +73,18 @@ public class ColumnSpec {
     }
 
     public static ColumnSpec of(Class<?> columnClass) {
-        if (ClassUtils.isAssignable(columnClass, Boolean.class, true))
+        if (TypeUtil.isAssignable(columnClass, Boolean.class))
             return new ColumnSpec(ColumnType.CHECKBOX, null);
 
-        if (ClassUtils.isAssignable(columnClass, Number.class, true))
+        if (TypeUtil.isAssignable(columnClass, Number.class))
             return new ColumnSpec(ColumnType.NUMBER, null);
 
-        if (ClassUtils.isAssignable(columnClass, Date.class) || ClassUtils.isAssignable(columnClass, Temporal.class))
+        if (TypeUtil.isAssignable(columnClass, Date.class) ||
+                TypeUtil.isAssignable(columnClass, Temporal.class))
             return new ColumnSpec(ColumnType.DATETIME, null);
 
-        if (ClassUtils.isAssignable(columnClass, Image.class) || ClassUtils.isAssignable(columnClass, ImageIcon.class))
+        if (TypeUtil.isAssignable(columnClass, Image.class) ||
+                TypeUtil.isAssignable(columnClass, ImageIcon.class))
             return new ColumnSpec(ColumnType.IMAGE, null);
 
         if (columnClass.isEnum())
