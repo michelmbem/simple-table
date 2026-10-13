@@ -28,11 +28,13 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        String[] tableColumns = {"$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
-        SimpleTableModel tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
+        String[] tableColumns = {
+                "$.lastName", "$.firstName", "$.gender", "$.dateOfBirth",
+                "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
+        var tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
         tableModel.getColumns()[1].setValidator(CellValidators.notEmpty());
         
-        SimpleTable table = new SimpleTable(tableModel);
+        var table = new SimpleTable(tableModel);
         table.setRowHeight(28);
         table.setColumnSpecs(
                 new ColumnSpec(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
@@ -44,10 +46,10 @@ public final class Demo {
                 new ColumnSpec(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
                 new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        var scrollPane = new JScrollPane(table);
         table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
 
-        JFrame frame = new JFrame("SimpleTable demo");
+        var frame = new JFrame("SimpleTable Demo");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(scrollPane);
         frame.pack();
@@ -60,7 +62,7 @@ public final class Demo {
         List<Person> personList = new ArrayList<>();
         ClassLoader classLoader = Demo.class.getClassLoader();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+        try (var reader = new BufferedReader(new InputStreamReader(
                 classLoader.getResourceAsStream("demodata.txt")))) {
 
             personList = reader.lines()
