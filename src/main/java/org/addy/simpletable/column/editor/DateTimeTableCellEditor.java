@@ -45,7 +45,8 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-        if (e.getSource() == calendarCombo.getCalendar() && "selectedDateTime".equals(e.getPropertyName())) {
+        if (e.getSource() == calendarCombo.getCalendar()
+                && "selectedDateTime".equals(e.getPropertyName())) {
             stopCellEditing();
         }
     }

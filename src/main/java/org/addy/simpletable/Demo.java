@@ -19,8 +19,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class Demo {
     public static void main(String... args) {
@@ -50,7 +48,7 @@ public final class Demo {
         table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
 
         JFrame frame = new JFrame("SimpleTable demo");
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(scrollPane);
         frame.pack();
         frame.setSize(800, 600);
@@ -63,7 +61,7 @@ public final class Demo {
         ClassLoader classLoader = Demo.class.getClassLoader();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(classLoader.getResourceAsStream("demodata.txt"))))) {
+                classLoader.getResourceAsStream("demodata.txt")))) {
 
             personList = reader.lines()
                     .map(line -> line.split(","))
@@ -76,7 +74,7 @@ public final class Demo {
                             Short.parseShort(fields[5]),
                             Boolean.parseBoolean(fields[6]),
                             loadImage(classLoader, fields[7])))
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,12 +84,17 @@ public final class Demo {
 
     private static Image loadImage(ClassLoader classLoader, String filename) {
         URL imageURL = classLoader.getResource("images/portraits/" + filename);
-        return new ImageIcon(Objects.requireNonNull(imageURL)).getImage();
+        return new ImageIcon(imageURL).getImage();
     }
 
     private static void buttonClicked(TableCellActionEvent e) {
-        String newName = JOptionPane.showInputDialog(e.getTable().getTopLevelAncestor(), "New name", e.getValue());
-        if (!StringUtil.isBlank(newName)) e.getTable().setValueAt(newName, e.getRow(), e.getColumn());
+        String newName = JOptionPane.showInputDialog(
+                e.getTable().getTopLevelAncestor(),
+                "New name",
+                e.getValue());
+
+        if (!StringUtil.isBlank(newName))
+            e.getTable().setValueAt(newName, e.getRow(), e.getColumn());
     }
 
 

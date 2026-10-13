@@ -8,7 +8,6 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.net.URL;
-import java.util.Objects;
 
 public class ImageTableCellRenderer extends JPictureBox implements TableCellRenderer {
     private static final Border NO_FOCUS_BORDER;
@@ -17,8 +16,9 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     static {
         NO_FOCUS_BORDER = BorderFactory.createEmptyBorder(1, 1, 1, 1);
 
-        URL errorImageURL = ImageTableCellRenderer.class.getClassLoader().getResource("images/icons/Error.png");
-        ERROR_IMAGE = new ImageIcon(Objects.requireNonNull(errorImageURL)).getImage();
+        URL errorImageURL = ImageTableCellRenderer.class.getClassLoader()
+                .getResource("images/icons/Error.png");
+        ERROR_IMAGE = new ImageIcon(errorImageURL).getImage();
     }
 
     public ImageTableCellRenderer() {
@@ -81,7 +81,9 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
 
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        if (propertyName.equals("imageSource") || propertyName.equals("image") || propertyName.equals("sizeMode")) {
+        if (propertyName.equals("imageSource")
+                || propertyName.equals("image")
+                || propertyName.equals("sizeMode")) {
             super.firePropertyChange(propertyName, oldValue, newValue);
         }
     }

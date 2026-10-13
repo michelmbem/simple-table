@@ -4,14 +4,14 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.net.URL;
-import java.util.Objects;
 
 public class LineNumberTableCellRenderer extends DefaultTableCellRenderer {
     private static final Icon SELECTION_ICON;
 
     static {
-        URL iconURL = LineNumberTableCellRenderer.class.getClassLoader().getResource("images/icons/bullet_arrow_right.png");
-        SELECTION_ICON = new ImageIcon(Objects.requireNonNull(iconURL));
+        URL iconURL = LineNumberTableCellRenderer.class.getClassLoader()
+                .getResource("images/icons/bullet_arrow_right.png");
+        SELECTION_ICON = new ImageIcon(iconURL);
     }
 
     @Override
