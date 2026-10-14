@@ -3,6 +3,14 @@ package org.addy.simpletable.column.adapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *  A ColumnAdapter that assumes that the given item is a JDBC ResultSet.
+ *  It can map columns by position or by name based on the constructor used.
+ *  If the default constructor is used, columns will be mapped by position.
+ *  If column names are supplied to the constructor, columns will be mapped by name.
+ *
+ * @author Mike
+ */
 public class ResultSetColumnAdapter extends AssociativeColumnAdapter {
     private final FieldExtractor fieldExtractor;
 

@@ -12,7 +12,8 @@ public final class UIHelper {
     private UIHelper() {}
 
     public static void prepareEditor(JComponent editor, JTable table, Object value, boolean isSelected, int row, int column) {
-        Component c = table.getCellRenderer(row, column).getTableCellRendererComponent(table, value, isSelected, true, row, column);
+        Component c = table.getCellRenderer(row, column)
+                .getTableCellRendererComponent(table, value, isSelected, true, row, column);
 
         editor.setForeground(c.getForeground());
         editor.setBackground(c.getBackground());

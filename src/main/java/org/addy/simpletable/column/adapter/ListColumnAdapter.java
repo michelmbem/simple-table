@@ -3,6 +3,7 @@ package org.addy.simpletable.column.adapter;
 import java.util.List;
 
 /**
+ * A ColumnAdapter that assumes that the given item is of a type that implements the List interface.
  *
  * @author Mike
  */

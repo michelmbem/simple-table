@@ -84,7 +84,9 @@ public class SimpleTable extends JTable {
     }
 
     public ColumnSpec getColumnSpec(int columnIndex) {
-        return columnSpecs != null && columnIndex < columnSpecs.length ? columnSpecs[columnIndex] : null;
+        return columnSpecs != null && columnIndex < columnSpecs.length
+                ? columnSpecs[columnIndex]
+                : null;
     }
 
     public void setColumnSpec(int columnIndex, ColumnSpec columnSpec) {
@@ -123,9 +125,11 @@ public class SimpleTable extends JTable {
         return rowHeaderView;
     }
 
-    public void createRowHeaders(JScrollPane scrollPane, ColumnType columnType, String headerText, int width, CellFormat cellFormat) {
+    public void createRowHeaders(JScrollPane scrollPane, ColumnType columnType,
+                                 String headerText, int width, CellFormat cellFormat) {
+
         rowHeaderView = new RowHeaderView(this, columnType, headerText, width, cellFormat);
-        JViewport rowHeader = new JViewport();
+        var rowHeader = new JViewport();
         rowHeader.setView(rowHeaderView);
         rowHeader.setPreferredSize(rowHeaderView.getPreferredSize());
         scrollPane.setRowHeader(rowHeader);
@@ -134,19 +138,19 @@ public class SimpleTable extends JTable {
 
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-        JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-        ColumnSpec colSpecs = getColumnSpec(column);
+        var component = (JComponent) super.prepareRenderer(renderer, row, column);
+        ColumnSpec colSpec = getColumnSpec(column);
 
-        if (colSpecs != null)
-            colSpecs.getCellFormat().applyTo(component, false);
+        if (colSpec != null)
+            colSpec.getCellFormat().applyTo(component, false);
 
         if (!component.getBackground().equals(getSelectionBackground())) {
             if (rolloverBackground != null && row == rolloverRowIndex) {
                 component.setForeground(getForeground());
                 component.setBackground(rolloverBackground);
             } else if (alternateBackground != null) {
-                if (!(colSpecs == null || colSpecs.getCellFormat().getBackground() == null)) {
-                    component.setBackground(colSpecs.getCellFormat().getBackground());
+                if (!(colSpec == null || colSpec.getCellFormat().getBackground() == null)) {
+                    component.setBackground(colSpec.getCellFormat().getBackground());
                 } else {
                     component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
                 }
@@ -158,17 +162,17 @@ public class SimpleTable extends JTable {
 
     @Override
     public Component prepareEditor(TableCellEditor editor, int row, int column) {
-        JComponent component = (JComponent) super.prepareEditor(editor, row, column);
-        ColumnSpec colSpecs = getColumnSpec(column);
+        var component = (JComponent) super.prepareEditor(editor, row, column);
+        ColumnSpec colSpec = getColumnSpec(column);
 
-        if (colSpecs != null)
-            colSpecs.getCellFormat().applyTo(component, true);
+        if (colSpec != null)
+            colSpec.getCellFormat().applyTo(component, true);
 
         return component;
     }
 
     protected void createRolloverListener() {
-        RolloverListener rolloverListener = new RolloverListener();
+        var rolloverListener = new RolloverListener();
         addMouseMotionListener(rolloverListener);
         addMouseListener(rolloverListener);
     }

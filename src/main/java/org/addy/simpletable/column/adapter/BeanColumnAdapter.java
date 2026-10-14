@@ -7,6 +7,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * A ColumnAdapter that maps column names to bean property names.
+ * It uses introspection to get or set column values.
  *
  * @author Mike
  */
@@ -58,9 +60,9 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
         return properties == null ? Object.class : properties[columnIndex].getPropertyType();
     }
 
-    private void loadPropertiesFrom(Class<?> itemClass) {
+    private void loadPropertiesFrom(Class<?> beanType) {
         try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(itemClass);
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanType);
             PropertyDescriptor[] allProperties = beanInfo.getPropertyDescriptors();
 
             properties = new PropertyDescriptor[columnNames.length];
@@ -76,7 +78,7 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
                 }
 
                 if (properties[i] == null)
-                    throw new IllegalArgumentException("Could not find a " + columnNames[i] + " property in class " + itemClass.getName());
+                    throw new IllegalArgumentException("Could not find a " + columnNames[i] + " property in class " + beanType.getName());
             }
         } catch (IntrospectionException e) {
             throw new IllegalStateException(e);

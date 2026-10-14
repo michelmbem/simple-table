@@ -1,6 +1,7 @@
 package org.addy.simpletable.column.adapter;
 
 /**
+ * The base class of all column adapters that can map columns by name.
  *
  * @author Mike
  */

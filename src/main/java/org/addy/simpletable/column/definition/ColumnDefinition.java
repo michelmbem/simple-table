@@ -21,7 +21,9 @@ public class ColumnDefinition implements Serializable {
     private CellConverter converter;
     private CellValidator validator;
 
-    public ColumnDefinition(String name, Class<?> type, boolean editable, CellConverter converter, CellValidator validator) {
+    public ColumnDefinition(String name, Class<?> type, boolean editable,
+                            CellConverter converter, CellValidator validator) {
+
         this.name = Objects.requireNonNull(name);
         this.type = type;
         this.editable = editable;

@@ -3,6 +3,7 @@ package org.addy.simpletable.column.adapter;
 import java.util.Map;
 
 /**
+ * A ColumnAdapter that assumes that the given item is of a type that implements the Map interface.
  *
  * @author Mike
  */

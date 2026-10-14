@@ -33,7 +33,7 @@ public class RowHeaderView extends JTable {
 
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-        JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
+        var component = (JComponent) super.prepareRenderer(renderer, row, column);
         cellFormat.applyTo(component, false);
         return component;
     }

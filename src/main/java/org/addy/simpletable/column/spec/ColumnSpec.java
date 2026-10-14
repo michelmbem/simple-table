@@ -11,6 +11,9 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * A class that handles the customization of table columns rendering and/or editing.
+ */
 public class ColumnSpec {
     private ColumnType columnType;
     private String headerText;
@@ -21,8 +24,9 @@ public class ColumnSpec {
     private CellFormat cellFormat;
     private Object extraData;
 
-    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable,
-                      CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width,
+                      boolean resizable, boolean sortable, CellFormat headerFormat,
+                      CellFormat cellFormat, Object extraData) {
 
         this.columnType = Objects.requireNonNull(columnType);
         this.headerText = headerText;
@@ -34,46 +38,66 @@ public class ColumnSpec {
         this.extraData = extraData;
     }
 
-    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable, Object extraData) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+    public ColumnSpec(ColumnType columnType, String headerText, int width,
+                      boolean resizable, boolean sortable, Object extraData) {
+
+        this(columnType, headerText, width, resizable, sortable,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
-    public ColumnSpec(ColumnType columnType, String headerText, int width, boolean resizable, boolean sortable) {
-        this(columnType, headerText, width, resizable, sortable, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+    public ColumnSpec(ColumnType columnType, String headerText, int width,
+                      boolean resizable, boolean sortable) {
+
+        this(columnType, headerText, width, resizable, sortable,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
-    public ColumnSpec(ColumnType columnType, String headerText, int width, CellFormat headerFormat,
-                      CellFormat cellFormat, Object extraData) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width,
+                      CellFormat headerFormat, CellFormat cellFormat, Object extraData) {
 
         this(columnType, headerText, width, true, true, headerFormat, cellFormat, extraData);
     }
 
-    public ColumnSpec(ColumnType columnType, String headerText, int width, CellFormat headerFormat, CellFormat cellFormat) {
+    public ColumnSpec(ColumnType columnType, String headerText, int width,
+                      CellFormat headerFormat, CellFormat cellFormat) {
+
         this(columnType, headerText, width, true, true, headerFormat, cellFormat, null);
     }
 
     public ColumnSpec(ColumnType columnType, String headerText, int width, Object extraData) {
-        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+        this(columnType, headerText, width, true, true,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
     public ColumnSpec(ColumnType columnType, String headerText, int width) {
-        this(columnType, headerText, width, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+        this(columnType, headerText, width, true, true,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
     public ColumnSpec(ColumnType columnType, String headerText, Object extraData) {
-        this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
+        this(columnType, headerText, -1, true, true,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, extraData);
     }
 
     public ColumnSpec(ColumnType columnType, String headerText) {
-        this(columnType, headerText, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+        this(columnType, headerText, -1, true, true,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
     public ColumnSpec() {
-        this(ColumnType.DEFAULT, null, -1, true, true, CellFormat.DEFAULT, CellFormat.DEFAULT, null);
+        this(ColumnType.DEFAULT, null, -1, true, true,
+                CellFormat.DEFAULT, CellFormat.DEFAULT, null);
     }
 
+    /**
+     * A factory method to generate a ColumnSpec based on the column's data type.
+     *
+     * @param columnClass The column's data type.
+     * @return A ColumnSpec initialized with a ColumnType that can handle the rendering
+     * and the editing of the given columnClass.
+     */
     public static ColumnSpec of(Class<?> columnClass) {
-        if (TypeUtil.isAssignable(columnClass, Boolean.class))
+        if (TypeUtil.isAssignable(columnClass, boolean.class))
             return new ColumnSpec(ColumnType.CHECKBOX, null);
 
         if (TypeUtil.isAssignable(columnClass, Number.class))
@@ -88,7 +112,7 @@ public class ColumnSpec {
             return new ColumnSpec(ColumnType.IMAGE, null);
 
         if (columnClass.isEnum())
-            return new ColumnSpec(ColumnType.COMBOBOX, null);
+            return new ColumnSpec(ColumnType.COMBOBOX, null, columnClass.getEnumConstants());
 
         return  new ColumnSpec();
     }

@@ -85,7 +85,7 @@ public abstract class ColumnType {
 
         @Override
         public TableCellEditor getEditor(Object configObject) {
-            JCheckBox checkBox = new JCheckBox();
+            var checkBox = new JCheckBox();
             checkBox.setBorderPainted(true);
             return new DefaultCellEditor(checkBox);
         }

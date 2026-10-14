@@ -6,7 +6,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.util.Objects;
 
-public class RowHeaderModel extends AbstractTableModel implements TableModelListener {
+public class RowHeaderModel
+        extends AbstractTableModel
+        implements TableModelListener {
+
     private final TableModel tableModel;
 
     public RowHeaderModel(TableModel tableModel) {

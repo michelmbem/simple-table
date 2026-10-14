@@ -7,6 +7,13 @@ import org.addy.simpletable.util.ELEngine;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
+/**
+ *  A ColumnAdapter that uses expression language (EL) to bind column values.
+ *  It assumes that column names are valid EL expressions (not wrapped in "${...}" or "#{...}").
+ *  The dollar-sign ($) is used to reference the current row item.
+ *
+ * @author Mike
+ */
 public class ELColumnAdapter extends AssociativeColumnAdapter {
     private final ExpressionFactory factory = new ExpressionFactoryImpl();
     private final SimpleContext context = new SimpleContext();
@@ -43,6 +50,9 @@ public class ELColumnAdapter extends AssociativeColumnAdapter {
         columnExpressions[columnIndex].setValue(context, value);
     }
 
+    /**
+     * Creates EL expressions from the given column names.
+     */
     private void createColumnExpressions() {
         columnExpressions = new ValueExpression[this.columnNames.length];
 
@@ -52,6 +62,12 @@ public class ELColumnAdapter extends AssociativeColumnAdapter {
         }
     }
 
+    /**
+     * Binds the given row item to an automatic variable named $,
+     * which is referenced by all column expressions.
+     *
+     * @param item The value associated with the current table row.
+     */
     private void bindItemToContext(Object item) {
         if (currentItemExpression == null)
             currentItemExpression = factory.createValueExpression(context, "#{$}", item.getClass());
