@@ -46,6 +46,9 @@ public final class Demo {
                 new ColumnSpec(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
                 new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
 
+        // Alternatively, comment the call table.setColumnSpecs and uncomment the following line to see the difference
+        // table.generateColumnSpecs();
+
         var scrollPane = new JScrollPane(table);
         table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
 
