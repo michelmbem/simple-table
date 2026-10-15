@@ -103,12 +103,12 @@ public class ColumnSpec {
         if (TypeUtil.isAssignable(columnClass, Number.class))
             return new ColumnSpec(ColumnType.NUMBER, null);
 
-        if (TypeUtil.isAssignable(columnClass, Date.class) ||
-                TypeUtil.isAssignable(columnClass, Temporal.class))
+        if (TypeUtil.isAssignable(columnClass, Date.class)
+                || TypeUtil.isAssignable(columnClass, Temporal.class))
             return new ColumnSpec(ColumnType.DATETIME, null);
 
-        if (TypeUtil.isAssignable(columnClass, Image.class) ||
-                TypeUtil.isAssignable(columnClass, ImageIcon.class))
+        if (TypeUtil.isAssignable(columnClass, Image.class)
+                || TypeUtil.isAssignable(columnClass, ImageIcon.class))
             return new ColumnSpec(ColumnType.IMAGE, null);
 
         if (columnClass.isEnum())
