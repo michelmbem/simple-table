@@ -94,8 +94,7 @@ public abstract class ColumnType {
 
         @Override
         public TableCellEditor getEditor(Object configObject) {
-            ComboBoxModel<?> comboBoxModel = getComboBoxModel(configObject);
-            JComboBox<?> comboBox = new JComboBox<>(comboBoxModel);
+            var comboBox = new JComboBox<>(getComboBoxModel(configObject));
             return new DefaultCellEditor(comboBox);
         }
 
