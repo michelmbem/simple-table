@@ -74,9 +74,9 @@ public class SimpleTableModel extends AbstractTableModel {
                 ColumnAdapters.from(CollectionUtil.requiredFirst(items).getClass(), columnNames));
     }
 
-    public SimpleTableModel(Class<?> itemClass, String... columnNames) {
-        this(null, ColumnDefinition.ofNames(columnNames), new ListRowAdapter(),
-                ColumnAdapters.from(Objects.requireNonNull(itemClass), columnNames));
+    public SimpleTableModel(Class<?> itemType, String... propertyNames) {
+        this(null, ColumnDefinition.ofNames(propertyNames), new ListRowAdapter(),
+                ColumnAdapters.from(Objects.requireNonNull(itemType), propertyNames));
     }
 
     public SimpleTableModel(ResultSet resultSet, String... columnNames) {
