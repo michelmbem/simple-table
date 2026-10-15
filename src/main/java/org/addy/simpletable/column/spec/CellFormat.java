@@ -8,15 +8,15 @@ public class CellFormat {
     public static final Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(2, 4, 2, 4);
 
     public static final CellFormat DEFAULT = new CellFormat();
-    public static final CellFormat FIRST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat PAGE_START = new CellFormat(SwingConstants.CENTER, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat FIRST_LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.LEADING, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat CENTER = new CellFormat(SwingConstants.CENTER, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.CENTER, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat LAST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat PAGE_END = new CellFormat(SwingConstants.CENTER, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
-    public static final CellFormat LAST_lINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.TRAILING, null, null, null, DEFAULT_BORDER);
+    public static final CellFormat FIRST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.LEADING);
+    public static final CellFormat PAGE_START = new CellFormat(SwingConstants.CENTER, SwingConstants.LEADING);
+    public static final CellFormat FIRST_LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.LEADING);
+    public static final CellFormat LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.CENTER);
+    public static final CellFormat CENTER = new CellFormat(SwingConstants.CENTER, SwingConstants.CENTER);
+    public static final CellFormat LINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.CENTER);
+    public static final CellFormat LAST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.TRAILING);
+    public static final CellFormat PAGE_END = new CellFormat(SwingConstants.CENTER, SwingConstants.TRAILING);
+    public static final CellFormat LAST_lINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.TRAILING);
 
     private int horizontalAlignment;
     private int verticalAlignment;
@@ -25,8 +25,9 @@ public class CellFormat {
     private Font font;
     private Border border;
 
-    public CellFormat(int horizontalAlignment, int verticalAlignment, Color foreground, Color background,
-                      Font font, Border border) {
+    public CellFormat(int horizontalAlignment, int verticalAlignment,
+                      Color foreground, Color background, Font font,
+                      Border border) {
 
         this.horizontalAlignment = horizontalAlignment;
         this.verticalAlignment = verticalAlignment;
@@ -36,20 +37,12 @@ public class CellFormat {
         this.border = border;
     }
 
-    public CellFormat() {
-        this(-1, -1, null, null, null, DEFAULT_BORDER);
+    private CellFormat(int horizontalAlignment, int verticalAlignment) {
+        this(horizontalAlignment, verticalAlignment, null, null, null, DEFAULT_BORDER);
     }
 
-    public CellFormat withColors(Color foreground, Color background) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, foreground, background, this.font, this.border);
-    }
-
-    public CellFormat withFont(Font font) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, font, this.border);
-    }
-
-    public CellFormat withBorder(Border border) {
-        return new CellFormat(this.horizontalAlignment, this.verticalAlignment, this.foreground, this.background, this.font, border);
+    private CellFormat() {
+        this(-1, -1);
     }
 
     public int getHorizontalAlignment() {
@@ -116,9 +109,76 @@ public class CellFormat {
                 if (background != null) button.setContentAreaFilled(true);
                 if (horizontalAlignment >= 0) button.setHorizontalAlignment(horizontalAlignment);
                 if (verticalAlignment >= 0) button.setVerticalAlignment(verticalAlignment);
-            } else if (component instanceof JTextField textField) {
-                if (horizontalAlignment >= 0) textField.setHorizontalAlignment(horizontalAlignment);
+            } else if (component instanceof JTextField textField && horizontalAlignment >= 0) {
+                textField.setHorizontalAlignment(horizontalAlignment);
             }
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Builder toBuilder() {
+        return builder()
+                .horizontalAlignment(horizontalAlignment)
+                .verticalAlignment(verticalAlignment)
+                .foreground(foreground)
+                .background(background)
+                .font(font)
+                .border(border);
+    }
+
+    public CellFormat withColors(Color foreground, Color background) {
+        return toBuilder()
+                .foreground(foreground)
+                .background(background)
+                .build();
+    }
+
+    public CellFormat withFont(Font font) {
+        return toBuilder().font(font).build();
+    }
+
+    public CellFormat withBorder(Border border) {
+        return toBuilder().border(border).build();
+    }
+
+    public static class Builder {
+        private final CellFormat cellFormat = new CellFormat();
+
+        public Builder horizontalAlignment(int arg) {
+            cellFormat.setHorizontalAlignment(arg);
+            return this;
+        }
+
+        public Builder verticalAlignment(int arg) {
+            cellFormat.setVerticalAlignment(arg);
+            return this;
+        }
+
+        public Builder foreground(Color arg) {
+            cellFormat.setForeground(arg);
+            return this;
+        }
+
+        public Builder background(Color arg) {
+            cellFormat.setBackground(arg);
+            return this;
+        }
+
+        public Builder font(Font arg) {
+            cellFormat.setFont(arg);
+            return this;
+        }
+
+        public Builder border(Border arg) {
+            cellFormat.setBorder(arg);
+            return this;
+        }
+
+        public CellFormat build() {
+            return cellFormat;
         }
     }
 }

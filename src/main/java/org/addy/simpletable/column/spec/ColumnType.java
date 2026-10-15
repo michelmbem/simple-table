@@ -4,13 +4,7 @@ import org.addy.simpletable.column.editor.ButtonTableCellEditor;
 import org.addy.simpletable.column.editor.DateTimeTableCellEditor;
 import org.addy.simpletable.column.editor.HyperLinkTableCellEditor;
 import org.addy.simpletable.column.editor.RangeTableCellEditor;
-import org.addy.simpletable.column.renderer.ButtonTableCellRenderer;
-import org.addy.simpletable.column.renderer.CheckBoxTableCellRenderer;
-import org.addy.simpletable.column.renderer.FormattedTableCellRenderer;
-import org.addy.simpletable.column.renderer.HyperLinkTableCellRenderer;
-import org.addy.simpletable.column.renderer.ImageTableCellRenderer;
-import org.addy.simpletable.column.renderer.LineNumberTableCellRenderer;
-import org.addy.simpletable.column.renderer.ProgressTableCellRenderer;
+import org.addy.simpletable.column.renderer.*;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.ButtonModel;
 import org.addy.simpletable.model.ProgressModel;
@@ -24,6 +18,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -104,12 +99,25 @@ public abstract class ColumnType {
             return new DefaultCellEditor(comboBox);
         }
 
-        private ComboBoxModel<?> getComboBoxModel(Object data) {
+        private static ComboBoxModel<?> getComboBoxModel(Object data) {
             if (data == null) return new SimpleComboBoxModel<>();
             if (data instanceof ComboBoxModel<?> cbm) return cbm;
             if (data instanceof Collection<?> col) return new SimpleComboBoxModel<>(col);
-            if (data.getClass().isArray()) return new SimpleComboBoxModel<>((Object[]) data);
+            if (data.getClass().isArray()) return new SimpleComboBoxModel<>(convertArray(data));
             return new SimpleComboBoxModel<>(Collections.singleton(data));
+        }
+
+        private static Object[] convertArray(Object arrayInstance) {
+            if (arrayInstance.getClass().arrayType().isPrimitive()) {
+                var objects = new Object[Array.getLength(arrayInstance)];
+                for (int i = 0; i < objects.length; ++i) {
+                    objects[i] = Array.get(arrayInstance, i);
+                }
+
+                return objects;
+            }
+
+            return (Object[]) arrayInstance;
         }
     };
 

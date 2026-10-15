@@ -194,10 +194,10 @@ public class ColumnSpec {
             column.setMaxWidth(column.getPreferredWidth());
         }
 
-        TableRowSorter<?> rowSorter = (TableRowSorter<?>) table.getRowSorter();
+        var rowSorter = (TableRowSorter<?>) table.getRowSorter();
         if (rowSorter != null) rowSorter.setSortable(columnIndex, sortable);
 
-        TableHeaderCellRenderer headerRenderer = new TableHeaderCellRenderer(table.getTableHeader().getDefaultRenderer());
+        var headerRenderer = new TableHeaderCellRenderer(table.getTableHeader().getDefaultRenderer());
         headerRenderer.setCellFormat(headerFormat);
         column.setHeaderRenderer(headerRenderer);
 
@@ -207,6 +207,18 @@ public class ColumnSpec {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public Builder toBuilder() {
+        return builder()
+                .columnType(columnType)
+                .headerText(headerText)
+                .width(width)
+                .resizable(resizable)
+                .sortable(sortable)
+                .headerFormat(headerFormat)
+                .cellFormat(cellFormat)
+                .extraData(extraData);
     }
 
 
