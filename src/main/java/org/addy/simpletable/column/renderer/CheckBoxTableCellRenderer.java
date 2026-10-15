@@ -4,6 +4,7 @@ import org.addy.util.ValueConverter;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
@@ -34,12 +35,12 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
     }
 
     @Override
-    public void invalidate() {
+    public void validate() {
         // Unused!
     }
 
     @Override
-    public void validate() {
+    public void invalidate() {
         // Unused!
     }
 
@@ -49,7 +50,7 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
     }
 
     @Override
-    public void repaint(long tm, int x, int y, int width, int height) {
+    public void repaint() {
         // Unused!
     }
 
@@ -59,23 +60,18 @@ public class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRen
     }
 
     @Override
-    public void repaint() {
-        // Unused!
-    }
-
-    @Override
-    public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+    public void repaint(long tm, int x, int y, int width, int height) {
         // Unused!
     }
 
     @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         switch (propertyName) {
-            case "text", "displayedMnemonic", "selected":
+            case "text", "displayedMnemonic", "icon":
                 super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
             case "font", "foreground":
-                if (oldValue != newValue && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)
+                if (oldValue != newValue && getClientProperty(BasicHTML.propertyKey) != null)
                     super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
             default:

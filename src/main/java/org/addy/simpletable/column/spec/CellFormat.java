@@ -5,8 +5,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public class CellFormat {
-    public static final Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(2, 4, 2, 4);
-
     public static final CellFormat DEFAULT = new CellFormat();
     public static final CellFormat FIRST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.LEADING);
     public static final CellFormat PAGE_START = new CellFormat(SwingConstants.CENTER, SwingConstants.LEADING);
@@ -17,6 +15,8 @@ public class CellFormat {
     public static final CellFormat LAST_LINE_START = new CellFormat(SwingConstants.LEADING, SwingConstants.TRAILING);
     public static final CellFormat PAGE_END = new CellFormat(SwingConstants.CENTER, SwingConstants.TRAILING);
     public static final CellFormat LAST_lINE_END = new CellFormat(SwingConstants.TRAILING, SwingConstants.TRAILING);
+
+    public static final Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(2, 4, 2, 4);
 
     private int horizontalAlignment;
     private int verticalAlignment;
@@ -127,21 +127,6 @@ public class CellFormat {
                 .background(background)
                 .font(font)
                 .border(border);
-    }
-
-    public CellFormat withColors(Color foreground, Color background) {
-        return toBuilder()
-                .foreground(foreground)
-                .background(background)
-                .build();
-    }
-
-    public CellFormat withFont(Font font) {
-        return toBuilder().font(font).build();
-    }
-
-    public CellFormat withBorder(Border border) {
-        return toBuilder().border(border).build();
     }
 
     public static class Builder {

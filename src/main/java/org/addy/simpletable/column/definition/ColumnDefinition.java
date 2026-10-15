@@ -75,7 +75,7 @@ public class ColumnDefinition implements Serializable {
         this.validator = validator;
     }
 
-    public static ColumnDefinition[] fromNames(String[] names) {
+    public static ColumnDefinition[] ofNames(String... names) {
         return Stream.of(names).map(ColumnDefinition::new).toArray(ColumnDefinition[]::new);
     }
 
@@ -127,7 +127,7 @@ public class ColumnDefinition implements Serializable {
                     );
             }
 
-            throw new IllegalArgumentException("Could not find a column with the name " + columnName + " in the ResultSet");
+            throw new IllegalArgumentException("Could not find a " + columnName + " column in the ResultSet");
         } catch (SQLException | ClassNotFoundException e) {
             throw new IllegalArgumentException("An error occurred while introspecting column " + columnName, e);
         }

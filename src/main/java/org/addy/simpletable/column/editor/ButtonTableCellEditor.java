@@ -13,7 +13,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class ButtonTableCellEditor
+        extends AbstractCellEditor
+        implements TableCellEditor, ActionListener {
+
     public static final String COMMAND = "BUTTON CLICK";
 
     private final JButton button;
@@ -81,7 +84,9 @@ public class ButtonTableCellEditor extends AbstractCellEditor implements TableCe
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (table.isEditing() && table.getCellEditor() == ButtonTableCellEditor.this && !isCurrentCellEditor)
+                if (table.isEditing()
+                        && table.getCellEditor() == ButtonTableCellEditor.this
+                        && !isCurrentCellEditor)
                     isCurrentCellEditor = true;
             }
 

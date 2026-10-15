@@ -55,7 +55,9 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (table.isEditing() && table.getCellEditor() == HyperLinkTableCellEditor.this && !isCurrentCellEditor)
+                if (table.isEditing()
+                        && table.getCellEditor() == HyperLinkTableCellEditor.this
+                        && !isCurrentCellEditor)
                     isCurrentCellEditor = true;
             }
 

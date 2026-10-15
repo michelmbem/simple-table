@@ -48,34 +48,34 @@ public class SimpleTableModel extends AbstractTableModel {
     public SimpleTableModel(Object itemSource, String[] columnNames,
                             RowAdapter rowAdapter, ColumnAdapter columnAdapter) {
 
-        this(itemSource, ColumnDefinition.fromNames(columnNames), rowAdapter, columnAdapter);
+        this(itemSource, ColumnDefinition.ofNames(columnNames), rowAdapter, columnAdapter);
     }
 
     public SimpleTableModel(Object[] items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(), columnAdapter);
+        this(items, ColumnDefinition.ofNames(columnNames), new ArrayRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Object[] items, String... columnNames) {
-        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(),
+        this(items, ColumnDefinition.ofNames(columnNames), new ArrayRowAdapter(),
                 ColumnAdapters.from(requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Object[][] items, String... columnNames) {
-        this(items, ColumnDefinition.fromNames(columnNames), new ArrayRowAdapter(), new ArrayColumnAdapter());
+        this(items, ColumnDefinition.ofNames(columnNames), new ArrayRowAdapter(), new ArrayColumnAdapter());
     }
 
     public SimpleTableModel(Collection<?> items, String[] columnNames, ColumnAdapter columnAdapter) {
-        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames),
+        this(CollectionUtil.toList(items), ColumnDefinition.ofNames(columnNames),
                 new ListRowAdapter(), columnAdapter);
     }
 
     public SimpleTableModel(Collection<?> items, String... columnNames) {
-        this(CollectionUtil.toList(items), ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
+        this(CollectionUtil.toList(items), ColumnDefinition.ofNames(columnNames), new ListRowAdapter(),
                 ColumnAdapters.from(CollectionUtil.requiredFirst(items).getClass(), columnNames));
     }
 
     public SimpleTableModel(Class<?> itemClass, String... columnNames) {
-        this(null, ColumnDefinition.fromNames(columnNames), new ListRowAdapter(),
+        this(null, ColumnDefinition.ofNames(columnNames), new ListRowAdapter(),
                 ColumnAdapters.from(Objects.requireNonNull(itemClass), columnNames));
     }
 

@@ -50,12 +50,12 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     }
 
     @Override
-    public void invalidate() {
+    public void validate() {
         // Unused!
     }
 
     @Override
-    public void validate() {
+    public void invalidate() {
         // Unused!
     }
 
@@ -65,7 +65,7 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     }
 
     @Override
-    public void repaint(long tm, int x, int y, int width, int height) {
+    public void repaint() {
         // Unused!
     }
 
@@ -75,7 +75,7 @@ public class ImageTableCellRenderer extends JPictureBox implements TableCellRend
     }
 
     @Override
-    public void repaint() {
+    public void repaint(long tm, int x, int y, int width, int height) {
         // Unused!
     }
 

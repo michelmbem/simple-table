@@ -3,6 +3,7 @@ package org.addy.simpletable.column.renderer;
 import org.addy.simpletable.model.ButtonModel;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
@@ -44,12 +45,12 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
     }
 
     @Override
-    public void invalidate() {
+    public void validate() {
         // Unused!
     }
 
     @Override
-    public void validate() {
+    public void invalidate() {
         // Unused!
     }
 
@@ -59,7 +60,7 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
     }
 
     @Override
-    public void repaint(long tm, int x, int y, int width, int height) {
+    public void repaint() {
         // Unused!
     }
 
@@ -69,7 +70,7 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
     }
 
     @Override
-    public void repaint() {
+    public void repaint(long tm, int x, int y, int width, int height) {
         // Unused!
     }
 
@@ -80,7 +81,7 @@ public class ButtonTableCellRenderer extends JButton implements TableCellRendere
                 super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
             case "font", "foreground":
-                if (oldValue != newValue && getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey) != null)
+                if (oldValue != newValue && getClientProperty(BasicHTML.propertyKey) != null)
                     super.firePropertyChange(propertyName, oldValue, newValue);
                 break;
             default:

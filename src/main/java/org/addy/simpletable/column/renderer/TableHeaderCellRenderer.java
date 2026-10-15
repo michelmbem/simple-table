@@ -20,7 +20,8 @@ public class TableHeaderCellRenderer implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
 
-        Component component = wrappedCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        Component component = wrappedCellRenderer
+                .getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         /* isEditor is set to true to prevent the border to be set */
         if (cellFormat != null) cellFormat.applyTo(component, true);
         return component;
@@ -31,7 +32,7 @@ public class TableHeaderCellRenderer implements TableCellRenderer {
     }
 
     public void setCellFormat(CellFormat cellFormat) {
-        this.cellFormat = cellFormat.withBorder(null);
+        this.cellFormat = cellFormat.toBuilder().border(null).build();
         if (this.cellFormat.getHorizontalAlignment() < 0)
             this.cellFormat.setHorizontalAlignment(SwingConstants.LEADING);
         if (this.cellFormat.getVerticalAlignment() < 0)

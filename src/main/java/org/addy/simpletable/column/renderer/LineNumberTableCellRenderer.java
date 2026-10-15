@@ -18,7 +18,7 @@ public class LineNumberTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
 
-        JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        var label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         label.setText(String.valueOf(row + 1));
         label.setIcon(row == table.getSelectedRow() ? SELECTION_ICON : null);
 

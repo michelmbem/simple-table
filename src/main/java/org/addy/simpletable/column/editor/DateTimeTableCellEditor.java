@@ -9,7 +9,8 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class DateTimeTableCellEditor extends AbstractCellEditor
+public class DateTimeTableCellEditor
+        extends AbstractCellEditor
         implements TableCellEditor, PropertyChangeListener {
 
     private final JCalendarCombo calendarCombo = new JCalendarCombo();
@@ -57,7 +58,7 @@ public class DateTimeTableCellEditor extends AbstractCellEditor
         calendarCombo.getCalendar().addPropertyChangeListener(this);
     }
 
-    private String mapFormat(String dateFormat) {
+    private static String mapFormat(String dateFormat) {
         return switch (dateFormat) {
             case "g" -> "yyyy-MM-dd HH:mm:ss";
             case "dt", "datetime" -> "dd/MM/yyyy HH:mm:ss";

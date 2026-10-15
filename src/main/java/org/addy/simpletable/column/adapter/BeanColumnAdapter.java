@@ -5,6 +5,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.stream.Stream;
 
 /**
  * A ColumnAdapter that maps column names to bean property names.
@@ -68,17 +69,12 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
             properties = new PropertyDescriptor[columnNames.length];
 
             for (int i = 0; i < properties.length; ++i) {
-                properties[i] = null;
-
-                for (PropertyDescriptor property : allProperties) {
-                    if (property.getName().equals(columnNames[i])) {
-                        properties[i] = property;
-                        break;
-                    }
-                }
-
-                if (properties[i] == null)
-                    throw new IllegalArgumentException("Could not find a " + columnNames[i] + " property in class " + beanType.getName());
+                final String propertyName = columnNames[i];
+                properties[i] = Stream.of(allProperties)
+                        .filter(p -> p.getName().equals(propertyName))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Could not find a " +
+                                propertyName + " property in class " + beanType.getName()));
             }
         } catch (IntrospectionException e) {
             throw new IllegalStateException(e);
