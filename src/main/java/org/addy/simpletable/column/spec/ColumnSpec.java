@@ -114,7 +114,7 @@ public class ColumnSpec {
         if (columnClass.isEnum())
             return new ColumnSpec(ColumnType.COMBOBOX, null, columnClass.getEnumConstants());
 
-        return  new ColumnSpec();
+        return new ColumnSpec();
     }
 
     public ColumnType getColumnType() {
