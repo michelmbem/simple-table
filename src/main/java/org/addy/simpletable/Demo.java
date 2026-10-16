@@ -35,7 +35,7 @@ public final class Demo {
         tableModel.getColumns()[1].setValidator(CellValidators.notEmpty());
         
         var table = new SimpleTable(tableModel);
-        table.setRowHeight(28);
+        table.setRowHeight(48);
         table.setColumnSpecs(
                 new ColumnSpec(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
                 new ColumnSpec(ColumnType.TEXT,"Prénom", 100),
@@ -45,9 +45,6 @@ public final class Demo {
                 new ColumnSpec(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
                 new ColumnSpec(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
                 new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
-
-        // Alternatively, comment the call table.setColumnSpecs and uncomment the following line to see the difference
-        // table.generateColumnSpecs();
 
         var scrollPane = new JScrollPane(table);
         table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
