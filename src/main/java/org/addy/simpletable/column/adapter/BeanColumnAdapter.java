@@ -1,6 +1,5 @@
 package org.addy.simpletable.column.adapter;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -62,20 +61,36 @@ public class BeanColumnAdapter extends AssociativeColumnAdapter {
     }
 
     private void loadPropertiesFrom(Class<?> beanType) {
+        PropertyDescriptor[] allProperties = getAllProperties(beanType);
+        properties = new PropertyDescriptor[columnNames.length];
+
+        for (int i = 0; i < properties.length; ++i) {
+            final String propertyName = columnNames[i];
+            properties[i] = Stream.of(allProperties)
+                    .filter(p -> p.getName().equals(propertyName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Could not find a " +
+                            propertyName + " property in class " + beanType.getName()));
+        }
+    }
+
+    private static PropertyDescriptor[] getAllProperties(Class<?> beanType) {
+        if (beanType.isRecord()) {
+            return Stream.of(beanType.getRecordComponents())
+                    .map(component -> {
+                        try {
+                            return new PropertyDescriptor(
+                                    component.getName(),
+                                    component.getAccessor(),
+                                    null);
+                        } catch (IntrospectionException e) {
+                            throw new IllegalStateException(e);
+                        }})
+                    .toArray(PropertyDescriptor[]::new);
+        }
+
         try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(beanType);
-            PropertyDescriptor[] allProperties = beanInfo.getPropertyDescriptors();
-
-            properties = new PropertyDescriptor[columnNames.length];
-
-            for (int i = 0; i < properties.length; ++i) {
-                final String propertyName = columnNames[i];
-                properties[i] = Stream.of(allProperties)
-                        .filter(p -> p.getName().equals(propertyName))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Could not find a " +
-                                propertyName + " property in class " + beanType.getName()));
-            }
+            return Introspector.getBeanInfo(beanType).getPropertyDescriptors();
         } catch (IntrospectionException e) {
             throw new IllegalStateException(e);
         }
