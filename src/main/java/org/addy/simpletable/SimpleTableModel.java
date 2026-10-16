@@ -198,10 +198,10 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return editable &&
-                columns[columnIndex].isEditable() &&
-                rowAdapter.isCellEditable(rowIndex) &&
-                columnAdapter.isCellEditable(columnIndex);
+        return editable
+                && columns[columnIndex].isEditable()
+                && rowAdapter.isCellEditable(rowIndex)
+                && columnAdapter.isCellEditable(columnIndex);
     }
 
     public void addRow(Object row) {
