@@ -388,6 +388,8 @@ public class SimpleTableModel extends AbstractTableModel {
                     var collection = (Collection<?>) itemSource;
                     tableModel.setItemSource(new ArrayList<>(collection));
                     tableModel.setRowAdapter(new ListRowAdapter());
+                } else if (ResultSet.class.isAssignableFrom(itemSourceType)) {
+                    tableModel.setRowAdapter(new ResultSetRowAdapter());
                 }
             }
 
