@@ -8,7 +8,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -223,7 +225,8 @@ public class ColumnSpec {
 
 
     public static class Builder {
-        private final ColumnSpec columnSpec = new ColumnSpec();
+        private final List<ColumnSpec> list = new ArrayList<>();
+        private ColumnSpec columnSpec = new ColumnSpec();
 
         public Builder columnType(ColumnType arg) {
             columnSpec.setColumnType(arg);
@@ -267,6 +270,17 @@ public class ColumnSpec {
 
         public ColumnSpec build() {
             return columnSpec;
+        }
+
+        public Builder next() {
+            list.add(build());
+            columnSpec = new ColumnSpec();
+            return this;
+        }
+
+        public ColumnSpec[] collect() {
+            list.add(build());
+            return list.toArray(ColumnSpec[]::new);
         }
     }
 }

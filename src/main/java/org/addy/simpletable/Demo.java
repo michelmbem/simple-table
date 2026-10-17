@@ -1,8 +1,7 @@
 package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.ELColumnAdapter;
-import org.addy.simpletable.column.spec.CellFormat;
-import org.addy.simpletable.column.spec.ColumnType;
+import org.addy.simpletable.column.spec.ColumnSpec;
 import org.addy.simpletable.column.validator.CellValidators;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
@@ -19,6 +18,11 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+import static org.addy.simpletable.column.spec.CellFormat.CENTER;
+import static org.addy.simpletable.column.spec.CellFormat.LINE_END;
+import static org.addy.simpletable.column.spec.ColumnType.*;
 
 public final class Demo {
     public static void main(String... args) {
@@ -37,29 +41,30 @@ public final class Demo {
                 .columnAdapter(ELColumnAdapter::new)
                 .build();
 
-        var table = SimpleTable.builder()
-                .model(tableModel)
-                .rowHeight(48)
-                .addColumnSpec(ColumnType.HYPERLINK, "Nom", 100)
-                    .extraData((TableCellActionListener) Demo::buttonClicked).end()
-                .addColumnSpec(ColumnType.TEXT, "Prénom", 100).end()
-                .addColumnSpec(ColumnType.COMBOBOX, "Sexe", 75).resizable(false)
-                    .cellFormat(CellFormat.CENTER).extraData(Gender.values()).end()
-                .addColumnSpec(ColumnType.DATETIME, "Né(e) le", 125).extraData("d").end()
-                .addColumnSpec(ColumnType.NUMBER,"Taille", 75).resizable(false)
-                    .headerFormat(CellFormat.LINE_END).cellFormat(CellFormat.LINE_END)
-                    .extraData("#0.00'm'").end()
-                .addColumnSpec(ColumnType.PROGRESS, "Poids (lbs)", 100).extraData(new Range(0, 220)).end()
-                .addColumnSpec(ColumnType.CHECKBOX, "Marié(e)?", 75).resizable(false)
-                    .headerFormat(CellFormat.CENTER).cellFormat(CellFormat.CENTER).end()
-                .addColumnSpec(ColumnType.IMAGE, "Photo", 75).resizable(false).sortable(false).end()
-                .build();
+        var table = new SimpleTable(tableModel);
+        table.setRowHeight(48);
+        table.setColumnSpecs(ColumnSpec.builder()
+                .columnType(HYPERLINK).headerText("Nom").width(100)
+                    .extraData((TableCellActionListener) Demo::buttonClicked).next()
+                .columnType(TEXT).headerText("Prénom").width(100).next()
+                .columnType(COMBOBOX).headerText("Sexe").width(75)
+                    .resizable(false).cellFormat(CENTER).extraData(Gender.values()).next()
+                .columnType(DATETIME).headerText("Né(e) le").width(125).extraData("d").next()
+                .columnType(NUMBER).headerText("Taille").width(75).resizable(false)
+                    .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").next()
+                .columnType(PROGRESS).headerText("Poids (lbs)").width(100)
+                    .extraData(new Range(0, 220)).next()
+                .columnType(CHECKBOX).headerText("Marié(e)?").width(75)
+                    .resizable(false).headerFormat(CENTER).cellFormat(CENTER).next()
+                .columnType(IMAGE).headerText("Photo").width(75)
+                    .resizable(false).sortable(false)
+                .collect());
 
         var scrollPane = new JScrollPane(table);
-        table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);
+        table.createRowHeaders(scrollPane, LINENUMBER, "#", 40, LINE_END);
 
         var frame = new JFrame("SimpleTable Demo");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setContentPane(scrollPane);
         frame.pack();
         frame.setSize(800, 600);
