@@ -2,12 +2,12 @@ package org.addy.simpletable;
 
 import org.addy.simpletable.column.adapter.ELColumnAdapter;
 import org.addy.simpletable.column.spec.CellFormat;
-import org.addy.simpletable.column.spec.ColumnSpec;
 import org.addy.simpletable.column.spec.ColumnType;
 import org.addy.simpletable.column.validator.CellValidators;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.Range;
+import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.util.StringUtil;
 
 import javax.swing.*;
@@ -28,23 +28,32 @@ public final class Demo {
             ex.printStackTrace();
         }
 
-        String[] tableColumns = {
-                "$.lastName", "$.firstName", "$.gender", "$.dateOfBirth",
-                "$.height", "$.weight * 2.20462262", "$.married", "$.photo"};
-        var tableModel = new SimpleTableModel(getTableData(), tableColumns, new ELColumnAdapter());
-        tableModel.getColumns()[1].setValidator(CellValidators.notEmpty());
-        
-        var table = new SimpleTable(tableModel);
-        table.setRowHeight(48);
-        table.setColumnSpecs(
-                new ColumnSpec(ColumnType.HYPERLINK,"Nom", 100, (TableCellActionListener) Demo::buttonClicked),
-                new ColumnSpec(ColumnType.TEXT,"Prénom", 100),
-                new ColumnSpec(ColumnType.COMBOBOX, "Sexe", 75, false, true, CellFormat.DEFAULT, CellFormat.CENTER, Gender.values()),
-                new ColumnSpec(ColumnType.DATETIME, "Né(e) le", 125, "d"),
-                new ColumnSpec(ColumnType.NUMBER,"Taille", 75, false, true, CellFormat.LINE_END, CellFormat.LINE_END, "#0.00'm'"),
-                new ColumnSpec(ColumnType.PROGRESS,"Poids (lbs)", 100, new Range(0, 220)),
-                new ColumnSpec(ColumnType.CHECKBOX,"Marié(e)?", 75, false, true, CellFormat.CENTER, CellFormat.CENTER, null),
-                new ColumnSpec(ColumnType.IMAGE,"Photo", 75, false, false));
+        var tableModel = SimpleTableModel.builder()
+                .itemSource(getTableData())
+                .addColumns("$.lastName", "$.firstName", "$.gender", "$.dateOfBirth", "$.height",
+                        "$.weight * 2.20462262", "$.married", "$.photo")
+                .column(1).validator(CellValidators.notEmpty()).end()
+                .rowAdapter(ListRowAdapter::new)
+                .columnAdapter(ELColumnAdapter::new)
+                .build();
+
+        var table = SimpleTable.builder()
+                .model(tableModel)
+                .rowHeight(48)
+                .addColumnSpec(ColumnType.HYPERLINK, "Nom", 100)
+                    .extraData((TableCellActionListener) Demo::buttonClicked).end()
+                .addColumnSpec(ColumnType.TEXT, "Prénom", 100).end()
+                .addColumnSpec(ColumnType.COMBOBOX, "Sexe", 75).resizable(false)
+                    .cellFormat(CellFormat.CENTER).extraData(Gender.values()).end()
+                .addColumnSpec(ColumnType.DATETIME, "Né(e) le", 125).extraData("d").end()
+                .addColumnSpec(ColumnType.NUMBER,"Taille", 75).resizable(false)
+                    .headerFormat(CellFormat.LINE_END).cellFormat(CellFormat.LINE_END)
+                    .extraData("#0.00'm'").end()
+                .addColumnSpec(ColumnType.PROGRESS, "Poids (lbs)", 100).extraData(new Range(0, 220)).end()
+                .addColumnSpec(ColumnType.CHECKBOX, "Marié(e)?", 75).resizable(false)
+                    .headerFormat(CellFormat.CENTER).cellFormat(CellFormat.CENTER).end()
+                .addColumnSpec(ColumnType.IMAGE, "Photo", 75).resizable(false).sortable(false).end()
+                .build();
 
         var scrollPane = new JScrollPane(table);
         table.createRowHeaders(scrollPane, ColumnType.LINENUMBER, "#", 40, CellFormat.LINE_END);

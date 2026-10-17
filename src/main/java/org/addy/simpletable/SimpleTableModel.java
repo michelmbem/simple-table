@@ -111,6 +111,7 @@ public class SimpleTableModel extends AbstractTableModel {
 
     public void setColumns(ColumnDefinition[] columns) {
         this.columns = columns;
+        configureColumnAdapter();
         fireTableStructureChanged();
     }
 
@@ -294,6 +295,49 @@ public class SimpleTableModel extends AbstractTableModel {
 
         public Builder addColumns(String... arg) {
             Stream.of(arg).forEach(this::addColumn);
+            return this;
+        }
+
+        public ColumnBuilder column(int arg) {
+            return new ColumnBuilder(tableColumns.get(arg));
+        }
+
+        public ColumnBuilder column(String arg) {
+            ColumnDefinition column = tableColumns.stream()
+                    .filter(c -> c.getName().equals(arg))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Could not find a column with name '" + arg + "' in the table model"));
+
+            return new ColumnBuilder(column);
+        }
+
+        public Builder removeColumn(int arg) {
+            tableColumns.remove(arg);
+            return this;
+        }
+
+        public Builder removeColumn(String arg) {
+            ColumnDefinition column = tableColumns.stream()
+                    .filter(c -> c.getName().equals(arg))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Could not find a column with name '" + arg + "' in the table model"));
+
+            tableColumns.remove(column);
+            return this;
+        }
+
+        public Builder removeColumns(int arg0, int arg1) {
+            for (int i = 0; i < arg1; i++) {
+                tableColumns.remove(arg0);
+            }
+
+            return this;
+        }
+
+        public Builder clearColumns() {
+            tableColumns.clear();
             return this;
         }
 
