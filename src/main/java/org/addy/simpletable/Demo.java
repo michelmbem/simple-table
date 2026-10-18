@@ -8,6 +8,7 @@ import org.addy.simpletable.event.TableCellActionListener;
 import org.addy.simpletable.model.Range;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.util.StringUtil;
+import org.addy.util.media.ImageHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static org.addy.simpletable.column.spec.CellFormat.CENTER;
@@ -42,7 +44,7 @@ public final class Demo {
                 .build();
 
         var table = new SimpleTable(tableModel);
-        table.setRowHeight(48);
+        table.setRowHeight(64);
         table.setColumnSpecs(ColumnSpec.builder()
                 .columnType(HYPERLINK).headerText("Nom").width(100)
                     .extraData((TableCellActionListener) Demo::buttonClicked).next()
@@ -75,6 +77,9 @@ public final class Demo {
     private static List<?> getTableData() {
         List<Person> personList = new ArrayList<>();
         ClassLoader classLoader = Demo.class.getClassLoader();
+        Image photoPage1 = loadImage(classLoader, "persons-page-1.jpg");
+        Image photoPage2 = loadImage(classLoader, "persons-page-2.jpg");
+        var photoIndex = new AtomicInteger(0);
 
         try (var reader = new BufferedReader(new InputStreamReader(
                 classLoader.getResourceAsStream("demodata.txt")))) {
@@ -89,7 +94,7 @@ public final class Demo {
                             Float.parseFloat(fields[4]),
                             Short.parseShort(fields[5]),
                             Boolean.parseBoolean(fields[6]),
-                            loadImage(classLoader, fields[7])))
+                            extractPhoto(photoPage1, photoPage2, photoIndex.getAndIncrement())))
                     .toList();
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,8 +104,25 @@ public final class Demo {
     }
 
     private static Image loadImage(ClassLoader classLoader, String filename) {
-        URL imageURL = classLoader.getResource("images/portraits/" + filename);
+        URL imageURL = classLoader.getResource("images/" + filename);
         return new ImageIcon(imageURL).getImage();
+    }
+
+    private static Image extractPhoto(Image photoGrid1, Image photoGrid2, int photoIndex) {
+        final int[] photoWidths = {180, 175, 180, 180, 175, 175, 180, 180, 180, 195};
+        final int[] photoHeights = {190, 185, 185, 185, 155};
+
+        Image photoGrid = photoGrid1;
+        int photoX = photoIndex % 10;
+        int photoY = photoIndex / 10;
+
+        if (photoY >= 5) {
+            photoGrid = photoGrid2;
+            photoY -= 5;
+        }
+
+        return ImageHelper.getSprite(photoGrid, photoX, photoY, photoWidths, photoHeights,
+                new Insets(2, 2, 25, 2));
     }
 
     private static void buttonClicked(TableCellActionEvent e) {
