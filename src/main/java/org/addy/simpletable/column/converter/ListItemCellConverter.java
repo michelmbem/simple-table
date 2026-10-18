@@ -19,7 +19,7 @@ public class ListItemCellConverter implements CellConverter {
     @Override
     public Object model2view(Object modelValue, Object rowItem) {
         return listItems.stream()
-                .filter(listItem -> listItem.value().equals(modelValue))
+                .filter(li -> Objects.equals(li.getValue(), modelValue))
                 .findFirst()
                 .orElse(null);
     }
@@ -27,6 +27,6 @@ public class ListItemCellConverter implements CellConverter {
     @Override
     public Object view2model(Object editorValue, Object rowItem) {
         var listItem = (ListItem<?>) editorValue;
-        return listItem != null ? listItem.value() : null;
+        return listItem != null ? listItem.getValue() : null;
     }
 }
