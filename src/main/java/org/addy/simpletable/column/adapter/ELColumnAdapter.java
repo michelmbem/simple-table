@@ -12,7 +12,7 @@ import javax.el.ValueExpression;
  *  It assumes that column names are valid EL expressions (not wrapped in "${...}" or "#{...}").
  *  The dollar-sign ($) is used to reference the current row item.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class ELColumnAdapter extends AssociativeColumnAdapter {
     private final ExpressionFactory factory = new ExpressionFactoryImpl();

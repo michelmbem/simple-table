@@ -7,7 +7,7 @@ import java.util.function.IntPredicate;
  * A ColumnAdapter that uses functional interfaces, mainly in the form of
  * method references or lambda expressions, to read and write cell values.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class FunctionalColumnAdapter<T> implements ColumnAdapter {
     private final ItemReader<T> itemReader;

@@ -2,7 +2,7 @@ package org.addy.simpletable.column.adapter;
 
 /**
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public interface ColumnAdapter {
     Object getValueAt(Object item, int columnIndex);

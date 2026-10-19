@@ -3,7 +3,7 @@ package org.addy.simpletable.column.adapter;
 /**
  * The base class of all column adapters that can map columns by name.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public abstract class AssociativeColumnAdapter implements ColumnAdapter {
     protected String[] columnNames;

@@ -21,7 +21,7 @@ import java.util.Objects;
  * Manages alternated row backgrounds as well as row highlighting on mouse hover and automatic sorting.<br>
  * Automatically generates cell renderers and editors for columns based on the given columnSpec specifications.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class SimpleTable extends JTable {
     public static final int DEFAULT_ROW_HEIGHT = 20;

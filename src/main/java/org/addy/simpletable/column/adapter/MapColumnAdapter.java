@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * A ColumnAdapter that assumes that the given item is of a type that implements the Map interface.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class MapColumnAdapter extends AssociativeColumnAdapter {
     public MapColumnAdapter(String... columnNames) {

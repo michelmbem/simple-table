@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 /**
  * A ColumnAdapter that assumes that the given item is an array.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class ArrayColumnAdapter implements ColumnAdapter {
     @Override

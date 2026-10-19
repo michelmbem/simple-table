@@ -9,7 +9,7 @@ import java.sql.SQLException;
  *  If the default constructor is used, columns will be mapped by position.
  *  If column names are supplied to the constructor, columns will be mapped by name.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class ResultSetColumnAdapter extends AssociativeColumnAdapter {
     private final FieldExtractor fieldExtractor;

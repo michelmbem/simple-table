@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  * A ColumnAdapter that maps column names to bean property names.
  * It uses introspection to get or set column values.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public class BeanColumnAdapter extends AssociativeColumnAdapter {
     protected PropertyDescriptor[] properties = null;

@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A factory and utility class for column adapters.
  *
- * @author Mike
+ * @author Michel Mbem
  */
 public final class ColumnAdapters {
     private ColumnAdapters() {}
