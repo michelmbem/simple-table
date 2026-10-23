@@ -9,50 +9,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DateFormatsTest {
     @Test
-    void of_returns_default_instance_when_value_is_g_or_null() {
+    void of_returns_date_instance_when_value_is_g_or_null() {
         DateFormat dateFormat1 = DateFormats.of("g");
         DateFormat dateFormat2 = DateFormats.of(null);
-        assertThat(dateFormat1).isEqualTo(DateFormat.getInstance());
-        assertThat(dateFormat2).isEqualTo(DateFormat.getInstance());
-    }
-
-    @Test
-    void of_returns_date_instance_when_value_is_d_or_date() {
-        DateFormat dateFormat1 = DateFormats.of("d");
-        DateFormat dateFormat2 = DateFormats.of("date");
         assertThat(dateFormat1).isEqualTo(DateFormat.getDateInstance());
         assertThat(dateFormat2).isEqualTo(DateFormat.getDateInstance());
     }
 
     @Test
-    void of_returns_time_instance_when_value_is_t_or_time() {
-        DateFormat dateFormat1 = DateFormats.of("t");
-        DateFormat dateFormat2 = DateFormats.of("time");
-        assertThat(dateFormat1).isEqualTo(DateFormat.getTimeInstance());
-        assertThat(dateFormat2).isEqualTo(DateFormat.getTimeInstance());
-    }
-
-    @Test
-    void of_returns_datetime_instance_when_value_is_dt_or_datetime() {
-        DateFormat dateFormat1 = DateFormats.of("dt");
-        DateFormat dateFormat2 = DateFormats.of("datetime");
-        assertThat(dateFormat1).isEqualTo(DateFormat.getDateTimeInstance());
-        assertThat(dateFormat2).isEqualTo(DateFormat.getDateTimeInstance());
-    }
-
-    @Test
-    void of_returns_correct_instance_with_correct_style_when_value_and_style_are_set() {
-        DateFormat dateFormat1 = DateFormats.of("d:short");
-        DateFormat dateFormat2 = DateFormats.of("time:long");
-        DateFormat dateFormat3 = DateFormats.of("dt:medium,short");
+    void of_returns_short_date_instance_when_value_is_s_or_short() {
+        DateFormat dateFormat1 = DateFormats.of("s");
+        DateFormat dateFormat2 = DateFormats.of("short");
         assertThat(dateFormat1).isEqualTo(DateFormat.getDateInstance(DateFormat.SHORT));
-        assertThat(dateFormat2).isEqualTo(DateFormat.getTimeInstance(DateFormat.LONG));
-        assertThat(dateFormat3).isEqualTo(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT));
+        assertThat(dateFormat2).isEqualTo(DateFormat.getDateInstance(DateFormat.SHORT));
+    }
+
+    @Test
+    void of_returns_medium_date_instance_when_value_is_m_or_medium() {
+        DateFormat dateFormat1 = DateFormats.of("m");
+        DateFormat dateFormat2 = DateFormats.of("medium");
+        assertThat(dateFormat1).isEqualTo(DateFormat.getDateInstance(DateFormat.MEDIUM));
+        assertThat(dateFormat2).isEqualTo(DateFormat.getDateInstance(DateFormat.MEDIUM));
+    }
+
+    @Test
+    void of_returns_long_date_instance_when_value_is_l_or_long() {
+        DateFormat dateFormat1 = DateFormats.of("l");
+        DateFormat dateFormat2 = DateFormats.of("long");
+        assertThat(dateFormat1).isEqualTo(DateFormat.getDateInstance(DateFormat.LONG));
+        assertThat(dateFormat2).isEqualTo(DateFormat.getDateInstance(DateFormat.LONG));
     }
 
     @Test
     void of_returns_simple_date_format_when_value_is_a_pattern() {
-        DateFormat dateFormat = DateFormats.of("dd/MM/yyyy HH:mm:ss");
+        DateFormat dateFormat = DateFormats.of("dd/MM/yyyy");
         assertThat(dateFormat).isInstanceOf(SimpleDateFormat.class);
     }
 

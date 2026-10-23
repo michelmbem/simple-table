@@ -107,7 +107,7 @@ public class ColumnSpec {
 
         if (TypeUtil.isAssignable(columnClass, Date.class)
                 || TypeUtil.isAssignable(columnClass, Temporal.class))
-            return new ColumnSpec(ColumnType.DATETIME, null);
+            return new ColumnSpec(ColumnType.DATE, null);
 
         if (TypeUtil.isAssignable(columnClass, Image.class)
                 || TypeUtil.isAssignable(columnClass, ImageIcon.class))

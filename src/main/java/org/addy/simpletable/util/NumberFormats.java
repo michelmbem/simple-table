@@ -2,6 +2,7 @@ package org.addy.simpletable.util;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public final class NumberFormats {
     private NumberFormats() {}
@@ -13,7 +14,7 @@ public final class NumberFormats {
         if (value instanceof NumberFormat numberFormat)
             return numberFormat;
 
-        return switch (value.toString()) {
+        return switch (value.toString().toLowerCase(Locale.ROOT)) {
             case "g" -> NumberFormat.getNumberInstance();
             case "$", "c", "currency" -> NumberFormat.getCurrencyInstance();
             case "%", "p", "percent" -> NumberFormat.getPercentInstance();

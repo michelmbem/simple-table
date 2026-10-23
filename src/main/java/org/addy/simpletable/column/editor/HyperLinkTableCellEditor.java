@@ -36,7 +36,9 @@ public class HyperLinkTableCellEditor extends AbstractCellEditor implements Tabl
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(
+            JTable table, Object value, boolean isSelected, int row, int column) {
+
         if (this.table == null) setTable(table);
 
         UIHelper.prepareEditor(label, table, value, isSelected, row, column);

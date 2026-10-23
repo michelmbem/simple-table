@@ -52,7 +52,9 @@ public class ButtonTableCellEditor
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(
+            JTable table, Object value, boolean isSelected, int row, int column) {
+
         if (this.table == null) setTable(table);
 
         UIHelper.prepareEditor(button, table, value, isSelected, row, column);

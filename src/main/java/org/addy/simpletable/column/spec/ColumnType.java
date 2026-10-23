@@ -1,7 +1,7 @@
 package org.addy.simpletable.column.spec;
 
 import org.addy.simpletable.column.editor.ButtonTableCellEditor;
-import org.addy.simpletable.column.editor.DateTimeTableCellEditor;
+import org.addy.simpletable.column.editor.DateTableCellEditor;
 import org.addy.simpletable.column.editor.HyperLinkTableCellEditor;
 import org.addy.simpletable.column.editor.RangeTableCellEditor;
 import org.addy.simpletable.column.renderer.*;
@@ -58,7 +58,7 @@ public abstract class ColumnType {
         }
     };
 
-    public static final ColumnType DATETIME = new ColumnType() {
+    public static final ColumnType DATE = new ColumnType() {
         @Override
         public TableCellRenderer getRenderer(Object configObject) {
             return new FormattedTableCellRenderer(DateFormats.of(configObject), Date.class);
@@ -67,8 +67,8 @@ public abstract class ColumnType {
         @Override
         public TableCellEditor getEditor(Object configObject) {
             return configObject != null
-                    ? new DateTimeTableCellEditor(configObject.toString())
-                    : new DateTimeTableCellEditor();
+                    ? new DateTableCellEditor(configObject.toString())
+                    : new DateTableCellEditor();
         }
     };
 

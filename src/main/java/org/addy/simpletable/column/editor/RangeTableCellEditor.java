@@ -27,7 +27,9 @@ public class RangeTableCellEditor extends AbstractCellEditor implements TableCel
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(
+            JTable table, Object value, boolean isSelected, int row, int column) {
+
         UIHelper.prepareEditor(panel, table, value, isSelected, row, column);
         slider.setValue(ValueConverter.toInt(value));
 
