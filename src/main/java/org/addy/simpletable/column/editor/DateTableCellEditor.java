@@ -10,6 +10,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class DateTableCellEditor
         extends AbstractCellEditor
@@ -63,11 +64,14 @@ public class DateTableCellEditor
     }
 
     private static String mapFormat(String dateFormat) {
+        ResourceBundle resources = ResourceBundle.getBundle(
+                DateTableCellEditor.class.getName());
+
         return switch (dateFormat.toLowerCase(Locale.ROOT)) {
             case "g" -> DateUtil.IsoFormat.Extended.DATE;
-            case "s", "short" -> "dd/MM/yy";
-            case "m", "medium" -> "d MMM yyyy";
-            case "l", "long" -> "d MMMM yyyy";
+            case "s", "short" -> resources.getString("date.short");
+            case "m", "medium" -> resources.getString("date.medium");
+            case "l", "long" -> resources.getString("date.long");
             default -> dateFormat;
         };
     }

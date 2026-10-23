@@ -51,7 +51,7 @@ public final class Demo {
                 .columnType(TEXT).headerText("Prénom").width(100).enqueue()
                 .columnType(COMBOBOX).headerText("Sexe").width(75)
                     .resizable(false).cellFormat(CENTER).extraData(Gender.values()).enqueue()
-                .columnType(DATE).headerText("Né(e) le").width(125).extraData("d").enqueue()
+                .columnType(DATE).headerText("Né(e) le").width(125).extraData("m").enqueue()
                 .columnType(NUMBER).headerText("Taille").width(75).resizable(false)
                     .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").enqueue()
                 .columnType(PROGRESS).headerText("Poids (lbs)").width(100)

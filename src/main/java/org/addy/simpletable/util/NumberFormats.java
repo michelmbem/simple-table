@@ -8,14 +8,13 @@ public final class NumberFormats {
     private NumberFormats() {}
 
     public static NumberFormat of(Object value) {
-        if (value == null)
-            return NumberFormat.getInstance();
+        if (value == null || value.equals("g"))
+            return NumberFormat.getNumberInstance();
 
         if (value instanceof NumberFormat numberFormat)
             return numberFormat;
 
         return switch (value.toString().toLowerCase(Locale.ROOT)) {
-            case "g" -> NumberFormat.getNumberInstance();
             case "$", "c", "currency" -> NumberFormat.getCurrencyInstance();
             case "%", "p", "percent" -> NumberFormat.getPercentInstance();
             default -> {
