@@ -8,8 +8,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -225,7 +225,7 @@ public class ColumnSpec {
 
 
     public static class Builder {
-        private final List<ColumnSpec> list = new ArrayList<>();
+        private final List<ColumnSpec> queue = new LinkedList<>();
         private ColumnSpec columnSpec = new ColumnSpec();
 
         public Builder columnType(ColumnType arg) {
@@ -272,15 +272,14 @@ public class ColumnSpec {
             return columnSpec;
         }
 
-        public Builder next() {
-            list.add(build());
+        public Builder enqueue() {
+            queue.add(build());
             columnSpec = new ColumnSpec();
             return this;
         }
 
         public ColumnSpec[] collect() {
-            list.add(build());
-            return list.toArray(ColumnSpec[]::new);
+            return queue.toArray(ColumnSpec[]::new);
         }
     }
 }

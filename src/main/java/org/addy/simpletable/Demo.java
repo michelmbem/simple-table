@@ -30,8 +30,8 @@ public final class Demo {
     public static void main(String... args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         var tableModel = SimpleTableModel.builder()
@@ -47,19 +47,19 @@ public final class Demo {
         table.setRowHeight(64);
         table.setColumnSpecs(ColumnSpec.builder()
                 .columnType(HYPERLINK).headerText("Nom").width(100)
-                    .extraData((TableCellActionListener) Demo::buttonClicked).next()
-                .columnType(TEXT).headerText("Prénom").width(100).next()
+                    .extraData((TableCellActionListener) Demo::buttonClicked).enqueue()
+                .columnType(TEXT).headerText("Prénom").width(100).enqueue()
                 .columnType(COMBOBOX).headerText("Sexe").width(75)
-                    .resizable(false).cellFormat(CENTER).extraData(Gender.values()).next()
-                .columnType(DATETIME).headerText("Né(e) le").width(125).extraData("d").next()
+                    .resizable(false).cellFormat(CENTER).extraData(Gender.values()).enqueue()
+                .columnType(DATETIME).headerText("Né(e) le").width(125).extraData("d").enqueue()
                 .columnType(NUMBER).headerText("Taille").width(75).resizable(false)
-                    .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").next()
+                    .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").enqueue()
                 .columnType(PROGRESS).headerText("Poids (lbs)").width(100)
-                    .extraData(new Range(0, 220)).next()
+                    .extraData(new Range(0, 220)).enqueue()
                 .columnType(CHECKBOX).headerText("Marié(e)?").width(75)
-                    .resizable(false).headerFormat(CENTER).cellFormat(CENTER).next()
+                    .resizable(false).headerFormat(CENTER).cellFormat(CENTER).enqueue()
                 .columnType(IMAGE).headerText("Photo").width(75)
-                    .resizable(false).sortable(false)
+                    .resizable(false).sortable(false).enqueue()
                 .collect());
 
         var scrollPane = new JScrollPane(table);
