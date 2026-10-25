@@ -34,28 +34,35 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/michelmbem/simple-table.git</connection>
-        <tag>HEAD</tag>
+        <connection>scm:git:https://github.com/michelmbem/simple-table.git</connection>
+        <developerConnection>scm:git:https://github.com/michelmbem/simple-table.git</developerConnection>
         <url>https://github.com/michelmbem/simple-table</url>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/michelmbem/simple-table</url>
-        </repository>
         <snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages Snapshots</name>
-            <url>https://maven.pkg.github.com/michelmbem/simple-table</url>
+            <id>cloudsmith</id>
+            <url>https://maven.cloudsmith.io/michelmbem/addy-libraries/</url>
         </snapshotRepository>
+        <repository>
+            <id>cloudsmith</id>
+            <url>https://maven.cloudsmith.io/michelmbem/addy-libraries/</url>
+        </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/michelmbem/addy-swing-extensions</url>
+            <id>michelmbem-addy-libraries</id>
+            <url>https://dl.cloudsmith.io/public/michelmbem/addy-libraries/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
