@@ -6,7 +6,7 @@
 
     <groupId>org.addy</groupId>
     <artifactId>simple-table</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <packaging>jar</packaging>
     <description>Enhanced Java Swing table component and the associated model</description>
 
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.addy</groupId>
             <artifactId>addy-swing</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>de.odysseus.juel</groupId>
