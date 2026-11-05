@@ -1,18 +1,15 @@
 package org.addy.simpletable.column.renderer;
 
+import org.addy.swing.ArrowDirection;
+import org.addy.swing.ArrowIcon;
+import org.addy.swing.KnownColor;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.net.URL;
 
 public class LineNumberTableCellRenderer extends DefaultTableCellRenderer {
-    private static final Icon SELECTION_ICON;
-
-    static {
-        URL iconURL = LineNumberTableCellRenderer.class.getClassLoader()
-                .getResource("images/icons/bullet_arrow_right.png");
-        SELECTION_ICON = new ImageIcon(iconURL);
-    }
+    private static final Icon SELECTION_ICON = new ArrowIcon(ArrowDirection.RIGHT, KnownColor.SLATEGRAY, 12, 12);
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
