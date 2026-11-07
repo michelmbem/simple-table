@@ -19,6 +19,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -76,13 +77,12 @@ public final class Demo {
 
     private static List<?> getTableData() {
         List<Person> personList = new ArrayList<>();
-        ClassLoader classLoader = Demo.class.getClassLoader();
-        Image photoPage1 = loadImage(classLoader, "persons-page-1.jpg");
-        Image photoPage2 = loadImage(classLoader, "persons-page-2.jpg");
+        Image photoPage1 = loadImage("persons-page-1.jpg");
+        Image photoPage2 = loadImage("persons-page-2.jpg");
         var photoIndex = new AtomicInteger(0);
 
         try (var reader = new BufferedReader(new InputStreamReader(
-                classLoader.getResourceAsStream("demodata.txt")))) {
+                Demo.class.getResourceAsStream("/demodata.txt")))) {
 
             personList = reader.lines()
                     .map(line -> line.split(","))
@@ -103,9 +103,9 @@ public final class Demo {
         return personList;
     }
 
-    private static Image loadImage(ClassLoader classLoader, String filename) {
-        URL imageURL = classLoader.getResource("images/" + filename);
-        return new ImageIcon(imageURL).getImage();
+    private static Image loadImage(String filename) {
+        URL imageURL = Demo.class.getResource("/images/" + filename);
+        return new ImageIcon(Objects.requireNonNull(imageURL)).getImage();
     }
 
     private static Image extractPhoto(Image photoGrid1, Image photoGrid2, int photoIndex) {
@@ -121,8 +121,9 @@ public final class Demo {
             photoY -= 5;
         }
 
-        return ImageHelper.getSprite(photoGrid, photoX, photoY, photoWidths, photoHeights,
+        Image photo = ImageHelper.getSprite(photoGrid, photoX, photoY, photoWidths, photoHeights,
                 new Insets(2, 2, 25, 2));
+        return ImageHelper.stripBorder(photo, Color.WHITE);
     }
 
     private static void buttonClicked(TableCellActionEvent e) {
