@@ -5,6 +5,7 @@ import org.addy.simpletable.column.spec.ColumnSpec;
 import org.addy.simpletable.column.validator.CellValidators;
 import org.addy.simpletable.event.TableCellActionEvent;
 import org.addy.simpletable.event.TableCellActionListener;
+import org.addy.simpletable.model.ProgressModel;
 import org.addy.simpletable.model.Range;
 import org.addy.simpletable.row.adapter.ListRowAdapter;
 import org.addy.util.StringUtil;
@@ -47,19 +48,19 @@ public final class Demo {
         var table = new SimpleTable(tableModel);
         table.setRowHeight(64);
         table.setColumnSpecs(ColumnSpec.builder()
-                .columnType(HYPERLINK).headerText("Nom").width(125)
+                .columnType(HYPERLINK).headerText("Name").width(100)
                     .extraData((TableCellActionListener) Demo::buttonClicked).enqueue()
-                .columnType(TEXT).headerText("Prénom").width(125).enqueue()
-                .columnType(COMBOBOX).headerText("Sexe").width(100)
+                .columnType(TEXT).headerText("Surname").width(100).enqueue()
+                .columnType(COMBOBOX).headerText("Gender").width(70)
                     .resizable(false).cellFormat(CENTER).extraData(Gender.values()).enqueue()
-                .columnType(DATE).headerText("Né(e) le").width(150).extraData("m").enqueue()
-                .columnType(NUMBER).headerText("Taille").width(75).resizable(false)
+                .columnType(DATE).headerText("Born on").width(150).extraData("m").enqueue()
+                .columnType(NUMBER).headerText("Height").width(80).resizable(false)
                     .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").enqueue()
-                .columnType(PROGRESS).headerText("Poids (lbs)").width(100)
-                    .extraData(new Range(0, 220)).enqueue()
-                .columnType(CHECKBOX).headerText("Marié(e)?").width(75)
+                .columnType(PROGRESS).headerText("Weight (lbs)").width(100)
+                    .extraData(new ProgressModel(0, 220, true, "##0'cm'")).enqueue()
+                .columnType(CHECKBOX).headerText("Maried?").width(70)
                     .resizable(false).headerFormat(CENTER).cellFormat(CENTER).enqueue()
-                .columnType(IMAGE).headerText("Photo").width(75)
+                .columnType(IMAGE).headerText("Photo").width(70)
                     .resizable(false).sortable(false).enqueue()
                 .collect());
 
@@ -70,7 +71,7 @@ public final class Demo {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setContentPane(scrollPane);
         frame.pack();
-        frame.setSize(900, 600);
+        frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
         SwingUtilities.invokeLater(() -> frame.setVisible(true));
     }
