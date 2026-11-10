@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class LineNumberTableCellRenderer extends DefaultTableCellRenderer {
-    private static final Icon SELECTION_ICON = new ArrowIcon(ArrowDirection.RIGHT, KnownColor.SLATEGRAY, 12, 12);
+    private static final Icon SELECTION_ICON = new ArrowIcon(ArrowDirection.RIGHT, KnownColor.SLATEGRAY, 12, 9);
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
