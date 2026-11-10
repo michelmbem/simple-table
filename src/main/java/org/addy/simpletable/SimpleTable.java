@@ -32,8 +32,10 @@ public class SimpleTable extends JTable {
     private ColumnSpec[] columnSpecs = null;
     private RowHeaderView rowHeaderView = null;
 
-    public SimpleTable() {
-        super();
+    public SimpleTable(TableModel tableModel, TableColumnModel columnModel,
+                       ListSelectionModel selectionModel) {
+
+        super(tableModel, columnModel, selectionModel);
         setRowHeight(DEFAULT_ROW_HEIGHT);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setAlternateBackground(KnownColor.WHITE_BLUE);
@@ -42,19 +44,16 @@ public class SimpleTable extends JTable {
         createRolloverListener();
     }
 
-    public SimpleTable(TableModel model) {
-        this();
-        setModel(model);
+    public SimpleTable(TableModel tableModel, TableColumnModel columnModel) {
+        this(tableModel, columnModel, null);
     }
 
-    public SimpleTable(TableModel tm, TableColumnModel cm) {
-        this(tm);
-        setColumnModel(cm);
+    public SimpleTable(TableModel tableModel) {
+        this(tableModel, null, null);
     }
 
-    public SimpleTable(TableModel tm, TableColumnModel cm, ListSelectionModel sm) {
-        this(tm, cm);
-        setSelectionModel(sm);
+    public SimpleTable() {
+        this(null, null, null);
     }
 
     public Color getAlternateBackground() {
@@ -84,18 +83,18 @@ public class SimpleTable extends JTable {
     }
 
     public ColumnSpec getColumnSpec(int columnIndex) {
-        return columnSpecs != null && columnIndex < columnSpecs.length
-                ? columnSpecs[columnIndex]
-                : null;
+        if (columnSpecs == null || 0 > columnIndex || columnIndex >= columnSpecs.length)
+            throw new IndexOutOfBoundsException(columnIndex);
+
+        return columnSpecs[columnIndex];
     }
 
     public void setColumnSpec(int columnIndex, ColumnSpec columnSpec) {
-        if (columnSpecs != null && columnIndex < columnSpecs.length) {
-            columnSpecs[columnIndex] = columnSpec;
-            columnSpec.applyTo(getColumnModel().getColumn(columnIndex), this, columnIndex);
-        } else {
-            throw new ArrayIndexOutOfBoundsException(columnIndex);
-        }
+        if (columnSpecs == null || 0 > columnIndex || columnIndex >= columnSpecs.length)
+            throw new IndexOutOfBoundsException(columnIndex);
+
+        columnSpecs[columnIndex] = columnSpec;
+        columnSpec.applyTo(getColumnModel().getColumn(columnIndex), this, columnIndex);
     }
 
     public void generateColumnSpecs() {
@@ -144,15 +143,15 @@ public class SimpleTable extends JTable {
         if (colSpec != null)
             colSpec.getCellFormat().applyTo(component, false);
 
-        if (!component.getBackground().equals(getSelectionBackground())) {
-            if (rolloverBackground != null && row == rolloverRowIndex) {
+        if (!Objects.equals(component.getBackground(), getSelectionBackground())) {
+            if (row == rolloverRowIndex && rolloverBackground != null) {
                 component.setForeground(getForeground());
                 component.setBackground(rolloverBackground);
             } else if (alternateBackground != null) {
-                if (!(colSpec == null || colSpec.getCellFormat().getBackground() == null)) {
-                    component.setBackground(colSpec.getCellFormat().getBackground());
-                } else {
+                if (colSpec == null || colSpec.getCellFormat().getBackground() == null) {
                     component.setBackground(row % 2 == 1 ? alternateBackground : getBackground());
+                } else {
+                    component.setBackground(colSpec.getCellFormat().getBackground());
                 }
             }
         }
