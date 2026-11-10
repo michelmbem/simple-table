@@ -47,12 +47,12 @@ public final class Demo {
         var table = new SimpleTable(tableModel);
         table.setRowHeight(64);
         table.setColumnSpecs(ColumnSpec.builder()
-                .columnType(HYPERLINK).headerText("Nom").width(100)
+                .columnType(HYPERLINK).headerText("Nom").width(125)
                     .extraData((TableCellActionListener) Demo::buttonClicked).enqueue()
-                .columnType(TEXT).headerText("Prénom").width(100).enqueue()
-                .columnType(COMBOBOX).headerText("Sexe").width(75)
+                .columnType(TEXT).headerText("Prénom").width(125).enqueue()
+                .columnType(COMBOBOX).headerText("Sexe").width(100)
                     .resizable(false).cellFormat(CENTER).extraData(Gender.values()).enqueue()
-                .columnType(DATE).headerText("Né(e) le").width(125).extraData("m").enqueue()
+                .columnType(DATE).headerText("Né(e) le").width(150).extraData("m").enqueue()
                 .columnType(NUMBER).headerText("Taille").width(75).resizable(false)
                     .headerFormat(LINE_END).cellFormat(LINE_END).extraData("#0.00'm'").enqueue()
                 .columnType(PROGRESS).headerText("Poids (lbs)").width(100)
@@ -70,7 +70,7 @@ public final class Demo {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setContentPane(scrollPane);
         frame.pack();
-        frame.setSize(800, 600);
+        frame.setSize(900, 600);
         frame.setLocationRelativeTo(null);
         SwingUtilities.invokeLater(() -> frame.setVisible(true));
     }

@@ -31,22 +31,14 @@ public class DateTableCellEditor
     public Component getTableCellEditorComponent(
             JTable table, Object value, boolean isSelected, int row, int column) {
 
-        if (columnClass == null)
-            columnClass = table.getModel().getColumnClass(column);
-
-        if (value != null)
-            calendarCombo.setDate(ValueConverter.toLocalDate(value));
-        else
-            calendarCombo.setChecked(false);
-
+        if (columnClass == null) columnClass = table.getModel().getColumnClass(column);
+        calendarCombo.setSelectedDate(ValueConverter.toLocalDate(value));
         return calendarCombo;
     }
 
     @Override
     public Object getCellEditorValue() {
-        return calendarCombo.isChecked()
-                ? ValueConverter.toType(calendarCombo.getDate(), columnClass)
-                : null;
+        return ValueConverter.toType(calendarCombo.getSelectedDate(), columnClass);
     }
 
     @Override
