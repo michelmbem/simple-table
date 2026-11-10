@@ -1,8 +1,8 @@
 package org.addy.simpletable.column.renderer;
 
-import org.addy.swing.ArrowDirection;
-import org.addy.swing.ArrowIcon;
 import org.addy.swing.KnownColor;
+import org.addy.swing.icon.ArrowDirection;
+import org.addy.swing.icon.ArrowIcon;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
